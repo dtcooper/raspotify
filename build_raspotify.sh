@@ -4,15 +4,13 @@ set +e
 
 cd "$(dirname "$0")"
 
-if git submodule status librespot | grep -q '^-'
-then
+if git submodule status librespot | grep -q '^-'; then
     echo 'No librespot directory found. Did you clone with submodules?'
     exit 1
 fi
 
 # We're NOT in the docker container, so let's build it
-if [ "$1" != 'in_docker_container' ]
-then
+if [ "$1" != 'in_docker_container' ]; then
     echo 'Not in docker container. Building container...'
     BASEDIR="$(pwd)"
 
@@ -34,8 +32,7 @@ else
     cd /src
 
     DEB_PKG_VER="$(grep '^Version:' /pkgbuild/raspotify/DEBIAN/control | sed 's/^Version: //')"
-    if echo "$DEB_PKG_VER" | fgrep -vq "$LIBRESPOT_GIT_REV" && [ "$2" != '-f' -a "$2" != '--force' ]
-    then
+    if echo "$DEB_PKG_VER" | fgrep -vq "$LIBRESPOT_GIT_REV" && [ "$2" != '-f' -a "$2" != '--force' ]; then
         echo 'Librespot git revision not found in package version. Is this correct? Use `--force` if so.'
         exit 1
     fi

@@ -3,7 +3,7 @@ Version: 0.1~librespot-6f24e3b-1
 Section: base
 Priority: optional
 Architecture: armhf
-Depends: libasound2
+Depends: libasound2, adduser
 Maintainer: David Cooper <david@dtcooper.com>
 Description: Raspotify
  Spotify Connect client + daemon for the Raspberry Pi, based off librespot

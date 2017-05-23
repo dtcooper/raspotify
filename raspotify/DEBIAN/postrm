@@ -15,6 +15,10 @@ if [ "$1" = "purge" ]; then
         deb-systemd-helper purge raspotify.service >/dev/null
         deb-systemd-helper unmask raspotify.service >/dev/null
     fi
+
+    deluser --force raspotify || true
+    delgroup --force raspotify >/dev/null 2>&1 || true
+    rm -rf /var/cache/raspotify
 fi
 
 if [ -d /run/systemd/system ]; then

@@ -1,8 +1,22 @@
 #!/bin/sh
 
-# Based off what debhelper would have added
-
 set -e
+
+
+if ! getent group raspotify >/dev/null 2>&1; then
+    addgroup --system raspotify
+fi
+
+if ! id raspotify >/dev/null 2>&1; then
+    adduser --system --disabled-password --disabled-login \
+        --home /var/cache/raspotify --ingroup raspotify raspotify
+fi
+
+mkdir -p 0755 /var/cache/raspotify
+chown raspotify:raspotify /var/cache/raspotify
+adduser raspotify audio
+
+# Based off what debhelper would have added
 
 # This will only remove masks created by d-s-h on package removal.
 deb-systemd-helper unmask raspotify.service >/dev/null || true

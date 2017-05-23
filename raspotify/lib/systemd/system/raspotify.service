@@ -3,12 +3,14 @@ Description=Raspotify
 After=network.target
 
 [Service]
-User=nobody
-Group=audio
+User=raspotify
+Group=raspotify
 Restart=always
 RestartSec=10
 EnvironmentFile=/etc/default/raspotify
-ExecStart=/usr/bin/librespot --name "${DEVICE_NAME} (%H)" --backend alsa --cache /tmp/spotify-cache --bitrate "$BITRATE" $OPTIONS
+ExecStartPre=/bin/mkdir -p 0755 /var/cache/raspotify ; /bin/chown raspotify:raspotify /var/cache/raspotify
+PermissionsStartOnly=true
+ExecStart=/usr/bin/librespot --name "${DEVICE_NAME} (%H)" --backend alsa --cache /var/cache/raspotify --bitrate "$BITRATE" $OPTIONS
 
 [Install]
 WantedBy=multi-user.target
