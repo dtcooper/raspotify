@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# Based off what debhelper would have added
+
+set -e
+
+if [ -d /run/systemd/system ]; then
+    deb-systemd-invoke stop raspotify.service >/dev/null
+fi

@@ -1,0 +1,8 @@
+DEVICE_NAME="raspotify"
+
+# One of 96 (low quality), 160 (medium quality), or 320 (high quality)
+BITRATE="160"
+
+OPTIONS=""
+# To log in as your spotify user, use something like
+#OPTIONS="--username USERNAME --password PASSWORD"
