@@ -12,7 +12,7 @@ then
     docker build -t librespot-cross -f contrib/Dockerfile .
 
     echo "Running script..."
-    docker run -it \
+    docker run \
         -v "$BASEDIR":/pkgbuild \
         librespot-cross \
         /pkgbuild/build_raspotify.sh in_docker_container
