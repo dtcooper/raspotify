@@ -1,30 +1,42 @@
 #!/bin/sh
 
-# We're NOT in the docker container, so let's build it
-if [ "$1" != "in_docker_container" ]
+set +e
+
+cd "$(dirname "$0")"
+
+if git submodule status librespot | grep -q '^-'
 then
-    echo "Not in docker container. Building container..."
-    cd "$(dirname "$0")"
+    echo 'No librespot directory found. Did you clone with submodules?'
+    exit 1
+fi
+
+# We're NOT in the docker container, so let's build it
+if [ "$1" != 'in_docker_container' ]
+then
+    echo 'Not in docker container. Building container...'
     BASEDIR="$(pwd)"
 
     # Build librespot-cross Docker container
     cd librespot
     docker build -t librespot-cross -f contrib/Dockerfile .
 
-    echo "Running script..."
+    echo 'Running script...'
     docker run \
         -v "$BASEDIR":/pkgbuild \
         librespot-cross \
-        /pkgbuild/build_raspotify.sh in_docker_container
+        /pkgbuild/build_raspotify.sh in_docker_container $@
 else
-    echo "Building in docker container"
+    echo 'Building in docker container'
 
     # Get versions to prepare build
-    LIBRESPOT_GIT_REV="$(git --git-dir=/pkgbuild/librespot/.git rev-parse --short HEAD)"
-    DEB_PKG_VER="$(grep '^Version:' /pkgbuild/raspotify/debian/control | sed 's/^Version: //')"
-    if echo "$DEB_PKG_VER" | fgrep -vq "$LIBRESPOT_GIT_REV"
+    cd /pkgbuild/librespot
+    LIBRESPOT_GIT_REV="$(git rev-parse --short HEAD)"
+    cd /src
+
+    DEB_PKG_VER="$(grep '^Version:' /pkgbuild/raspotify/DEBIAN/control | sed 's/^Version: //')"
+    if echo "$DEB_PKG_VER" | fgrep -vq "$LIBRESPOT_GIT_REV" && [ "$2" != '-f' -a "$2" != '--force' ]
     then
-        echo 'Librespot git revision not found in package version. Is this correct?'
+        echo 'Librespot git revision not found in package version. Is this correct? Use `--force` if so.'
         exit 1
     fi
 
