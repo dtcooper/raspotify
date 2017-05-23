@@ -4,10 +4,6 @@
 
 set -e
 
-if [ -d /run/systemd/system ] ; then
-        systemctl --system daemon-reload >/dev/null || true
-fi
-
 if [ "$1" = "remove" ]; then
     if [ -x "/usr/bin/deb-systemd-helper" ]; then
         deb-systemd-helper mask raspotify.service >/dev/null
@@ -19,4 +15,8 @@ if [ "$1" = "purge" ]; then
         deb-systemd-helper purge raspotify.service >/dev/null
         deb-systemd-helper unmask raspotify.service >/dev/null
     fi
+fi
+
+if [ -d /run/systemd/system ]; then
+    systemctl --system daemon-reload >/dev/null || true
 fi

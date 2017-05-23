@@ -20,10 +20,5 @@ fi
 
 if [ -d /run/systemd/system ]; then
     systemctl --system daemon-reload >/dev/null || true
-    if [ -n "$2" ]; then
-        _dh_action=try-restart
-    else
-        _dh_action=start
-    fi
-    deb-systemd-invoke $_dh_action raspotify.service >/dev/null || true
+    deb-systemd-invoke start raspotify.service >/dev/null || true
 fi
