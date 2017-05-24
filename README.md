@@ -2,28 +2,38 @@
 
 _**Spotify Connect for the Raspberry Pi.**_
 
+## tl;dr
+
+Install the Spotify Connect client on your Raspberry Pi,
+
+```
+curl -sL https://raw.github.com/dtcooper/raspotify/master/install.sh | sh -s
+```
+
+## Introduction
+
 Raspotify is a Spotify Connect client for [Raspbian](https://www.raspberrypi.org/downloads/raspbian/) on the
 Raspberry Pi 2/3 that Just Works™. Raspotify is a Debian package which thinly wraps the awesome
 [librespot](https://github.com/plietar/librespot) library by [Paul Lietar]([https://github.com/plietar) that
 works out of the box, immediately after installation.
 
-## Overview
+## Download Latest Version
 
 Head on over to the [releases](https://github.com/dtcooper/raspotify/releases/latest) page to download the
-most recent version. Or follow the [directions below](#installation).
+most recent version and install the Debian package. Or follow the [directions below](#easy-installation).
 
 ### Requirements
 
 Raspotify works on a Raspberry Pi 2 or 3 running [Raspbian](https://www.raspberrypi.org/downloads/raspbian/).
 You'll need a Spotify Premium account in order to use Connect.
 
-### Installation
+### Easy Installation
 
 Download the Debian package and install it. Run the following at the command line on your Pi to install
 the latest version.
 
 ```
-curl -L https://raw.github.com/dtcooper/raspotify/master/install.sh | sh -s
+curl -sL https://raw.github.com/dtcooper/raspotify/master/install.sh | sh -s
 ```
 
 That's it! Plug a speaker into your Pi on your local network, select the device in Spotify et voilà!
@@ -77,7 +87,7 @@ There should be a built Debian package (a `.deb` file) in your project directory
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [`LICENSE`](LICENSE) file for details.
 
 ## Acknowledgments
 
