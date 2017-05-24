@@ -1,6 +1,6 @@
 # Raspotify
 
-_**Spotify Connect for the Raspberry Pi.**_
+_**Spotify Connect client for the Raspberry Pi that Just Works™.**_
 
 ## tl;dr
 
