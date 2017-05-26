@@ -38,6 +38,7 @@ else
     fi
 
     DEB_PKG_NAME="raspotify_${DEB_PKG_VER}_armhf.deb"
+    echo "Building $DEB_PKG_VER..."
 
     # Cross compile
     cargo build --release --target arm-unknown-linux-gnueabihf --no-default-features --features alsa-backend
@@ -45,9 +46,6 @@ else
 
     mkdir -p raspotify/usr/bin
     cp /build/arm-unknown-linux-gnueabihf/release/librespot raspotify/usr/bin
-
-    # Strip substantially decreases size of binary
-    arm-linux-gnueabi-strip raspotify/usr/bin/librespot
 
     # Build debian package
     fakeroot dpkg-deb -b raspotify "$DEB_PKG_NAME"
