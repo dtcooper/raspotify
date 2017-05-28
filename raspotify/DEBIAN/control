@@ -1,5 +1,5 @@
 Package: raspotify
-Version: 0.2~librespot-6f24e3b-1
+Version: 0.3~librespot-6f24e3b-1
 Section: base
 Priority: optional
 Architecture: armhf
