@@ -13,7 +13,7 @@ curl -sL https://raw.github.com/dtcooper/raspotify/master/install.sh | sh -s
 ## Introduction
 
 Raspotify is a Spotify Connect client for [Raspbian](https://www.raspberrypi.org/downloads/raspbian/) on the
-Raspberry Pi 2/3 that Just Works™. Raspotify is a Debian package which thinly wraps the awesome
+Raspberry Pi that Just Works™. Raspotify is a Debian package which thinly wraps the awesome
 [librespot](https://github.com/plietar/librespot) library by [Paul Lietar]([https://github.com/plietar) that
 works out of the box, immediately after installation.
 
@@ -24,8 +24,14 @@ most recent version and install the Debian package. Or follow the [directions be
 
 ### Requirements
 
-Raspotify works on a Raspberry Pi 2 or 3 running [Raspbian](https://www.raspberrypi.org/downloads/raspbian/).
+Raspotify works on a Raspberry Pi running [Raspbian](https://www.raspberrypi.org/downloads/raspbian/).
 You'll need a Spotify Premium account in order to use Connect.
+
+Raspotify should work on _any_ Pi but it has been tested on,
+
+* Raspberry Pi (v1) model B
+* Raspberry Pi 2 model B
+* Raspberry Pi 3 Model B
 
 ### Easy Installation
 

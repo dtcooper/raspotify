@@ -1,54 +1,44 @@
 #!/bin/sh
 
-set +e
-
-cd "$(dirname "$0")"
-
-if git submodule status librespot | grep -q '^-'; then
-    echo 'No librespot directory found. Did you clone with submodules?'
-    exit 1
-fi
-
-# We're NOT in the docker container, so let's build it
+# We're NOT in the docker container, so let's build it and enter
 if [ "$1" != 'in_docker_container' ]; then
-    echo 'Not in docker container. Building container...'
-    BASEDIR="$(pwd)"
+    cd "$(dirname "$0")"
 
-    # Build librespot-cross Docker container
+    if git submodule status librespot | grep -q '^-'; then
+        echo 'No librespot directory found. Did you clone with submodules?'
+        exit 1
+    fi
+
+
     cd librespot
-    docker build -t librespot-cross -f contrib/Dockerfile .
+    LIBRESPOT_GIT_REV="$(git rev-parse --short HEAD)"
+    cd ..
 
-    echo 'Running script...'
+    # Build Docker container and run script
+    docker build -t raspotify -f Dockerfile .
     docker run \
-        -v "$BASEDIR":/pkgbuild \
-        librespot-cross \
-        /pkgbuild/build_raspotify.sh in_docker_container $@
+        -v "$(pwd):/mnt" \
+        --env LIBRESPOT_GIT_REV="$LIBRESPOT_GIT_REV" \
+        raspotify
 else
     echo 'Building in docker container'
 
-    # Get versions to prepare build
-    cd /pkgbuild/librespot
-    LIBRESPOT_GIT_REV="$(git rev-parse --short HEAD)"
-    cd /src
+    cd /librespot
 
-    DEB_PKG_VER="$(grep '^Version:' /pkgbuild/raspotify/DEBIAN/control | sed 's/^Version: //')"
+    DEB_PKG_VER="$(grep '^Version:' /mnt/raspotify/DEBIAN/control | sed 's/^Version: //')"
     if echo "$DEB_PKG_VER" | fgrep -vq "$LIBRESPOT_GIT_REV" && [ "$2" != '-f' -a "$2" != '--force' ]; then
-        echo 'Librespot git revision not found in package version. Is this correct? Use `--force` if so.'
+        echo 'Librespot git revision not found in package version. Is this correct?'
         exit 1
     fi
 
     DEB_PKG_NAME="raspotify_${DEB_PKG_VER}_armhf.deb"
-    echo "Building $DEB_PKG_VER..."
 
-    # Cross compile
     cargo build --release --target arm-unknown-linux-gnueabihf --no-default-features --features alsa-backend
-    cd /pkgbuild
 
-    mkdir -p raspotify/usr/bin
-    cp /build/arm-unknown-linux-gnueabihf/release/librespot raspotify/usr/bin
+    mkdir -p /mnt/raspotify/usr/bin
+    cp -v /build/arm-unknown-linux-gnueabihf/release/librespot /mnt/raspotify/usr/bin
 
-    # Build debian package
+    cd /mnt
     fakeroot dpkg-deb -b raspotify "$DEB_PKG_NAME"
-
     echo "Package built as $DEB_PKG_NAME"
 fi
