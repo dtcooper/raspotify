@@ -38,6 +38,9 @@ else
     mkdir -p /mnt/raspotify/usr/bin
     cp -v /build/arm-unknown-linux-gnueabihf/release/librespot /mnt/raspotify/usr/bin
 
+    # Strip dramatically decreases the size
+    arm-linux-gnueabihf-strip /mnt/raspotify/usr/bin/librespot
+
     cd /mnt
     fakeroot dpkg-deb -b raspotify "$DEB_PKG_NAME"
     echo "Package built as $DEB_PKG_NAME"
