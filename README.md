@@ -61,19 +61,24 @@ you can configure it by editing `/etc/default/raspotify` which passes arguments 
 ```
 # /etc/default/raspotify -- Arguments for librespot
 
-# Device name
-DEVICE_NAME="raspotify"
+# Device name on Spotify Connect
+#DEVICE_NAME="raspotify"
 
-# Bitrate, one of 96 (low quality), 160 (medium quality), or 320 (high quality)
-BITRATE="160"
+# Bitrate, one of 96 (low quality), 160 (default quality), or 320 (high quality)
+#BITRATE="160"
 
-# Additional options, see `librespot -h' for more info. Can be safely left blank
-OPTIONS=""
-
+# Additional command line arguments for librespot can be set below.
+# See `librespot -h' for more info.
+#
 # To make your device visible on Spotify Connect across the Internet add your
 # username and password which can be set via "Set device password", on your
-# account settings.
+# account settings, use `--username` and `--password`.
+#
+# To choose a different output device (ie a USB audio dongle or HDMI audio out),
+# use `--device` with something like `--device hw:0,1`. Your mileage may vary.
+#
 #OPTIONS="--username <USERNAME> --password <PASSWORD>"
+
 ```
 
 After editing restart the daemon by running `sudo service raspotify restart`.
