@@ -25,14 +25,13 @@ RUN echo '#!/bin/sh\narm-linux-gnueabihf-gcc --sysroot /toolchain/rpi-tools/arm-
     && chmod +x rpi-tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/gcc-wrapper \
     && ln -s ld-linux.so.3 rpi-tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/lib/ld-linux-armhf.so.3
 
-# Download and exact libasound2 from Raspbian
-RUN curl -OL http://mirrordirector.raspbian.org/raspbian/pool/main/a/alsa-lib/libasound2_1.0.25-4_armhf.deb \
-    && curl -OL http://mirrordirector.raspbian.org/raspbian/pool/main/a/alsa-lib/libasound2-dev_1.0.25-4_armhf.deb \
-    && ar p libasound2_1.0.25-4_armhf.deb data.tar.gz \
-        | tar -xvz -C rpi-tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot \
-    && ar p libasound2-dev_1.0.25-4_armhf.deb data.tar.gz \
-        | tar -xz -C rpi-tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot \
-    && rm *.deb
+# Install 1.0.x alsa-utils which is needed for compilation
+RUN curl -O ftp://ftp.alsa-project.org/pub/lib/alsa-lib-1.0.29.tar.bz2 \
+    && tar xvjf alsa-lib-1.0.29.tar.bz2 && cd alsa-lib-1.0.29 \
+    && CC=arm-linux-gnueabihf-gcc ./configure --host=arm-linux-gnueabihf \
+        --prefix=/toolchain/rpi-tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot \
+    && make -j $(nproc --all) && make install \
+    && cd .. && rm -rf alsa-lib-1.0.29.tar.bz2 alsa-lib-1.0.29
 
 # Set up Rust
 ENV PATH="/root/.cargo/bin/:${PATH}"
