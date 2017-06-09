@@ -39,5 +39,5 @@ sudo apt-get install -y libasound2 adduser
 
 cd /tmp
 curl -Lo raspotify-latest.deb "$LATEST_RELEASE"
-sudo dpkg -i raspotify-latest.deb
+sudo dpkg -i --force-confold raspotify-latest.deb
 rm raspotify-latest.deb
