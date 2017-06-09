@@ -2,6 +2,15 @@
 
 # Install script for Raspotify. Downloads and installs Debian package.
 
+run_on_pi_only() {
+    echo "Raspotify installer only runs on a Raspberry Pi"
+    exit 1
+}
+
+if ! which apt-get > /dev/null; then
+    run_on_pi_only
+fi
+
 DID_APT_GET_UPDATE=
 
 do_apt_get_update() {
@@ -17,8 +26,7 @@ if ! which lsb_release > /dev/null; then
 fi
 
 if lsb_release -si | fgrep -ivq raspbian; then
-    echo "Please run on a Raspberry Pi"
-    exit 1
+    run_on_pi_only
 fi
 
 
