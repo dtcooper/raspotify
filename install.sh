@@ -1,5 +1,7 @@
 #!/bin/sh
 
+REQUIRED_PACKAGES="libasound2 adduser"
+
 # Install script for Raspotify. Downloads and installs Debian package.
 
 run_on_pi_only() {
@@ -36,14 +38,23 @@ if ! which curl > /dev/null; then
 fi
 
 
-LATEST_RELEASE="$(curl -Ls https://api.github.com/repos/dtcooper/raspotify/releases/latest | grep browser_download_url | head -n 1 | cut -d '"' -f 4)"
+LATEST_RELEASE="$(curl -Ls https://api.github.com/repos/dtcooper/raspotify/releases/latest | fgrep browser_download_url | head -n 1 | cut -d '"' -f 4)"
 if [ -z "$LATEST_RELEASE" ]; then
     echo "Can't find latest Raspotify release on GitHub"
     exit 1
 fi
 
-do_apt_get_update
-sudo apt-get install -y libasound2 adduser
+PACKAGES_TO_INSTALL=
+for package in $REQUIRED_PACKAGES; do
+    if ! dpkg-query --show --showformat='${db:Status-Status}\n' "$package" 2> /dev/null | grep -q '^installed$'; then
+        PACKAGES_TO_INSTALL="$package $PACKAGES_TO_INSTALL"
+    fi
+done
+
+if [ "$PACKAGES_TO_INSTALL" ]; then
+    do_apt_get_update
+    sudo apt-get -y install $PACKAGES_TO_INSTALL
+fi
 
 cd /tmp
 curl -Lo raspotify-latest.deb "$LATEST_RELEASE"
