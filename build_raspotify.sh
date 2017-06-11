@@ -15,8 +15,9 @@ if [ "$1" != 'in_docker_container' ]; then
     cd ..
 
     # Build Docker container and run script
-    docker build -t raspotify -f Dockerfile .
+    docker build -t raspotify .
     docker run \
+        --rm \
         -v "$(pwd):/mnt" \
         --env LIBRESPOT_GIT_REV="$LIBRESPOT_GIT_REV" \
         raspotify
