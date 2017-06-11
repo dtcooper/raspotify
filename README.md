@@ -7,7 +7,7 @@ _**Spotify Connect client for the Raspberry Pi that Just Works™.**_
 Install the Spotify Connect client on your Raspberry Pi,
 
 ```
-curl -sL https://raw.github.com/dtcooper/raspotify/master/install.sh | sh -s
+curl -sL https://raw.github.com/dtcooper/raspotify/master/install.sh | sh
 ```
 
 ## Introduction
@@ -39,7 +39,7 @@ Download the Debian package and install it. Run the following at the command lin
 the latest version.
 
 ```
-curl -sL https://raw.github.com/dtcooper/raspotify/master/install.sh | sh -s
+curl -sL https://raw.github.com/dtcooper/raspotify/master/install.sh | sh
 ```
 
 That's it! Plug a speaker into your Pi on your local network, select the device in Spotify et voilà!
