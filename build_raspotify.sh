@@ -4,31 +4,23 @@
 if [ "$1" != 'in_docker_container' ]; then
     cd "$(dirname "$0")"
 
-    if git submodule status librespot | grep -q '^-'; then
-        echo 'No librespot directory found. Did you clone with submodules?'
-        exit 1
+    if [ ! -d librespot ]; then
+        echo "No directory named librespot exists! Cloning..."
+        git clone https://github.com/plietar/librespot.git
     fi
-
-
-    cd librespot
-    LIBRESPOT_GIT_REV="$(git rev-parse --short HEAD)"
-    cd ..
 
     # Build Docker container and run script
     docker build -t raspotify .
-    docker run \
-        --rm \
-        -v "$(pwd):/mnt" \
-        --env LIBRESPOT_GIT_REV="$LIBRESPOT_GIT_REV" \
-        raspotify
+    docker run --rm -v "$(pwd):/mnt" raspotify
 else
     echo 'Building in docker container'
 
     cd /librespot
+    LIBRESPOT_GIT_REV="$(git rev-parse --short HEAD)"
 
     DEB_PKG_VER="$(grep '^Version:' /mnt/raspotify/DEBIAN/control | sed 's/^Version: //')"
-    if echo "$DEB_PKG_VER" | fgrep -vq "$LIBRESPOT_GIT_REV" && [ "$2" != '-f' -a "$2" != '--force' ]; then
-        echo 'Librespot git revision not found in package version. Is this correct?'
+    if echo "$DEB_PKG_VER" | fgrep -vq "$LIBRESPOT_GIT_REV"; then
+        echo 'Librespot git revision not found in package version. Aborting.'
         exit 1
     fi
 
