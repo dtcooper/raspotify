@@ -1,3 +1,4 @@
 librespot/
 raspotify*.deb
 raspotify/usr/bin/librespot
+raspotify/DEBIAN/control

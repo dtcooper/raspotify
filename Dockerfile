@@ -46,4 +46,4 @@ ENV CARGO_TARGET_DIR /build
 ENV CARGO_HOME /build/cache
 
 ADD librespot /librespot
-CMD /mnt/build_raspotify.sh in_docker_container
+CMD /mnt/build.sh in_docker_container

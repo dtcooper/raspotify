@@ -15,16 +15,15 @@ if [ "$1" != 'in_docker_container' ]; then
 else
     echo 'Building in docker container'
 
+    cd /mnt
+    RASPOTIFY_GIT_VER="$(git describe --tags --always --dirty=-modified 2>/dev/null || echo unknown)"
+
     cd /librespot
-    LIBRESPOT_GIT_REV="$(git rev-parse --short HEAD)"
+    LIBRESPOT_GIT_REV="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
 
-    DEB_PKG_VER="$(grep '^Version:' /mnt/raspotify/DEBIAN/control | sed 's/^Version: //')"
-    if echo "$DEB_PKG_VER" | fgrep -vq "$LIBRESPOT_GIT_REV"; then
-        echo 'Librespot git revision not found in package version. Aborting.'
-        exit 1
-    fi
-
+    DEB_PKG_VER="${RASPOTIFY_GIT_VER}~librespot-${LIBRESPOT_GIT_REV}-1"
     DEB_PKG_NAME="raspotify_${DEB_PKG_VER}_armhf.deb"
+    sed "s/<<<VERSION>>>/$DEB_PKG_VER/g" /mnt/control.debian.tmpl > /mnt/raspotify/DEBIAN/control
 
     cargo build --release --target arm-unknown-linux-gnueabihf --no-default-features --features alsa-backend
 
