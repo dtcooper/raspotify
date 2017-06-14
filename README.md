@@ -85,13 +85,13 @@ After editing restart the daemon by running `sudo service raspotify restart`.
 
 ## Building the Package Yourself
 
-All that's required is [Docker](https://www.docker.com/) and a \*nix system (tested on Ubuntu 16.04 LTS and
-macOS El Capitan).
+All that's required is [Docker](https://www.docker.com/) and a \*nix system with Make
+(tested on Ubuntu 16.04 LTS and macOS El Capitan).
 
 ```
-git clone --recursive https://github.com/dtcooper/raspotify
+git clone https://github.com/dtcooper/raspotify
 cd raspotify
-./build_raspotify.sh
+make
 ```
 
 There should be a built Debian package (a `.deb` file) in your project directory.
