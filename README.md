@@ -12,15 +12,17 @@ curl -sL https://raw.github.com/dtcooper/raspotify/master/install.sh | sh
 
 ## Introduction
 
-Raspotify is a Spotify Connect client for [Raspbian](https://www.raspberrypi.org/downloads/raspbian/) on the
-Raspberry Pi that Just Works™. Raspotify is a Debian package which thinly wraps the awesome
-[librespot](https://github.com/plietar/librespot) library by [Paul Lietar]([https://github.com/plietar) that
-works out of the box, immediately after installation.
+Raspotify is a Spotify Connect client for [Raspbian](https://www.raspberrypi.org/downloads/raspbian/)
+on the Raspberry Pi that Just Works™. Raspotify is a Debian package which thinly
+wraps the awesome [librespot](https://github.com/plietar/librespot) library by
+[Paul Lietar]([https://github.com/plietar) that works out of the box on all three
+versions of the Pi, immediately after installation.
 
 ## Download Latest Version
 
-Head on over to the [releases](https://github.com/dtcooper/raspotify/releases/latest) page to download the
-most recent version and install the Debian package. Or follow the [directions below](#easy-installation).
+Head on over to the [releases](https://github.com/dtcooper/raspotify/releases/latest)
+page to download themost recent version and install the Debian package. Or follow
+the [directions below](#easy-installation).
 
 ### Requirements
 
@@ -31,18 +33,19 @@ Raspotify should work on _any_ Pi but it has been tested on,
 
 * Raspberry Pi (v1) model B
 * Raspberry Pi 2 model B
-* Raspberry Pi 3 Model B
+* Raspberry Pi 3 model B
 
 ### Easy Installation
 
-Download the Debian package and install it. Run the following at the command line on your Pi to install
-the latest version.
+Download the Debian package and install it. Run the following at the command
+line on your Pi to install the latest version.
 
 ```
 curl -sL https://raw.github.com/dtcooper/raspotify/master/install.sh | sh
 ```
 
-That's it! Plug a speaker into your Pi on your local network, select the device in Spotify et voilà!
+That's it! Plug a speaker into your Pi on your local network, select the device
+in Spotify et voilà!
 
 ### Uninstalling
 
@@ -54,9 +57,9 @@ sudo apt-get remove -y raspotify
 
 ## Configuration
 
-Raspotify works out of the box and should be discoverable on Spotify Connect on your local network, however
-you can configure it by editing `/etc/default/raspotify` which passes arguments to
-[librespot](https://github.com/plietar/librespot).
+Raspotify works out of the box and should be discoverable on Spotify Connect on
+your local network, however you can configure it by editing `/etc/default/raspotify`
+which passes arguments to [librespot](https://github.com/plietar/librespot).
 
 ```
 # /etc/default/raspotify -- Arguments for librespot
@@ -85,8 +88,9 @@ After editing restart the daemon by running `sudo service raspotify restart`.
 
 ## Building the Package Yourself
 
-All that's required is [Docker](https://www.docker.com/) and a \*nix system with Make
-(tested on Ubuntu 16.04 LTS and macOS El Capitan).
+All that's required is [Docker](https://www.docker.com/) on a \*nix system with git
+and Make. It can built on any amd64 platform that runs docker using Raspberry Pi's
+cross-compiler (tested on Ubuntu 16.04 LTS and macOS El Capitan).
 
 ```
 git clone https://github.com/dtcooper/raspotify
@@ -98,7 +102,8 @@ There should be a built Debian package (a `.deb` file) in your project directory
 
 ## License
 
-This project is licensed under the MIT License - see the [`LICENSE`](LICENSE) file for details.
+This project is licensed under the MIT License - see the [`LICENSE`](LICENSE)
+file for details.
 
 ## Acknowledgments
 
