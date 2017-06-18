@@ -18,7 +18,7 @@ else
     cd /mnt
     RASPOTIFY_GIT_VER="$(git describe --tags --always --dirty=-modified 2>/dev/null || echo unknown)"
 
-    cd /librespot
+    cd librespot
     LIBRESPOT_GIT_REV="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
 
     DEB_PKG_VER="${RASPOTIFY_GIT_VER}~librespot-${LIBRESPOT_GIT_REV}-1"

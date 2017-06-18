@@ -45,5 +45,4 @@ RUN mkdir /build
 ENV CARGO_TARGET_DIR /build
 ENV CARGO_HOME /build/cache
 
-ADD librespot /librespot
 CMD /mnt/build.sh in_docker_container
