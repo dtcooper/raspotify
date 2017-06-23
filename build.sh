@@ -1,12 +1,14 @@
 #!/bin/sh
 
+set -e
+
 # We're NOT in the docker container, so let's build it and enter
 if [ "$1" != 'in_docker_container' ]; then
     cd "$(dirname "$0")"
 
     if [ ! -d librespot ]; then
         echo "No directory named librespot exists! Cloning..."
-        git clone https://github.com/plietar/librespot.git
+        git clone git://github.com/plietar/librespot.git
     fi
 
     # Build Docker container and run script
@@ -14,6 +16,16 @@ if [ "$1" != 'in_docker_container' ]; then
     docker run --rm -v "$(pwd):/mnt" raspotify
 else
     echo 'Building in docker container'
+
+    # Install most recent version of rust
+    curl https://sh.rustup.rs -sSf | sh -s -- -y
+    export PATH="/root/.cargo/bin/:$PATH"
+    export CARGO_TARGET_DIR="/build"
+    export CARGO_HOME="/build/cache"
+
+    mkdir /.cargo
+    echo '[target.arm-unknown-linux-gnueabihf]\nlinker = "gcc-wrapper"' > /.cargo/config
+    rustup target add arm-unknown-linux-gnueabihf
 
     cd /mnt
     RASPOTIFY_GIT_VER="$(git describe --tags --always --dirty=-modified 2>/dev/null || echo unknown)"

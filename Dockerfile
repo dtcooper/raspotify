@@ -7,14 +7,11 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Install rust
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
-
 RUN mkdir /toolchain
 WORKDIR /toolchain
 
 # Check out Raspbian cross-compiler (this will work on *ALL* Raspberry Pi versions)
-RUN git clone --depth 1 https://github.com/raspberrypi/tools.git rpi-tools \
+RUN git clone --depth 1 git://github.com/raspberrypi/tools.git rpi-tools \
     && rm -rf rpi-tools/.git
 ENV PATH="/toolchain/rpi-tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/:${PATH}"
 
@@ -33,16 +30,6 @@ RUN curl -O ftp://ftp.alsa-project.org/pub/lib/alsa-lib-1.0.29.tar.bz2 \
     && make -j $(nproc --all) && make install \
     && cd .. && rm -rf alsa-lib-1.0.29.tar.bz2 alsa-lib-1.0.29
 
-# Set up Rust
-ENV PATH="/root/.cargo/bin/:${PATH}"
-
-RUN mkdir /.cargo \
-    && echo '[target.arm-unknown-linux-gnueabihf]\nlinker = "gcc-wrapper"' \
-        > /.cargo/config \
-    && rustup target add arm-unknown-linux-gnueabihf
-
 RUN mkdir /build
-ENV CARGO_TARGET_DIR /build
-ENV CARGO_HOME /build/cache
 
 CMD /mnt/build.sh in_docker_container
