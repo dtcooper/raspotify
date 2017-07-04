@@ -1,4 +1,5 @@
 librespot/
 raspotify*.deb
 raspotify/usr/bin/librespot
+raspotify/usr/share/doc/raspotify/copyright
 raspotify/DEBIAN/control

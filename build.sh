@@ -32,20 +32,22 @@ else
 
     cd librespot
     LIBRESPOT_GIT_REV="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
+    cargo build --release --target arm-unknown-linux-gnueabihf --no-default-features --features alsa-backend
+
+    cd /mnt
+    mkdir -p raspotify/usr/bin
+    cp -v /build/arm-unknown-linux-gnueabihf/release/librespot raspotify/usr/bin
+
+    # Strip dramatically decreases the size
+    arm-linux-gnueabihf-strip raspotify/usr/bin/librespot
 
     DEB_PKG_VER="${RASPOTIFY_GIT_VER}~librespot-${LIBRESPOT_GIT_REV}-1"
     DEB_PKG_NAME="raspotify_${DEB_PKG_VER}_armhf.deb"
-    sed "s/<<<VERSION>>>/$DEB_PKG_VER/g" /mnt/control.debian.tmpl > /mnt/raspotify/DEBIAN/control
+    sed "s/<<<VERSION>>>/$DEB_PKG_VER/g" control.debian.tmpl > raspotify/DEBIAN/control
 
-    cargo build --release --target arm-unknown-linux-gnueabihf --no-default-features --features alsa-backend
+    mkdir -p raspotify/usr/share/doc/raspotify
+    cp -v LICENSE raspotify/usr/share/doc/raspotify/copyright
 
-    mkdir -p /mnt/raspotify/usr/bin
-    cp -v /build/arm-unknown-linux-gnueabihf/release/librespot /mnt/raspotify/usr/bin
-
-    # Strip dramatically decreases the size
-    arm-linux-gnueabihf-strip /mnt/raspotify/usr/bin/librespot
-
-    cd /mnt
     fakeroot dpkg-deb -b raspotify "$DEB_PKG_NAME"
     echo "Package built as $DEB_PKG_NAME"
 fi
