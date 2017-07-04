@@ -71,7 +71,7 @@ which passes arguments to [librespot](https://github.com/plietar/librespot).
 #BITRATE="160"
 
 # Additional command line arguments for librespot can be set below.
-# See `librespot -h' for more info.
+# See `librespot -h` for more info.
 #
 # To make your device visible on Spotify Connect across the Internet add your
 # username and password which can be set via "Set device password", on your
@@ -82,9 +82,13 @@ which passes arguments to [librespot](https://github.com/plietar/librespot).
 #
 #OPTIONS="--username <USERNAME> --password <PASSWORD>"
 
+# Uncomment to use a cache for downloaded audio files. It's best to leave this
+# as-is since permissions are properly set on directory `/var/cache/raspotify'.
+#CACHE_ARGS="--cache /var/cache/raspotify"
+
 ```
 
-After editing restart the daemon by running `sudo service raspotify restart`.
+After editing restart the daemon by running `sudo systemctl restart raspotify`.
 
 ## Building the Package Yourself
 
