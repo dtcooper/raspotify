@@ -1,10 +1,13 @@
 FROM debian:stretch
 
-# Install git and compilers
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    curl \
-    git \
+# Install git and compilers, let's toss gnupg and reprepro in there so we can
+# use this container to make the apt repo as well
+RUN apt-get update && apt-get -y upgrade && apt-get install -y \
+        build-essential \
+        curl \
+        git \
+        gnupg \
+        reprepro \
     && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /toolchain
@@ -31,5 +34,3 @@ RUN curl -O ftp://ftp.alsa-project.org/pub/lib/alsa-lib-1.0.29.tar.bz2 \
     && cd .. && rm -rf alsa-lib-1.0.29.tar.bz2 alsa-lib-1.0.29
 
 RUN mkdir /build
-
-CMD /mnt/build.sh in_docker_container

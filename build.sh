@@ -1,53 +1,59 @@
 #!/bin/sh
 
+echo 'Building in docker container'
+
 set -e
+cd /mnt/raspotify
 
-# We're NOT in the docker container, so let's build it and enter
-if [ "$1" != 'in_docker_container' ]; then
-    cd "$(dirname "$0")"
+# Install most recent version of rust
+curl https://sh.rustup.rs -sSf | sh -s -- -y
+export PATH="/root/.cargo/bin/:$PATH"
+export CARGO_TARGET_DIR="/build"
+export CARGO_HOME="/build/cache"
 
-    if [ ! -d librespot ]; then
-        echo "No directory named librespot exists! Cloning..."
-        git clone git://github.com/plietar/librespot.git
-    fi
+# Install the gcc wrapper in container into cargo
+mkdir /.cargo
+echo '[target.arm-unknown-linux-gnueabihf]\nlinker = "gcc-wrapper"' > /.cargo/config
+rustup target add arm-unknown-linux-gnueabihf
 
-    # Build Docker container and run script
-    docker build -t raspotify .
-    docker run --rm -v "$(pwd):/mnt" raspotify
-else
-    echo 'Building in docker container'
+# Get the git rev of raspotify for .deb versioning
+RASPOTIFY_GIT_VER="$(git describe --tags --always --dirty 2>/dev/null || echo unknown)"
 
-    # Install most recent version of rust
-    curl https://sh.rustup.rs -sSf | sh -s -- -y
-    export PATH="/root/.cargo/bin/:$PATH"
-    export CARGO_TARGET_DIR="/build"
-    export CARGO_HOME="/build/cache"
-
-    mkdir /.cargo
-    echo '[target.arm-unknown-linux-gnueabihf]\nlinker = "gcc-wrapper"' > /.cargo/config
-    rustup target add arm-unknown-linux-gnueabihf
-
-    cd /mnt
-    RASPOTIFY_GIT_VER="$(git describe --tags --always --dirty=-modified 2>/dev/null || echo unknown)"
-
-    cd librespot
-    LIBRESPOT_GIT_REV="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
-    cargo build --release --target arm-unknown-linux-gnueabihf --no-default-features --features alsa-backend
-
-    cd /mnt
-    mkdir -p raspotify/usr/bin
-    cp -v /build/arm-unknown-linux-gnueabihf/release/librespot raspotify/usr/bin
-
-    # Strip dramatically decreases the size
-    arm-linux-gnueabihf-strip raspotify/usr/bin/librespot
-
-    DEB_PKG_VER="${RASPOTIFY_GIT_VER}~librespot-${LIBRESPOT_GIT_REV}-1"
-    DEB_PKG_NAME="raspotify_${DEB_PKG_VER}_armhf.deb"
-    sed "s/<<<VERSION>>>/$DEB_PKG_VER/g" control.debian.tmpl > raspotify/DEBIAN/control
-
-    mkdir -p raspotify/usr/share/doc/raspotify
-    cp -v LICENSE raspotify/usr/share/doc/raspotify/copyright
-
-    fakeroot dpkg-deb -b raspotify "$DEB_PKG_NAME"
-    echo "Package built as $DEB_PKG_NAME"
+if [ ! -d librespot ]; then
+    echo "No directory named librespot exists! Cloning..."
+    git clone git://github.com/plietar/librespot.git
 fi
+
+# Get the git rev of librespot for .deb versioning
+cd librespot
+LIBRESPOT_GIT_REV="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
+LIBRESPOT_DEB_VER="$(TZ=UTC git show --quiet --date='format-local:%Y%m%dT%H%M%SZ' --format="%cd.%h" "$LIBRESPOT_GIT_REV" 2>/dev/null || echo "unknown")"
+
+# Build librespot
+cargo build --release --target arm-unknown-linux-gnueabihf --no-default-features --features alsa-backend
+
+# Copy librespot to pkg root
+cd /mnt/raspotify
+mkdir -p raspotify/usr/bin
+cp -v /build/arm-unknown-linux-gnueabihf/release/librespot raspotify/usr/bin
+
+# Strip dramatically decreases the size
+arm-linux-gnueabihf-strip raspotify/usr/bin/librespot
+
+# Compute final package version + filename
+DEB_PKG_VER="${RASPOTIFY_GIT_VER}~librespot.${LIBRESPOT_DEB_VER}"
+DEB_PKG_NAME="raspotify_${DEB_PKG_VER}_armhf.deb"
+echo "$DEB_PKG_NAME"
+sed "s/<<<VERSION>>>/$DEB_PKG_VER/g" control.debian.tmpl > raspotify/DEBIAN/control
+
+# Copy over copyright
+mkdir -p raspotify/usr/share/doc/raspotify
+cp -v LICENSE raspotify/usr/share/doc/raspotify/copyright
+
+# Finally, build debian package
+dpkg-deb -b raspotify "$DEB_PKG_NAME"
+
+# Perm fixup. Not needed on macOS, but is on Linux
+chown -R "$PERMFIX_UID:$PERMFIX_GID" /mnt/raspotify 2> /dev/null
+
+echo "Package built as $DEB_PKG_NAME"
