@@ -29,11 +29,11 @@ apt-repo-warning:
 	fi;
 
 apt-repo: raspotify_*.deb apt-repo-warning
-# 		# Shallow clone of github pages for overwrite
+# 	# Shallow clone of github pages for overwrite
 	rm -rf apt-repo
 	git clone -b gh-pages --single-branch "$(APT_GH_PAGES_REPO)" apt-repo
 	docker build -t raspotify .
-#		# Needs an interactive terminal to get gpg passphrase
+#	# Needs an interactive terminal to get gpg passphrase
 	docker run \
 			--interactive \
 			--tty \
@@ -58,7 +58,7 @@ apt-deploy: apt apt-deploy-warning
 	cp -v README.md LICENSE install.sh apt-repo
 	cd apt-repo && git add -A
 	cd apt-repo && git commit --amend -C HEAD --reset-author
-# 		# Force push, overwriting gh-pages branch chomping previous versions.
+# 	# Force push, overwriting gh-pages branch chomping previous versions.
 	cd apt-repo && git push -f origin gh-pages
 
 all: raspotify_*.deb
