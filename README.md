@@ -41,8 +41,8 @@ Raspotify should work on _any_ Pi but it has been tested on,
 
 ### Easy Installation
 
-Download the Debian package and install it. Run the following at the command
-line on your Pi to install the latest version.
+This command downloads and installs the Debian package and adds its apt repository,
+which ensures you'll always be up to date with upstream changes.
 
 ```
 curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
@@ -50,6 +50,27 @@ curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
 
 That's it! Plug a speaker into your Pi on your local network, select the device
 in Spotify et voilà!
+
+### Hard installation
+
+Essentially, here's what the easy installer does,
+
+```
+# Install curl and https apt transport
+sudo apt-get -y install curl apt-transport-https
+
+# Add repo and its GPG key
+curl -sSL https://dtcooper.github.io/raspotify/key.asc | sudo apt-key add -v -
+echo 'deb https://dtcooper.github.io/raspotify jessie main' | sudo tee /etc/apt/sources.list.d/raspotify.list
+
+# Install package
+sudo apt-get update
+sudo apt-get -y install raspotify
+```
+
+Or just download the latest .deb package and install it manually:
+
+ * [`raspotify-latest.deb`](https://dtcooper.github.io/raspotify/raspotify-latest.deb)
 
 ### Uninstalling
 
