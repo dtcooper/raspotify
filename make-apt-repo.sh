@@ -34,7 +34,7 @@ EOF
 reprepro includedeb jessie "../$DEB_PKG_NAME"
 rm -rf conf db
 
-ln -s "$(find . -name '*.deb' -type f -printf '%P\n' -quit)" raspotify-latest.deb
+ln -fs "$(find . -name '*.deb' -type f -printf '%P\n' -quit)" raspotify-latest.deb
 
 # Perm fixup. Not needed on macOS, but is on Linux
 chown -R "$PERMFIX_UID:$PERMFIX_GID" /mnt/raspotify/* 2> /dev/null

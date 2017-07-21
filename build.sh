@@ -40,11 +40,16 @@ cp -v /build/arm-unknown-linux-gnueabihf/release/librespot raspotify/usr/bin
 # Strip dramatically decreases the size
 arm-linux-gnueabihf-strip raspotify/usr/bin/librespot
 
-# Compute final package version + filename
+# Compute final package version + filename for Debian control file
 DEB_PKG_VER="${RASPOTIFY_GIT_VER}~librespot.${LIBRESPOT_DEB_VER}"
 DEB_PKG_NAME="raspotify_${DEB_PKG_VER}_armhf.deb"
 echo "$DEB_PKG_NAME"
-sed "s/<<<VERSION>>>/$DEB_PKG_VER/g" control.debian.tmpl > raspotify/DEBIAN/control
+
+jinja2 \
+        -D "VERSION=$DEB_PKG_VER" \
+        -D "RUST_VERSION=$(rustc -V)" \
+        -D "RASPOTIFY_AUTHOR=$RASPOTIFY_AUTHOR" \
+    control.debian.tmpl > raspotify/DEBIAN/control
 
 # Copy over copyright
 mkdir -p raspotify/usr/share/doc/raspotify
