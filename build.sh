@@ -51,9 +51,10 @@ jinja2 \
         -D "RASPOTIFY_AUTHOR=$RASPOTIFY_AUTHOR" \
     control.debian.tmpl > raspotify/DEBIAN/control
 
-# Copy over copyright
+# Copy over copyright files
 mkdir -p raspotify/usr/share/doc/raspotify
 cp -v LICENSE raspotify/usr/share/doc/raspotify/copyright
+cp -v librespot/LICENSE raspotify/usr/share/doc/raspotify/librespot.copyright
 
 # Finally, build debian package
 dpkg-deb -b raspotify "$DEB_PKG_NAME"
