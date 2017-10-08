@@ -18,7 +18,7 @@ that Just Works™. Raspotify is a
 [Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_\(file_format\))
 which thinly wraps the awesome
 [librespot](https://github.com/plietar/librespot) library by
-[Paul Lietar](https://github.com/plietar) that works out of the box on all three
+[Paul Lietar](https://github.com/plietar). It works out of the box on all three
 revisions of the Pi, immediately after installation.
 
 ## Download Latest Version
@@ -80,7 +80,7 @@ To uninstall, remove the package,
 sudo apt-get remove -y raspotify
 ```
 
-To completely remove the Raspotify and its Debian repo, try
+To completely remove Raspotify and its Debian repository from your system try,
 ```
 sudo apt-get remove -y --purge raspotify
 sudo rm -v /etc/apt/sources.list.d/raspotify.list
@@ -88,7 +88,7 @@ sudo rm -v /etc/apt/sources.list.d/raspotify.list
 
 ## Configuration
 
-Raspotify works out of the box and should be discoverable on Spotify Connect on
+Raspotify works out of the box and should be discoverable by Spotify Connect on
 your local network, however you can configure it by editing `/etc/default/raspotify`
 which passes arguments to [librespot](https://github.com/plietar/librespot).
 
@@ -118,14 +118,14 @@ which passes arguments to [librespot](https://github.com/plietar/librespot).
 #CACHE_ARGS="--cache /var/cache/raspotify"
 ```
 
-After editing restart the daemon by running `sudo systemctl restart raspotify`.
+After editing restart the daemon by running: `sudo systemctl restart raspotify`
 
 ## Building the Package Yourself
 
 All that's required is [Docker](https://www.docker.com/) on a \*nix system with
 [git](https://git-scm.com/) and [Make](https://www.gnu.org/software/make/). It
-can built on any amd64 platform that runs docker using Raspberry Pi's cross-compiler
-(tested on Ubuntu 16.04 LTS and macOS El Capitan).
+can be built on any amd64 platform that runs docker using Raspberry Pi's
+cross-compiler (tested on Ubuntu 16.04 LTS and macOS El Capitan).
 
 ```
 git clone https://github.com/dtcooper/raspotify
