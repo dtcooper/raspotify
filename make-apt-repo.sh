@@ -1,5 +1,10 @@
 #!/bin/sh
 
+if [ "$IN_DOCKER_CONTAINER" != "1" ]; then
+    echo "Must be run in docker container"
+    exit 1
+fi
+
 echo 'Making apt repo in Docker container'
 
 set -e

@@ -1,5 +1,7 @@
 FROM debian:stretch
 
+ENV INSIDE_DOCKER_CONTAINER 1
+
 # Install git and compilers, let's toss gnupg and reprepro in there so we can
 # use this container to make the apt repo as well
 RUN apt-get update && apt-get -y upgrade && apt-get install -y \

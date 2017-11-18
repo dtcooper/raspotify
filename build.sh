@@ -1,5 +1,10 @@
 #!/bin/sh
 
+if [ "$INSIDE_DOCKER_CONTAINER" != "1" ]; then
+    echo "Must be run in docker container"
+    exit 1
+fi
+
 echo 'Building in docker container'
 
 set -e
