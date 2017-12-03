@@ -1,0 +1,26 @@
+diff --git a/core/src/connection/mod.rs b/core/src/connection/mod.rs
+index 1d6f1f0..b39ff02 100644
+--- a/core/src/connection/mod.rs
++++ b/core/src/connection/mod.rs
+@@ -41,7 +41,7 @@ pub fn authenticate(transport: Transport, credentials: Credentials, device_id: S
+         system_info => {
+             cpu_family: CpuFamily::CPU_UNKNOWN,
+             os: Os::OS_UNKNOWN,
+-            system_information_string: format!("librespot_{}_{}", version::short_sha(), version::build_id()),
++            system_information_string: format!("raspotify_{}_{}", version::short_sha(), version::build_id()),
+             device_id: device_id,
+         },
+         version_string: version::version_string(),
+diff --git a/src/main.rs b/src/main.rs
+index c2850cd..666607f 100644
+--- a/src/main.rs
++++ b/src/main.rs
+@@ -113,7 +113,7 @@ fn setup(args: &[String]) -> Setup {
+     let verbose = matches.opt_present("verbose");
+     setup_logging(verbose);
+ 
+-    info!("librespot {} ({}). Built on {}. Build ID: {}",
++    info!("librespot (raspotify) {} ({}). Built on {}. Build ID: {}",
+              version::short_sha(),
+              version::commit_date(),
+              version::short_now(),
