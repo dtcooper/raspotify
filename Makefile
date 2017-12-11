@@ -2,7 +2,7 @@
 
 # You'll need my GPG_KEY for signing, which I'm pretty sure you don't have :P
 APT_GPG_KEY?=2CC9B80F5AE2B7ACEFF2BA3209146F2F7953A455
-APT_GH_PAGES_REPO?=git@github.com:fossedihelm/raspotify.git
+APT_GH_PAGES_REPO?=git@github.com:dtcooper/raspotify.git
 RASPOTIFY_AUTHOR?=David Cooper <david@dtcooper.com>
 
 raspotify_*.deb:
@@ -61,6 +61,7 @@ apt-deploy: apt apt-deploy-warning
 	cd apt-repo && git add -A
 	cd apt-repo && git commit --amend -C HEAD --reset-author
 # 	# Force push, overwriting gh-pages branch chomping previous versions.
+#	no commit changes (local)
 #	cd apt-repo && git push -f origin gh-pages
 
 all: raspotify_*.deb
