@@ -135,6 +135,22 @@ make
 
 There should be a built Debian package (a `.deb` file) in your project directory.
 
+> #### Note About Raspotify's APT Repository
+>
+> You _can_ actually use GitHub to host an APT repository for Raspotify as I
+> have done, but that's very much out of the scope of this Readme. Have a look
+> at the [Makefile](Makefile)'s `apt-repo` and `apt-deploy` directives, and its
+> `APT_GPG_KEY` and `APT_GH_PAGES_REPO` variables. You'll _at least_ need this
+> repository cloned on GitHub, GitHub Pages enabled for the `gh-pages` branch,
+> and a [GPG](https://www.gnupg.org/) key. I **can't** and **won't** support any
+> users trying to do this at this time, but _have fun and good luck!_
+
+## Troubleshooting
+
+> *My volume on Spotify is 100% and it's still too quiet!*
+
+Have you tried turning the volume up using the command `alsamixer`?
+
 ## License
 
 This project is licensed under the MIT License - see the [`LICENSE`](LICENSE)
