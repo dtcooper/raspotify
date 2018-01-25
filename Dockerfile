@@ -6,16 +6,21 @@ ENV INSIDE_DOCKER_CONTAINER 1
 # use this container to make the apt repo as well
 RUN apt-get update \
     && apt-get -y upgrade \
-    && apt-get install -y \
+    && apt-get install -y --no-install-recommends \
         build-essential \
         curl \
         git \
         gnupg \
+        pandoc \
         python-pip \
+        python-setuptools \
+        python-wheel \
         reprepro \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install jinja2-cli
+RUN pip install \
+        jinja2-cli  \
+        unidecode
 
 RUN mkdir /toolchain
 WORKDIR /toolchain

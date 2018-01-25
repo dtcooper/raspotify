@@ -58,9 +58,15 @@ jinja2 \
     control.debian.tmpl > raspotify/DEBIAN/control
 
 # Copy over copyright files
-mkdir -p raspotify/usr/share/doc/raspotify
-cp -v LICENSE raspotify/usr/share/doc/raspotify/copyright
-cp -v librespot/LICENSE raspotify/usr/share/doc/raspotify/librespot.copyright
+DOC_DIR="raspotify/usr/share/doc/raspotify"
+mkdir -p "$DOC_DIR"
+cp -v LICENSE "$DOC_DIR/copyright"
+cp -v librespot/LICENSE "$DOC_DIR/librespot.copyright"
+
+# Markdown to plain text for readme
+pandoc -f markdown -t plain --columns=80 README.md \
+    | sed 's/LICENSE/copyright/' | unidecode -e utf8 > "$DOC_DIR/readme"
+
 
 # Finally, build debian package
 dpkg-deb -b raspotify "$DEB_PKG_NAME"

@@ -1,7 +1,8 @@
 apt-repo/
 librespot/
 raspotify*.deb
+raspotify/DEBIAN/control
 raspotify/usr/bin/librespot
 raspotify/usr/share/doc/raspotify/copyright
 raspotify/usr/share/doc/raspotify/librespot.copyright
-raspotify/DEBIAN/control
+raspotify/usr/share/doc/raspotify/readme
