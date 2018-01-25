@@ -61,6 +61,7 @@ apt-deploy: apt apt-deploy-warning
 	cd apt-repo && git add -A
 	cd apt-repo && git commit --amend -C HEAD --reset-author
 # 	# Force push, overwriting gh-pages branch chomping previous versions.
-	cd apt-repo && git push -f origin gh-pages
+#	no commit changes (local)
+#	cd apt-repo && git push -f origin gh-pages
 
 all: raspotify_*.deb
