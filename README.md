@@ -17,9 +17,9 @@ Raspotify is a [Spotify Connect](https://www.spotify.com/connect/) client for
 that Just Works™. Raspotify is a
 [Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_\(file_format\))
 which thinly wraps the awesome
-[librespot](https://github.com/plietar/librespot) library by
-[Paul Lietar](https://github.com/plietar). It works out of the box on all three
-revisions of the Pi, immediately after installation.
+[librespot](https://github.com/librespot-org/librespot) library by
+[Paul Lietar](https://github.com/plietar) and others. It works out of the box on
+all three revisions of the Pi, immediately after installation.
 
 ## Download Latest Version
 
@@ -90,7 +90,7 @@ sudo rm -v /etc/apt/sources.list.d/raspotify.list
 
 Raspotify works out of the box and should be discoverable by Spotify Connect on
 your local network, however you can configure it by editing `/etc/default/raspotify`
-which passes arguments to [librespot](https://github.com/plietar/librespot).
+which passes arguments to [librespot](https://github.com/librespot-org/librespot).
 
 ```
 # /etc/default/raspotify -- Arguments for librespot
@@ -159,6 +159,6 @@ file for details.
 ## Acknowledgments
 
 Special thanks to [Paul Lietar](https://github.com/plietar) for
-[librespot](https://github.com/plietar/librespot), which Raspotify packages.
-Without [librespot](https://github.com/plietar/librespot), Raspotify would simply
-not exist.
+[librespot](https://github.com/librespot-org/librespot) (and its additional authors),
+which Raspotify packages. Without [librespot](https://github.com/librespot-org/librespot),
+Raspotify would simply not exist.
