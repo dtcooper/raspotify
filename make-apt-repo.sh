@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ "$IN_DOCKER_CONTAINER" != "1" ]; then
+if [ "$INSIDE_DOCKER_CONTAINER" != "1" ]; then
     echo "Must be run in docker container"
     exit 1
 fi
