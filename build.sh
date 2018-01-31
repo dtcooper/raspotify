@@ -35,7 +35,9 @@ LIBRESPOT_GIT_REV="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
 LIBRESPOT_DEB_VER="$(TZ=UTC git show --quiet --date='format-local:%Y%m%dT%H%M%SZ' --format="%cd.%h" "$LIBRESPOT_GIT_REV" 2>/dev/null || echo "unknown")"
 
 # Build librespot
-patch -N -p1 < ../build-id.patch || true
+sed -i 's/\(librespot\)\( {} ({})\. Built on {}\. Build ID: {}\)/\1 (raspotify)\2/' src/main.rs
+sed -i 's/librespot\(_{}_{}\)/raspotify\1/' core/src/connection/mod.rs
+
 cargo build --release --target arm-unknown-linux-gnueabihf --no-default-features --features alsa-backend
 
 # Copy librespot to pkg root
