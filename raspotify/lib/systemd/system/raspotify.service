@@ -12,8 +12,9 @@ ExecStartPre=/bin/mkdir -p 0755 /var/cache/raspotify ; /bin/chown raspotify:rasp
 Environment="DEVICE_NAME=raspotify (%H)"
 Environment="BITRATE=160"
 Environment="CACHE_ARGS=--disable-audio-cache"
+Environment="VOLUME_ARGS=--enable-volume-normalisation"
 EnvironmentFile=-/etc/default/raspotify
-ExecStart=/usr/bin/librespot --name ${DEVICE_NAME} --backend alsa --bitrate ${BITRATE} $CACHE_ARGS $OPTIONS
+ExecStart=/usr/bin/librespot --name ${DEVICE_NAME} --backend alsa --bitrate ${BITRATE} $CACHE_ARGS $VOLUME_ARGS $OPTIONS
 
 [Install]
 WantedBy=multi-user.target
