@@ -151,6 +151,10 @@ There should be a built Debian package (a `.deb` file) in your project directory
 
 Have you tried turning the volume up using the command `alsamixer`?
 
+## Donations
+
+You can donate to Bitcoin address: `1GAYJEWCGDaY1FbSfdD8W9Qzevu14UJTX6`
+
 ## License
 
 This project is licensed under the MIT License - see the [`LICENSE`](LICENSE)
