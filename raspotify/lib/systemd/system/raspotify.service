@@ -8,7 +8,7 @@ Group=raspotify
 Restart=always
 RestartSec=10
 PermissionsStartOnly=true
-ExecStartPre=/bin/mkdir -p 0755 /var/cache/raspotify ; /bin/chown raspotify:raspotify /var/cache/raspotify
+ExecStartPre=/bin/mkdir -m 0755 -p /var/cache/raspotify ; /bin/chown raspotify:raspotify /var/cache/raspotify
 Environment="DEVICE_NAME=raspotify (%H)"
 Environment="BITRATE=160"
 Environment="CACHE_ARGS=--disable-audio-cache"
