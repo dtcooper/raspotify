@@ -93,7 +93,7 @@ your local network, however you can configure it by editing `/etc/default/raspot
 which passes arguments to [librespot](https://github.com/librespot-org/librespot).
 
 ```
-# /etc/default/raspotify -- Arguments for librespot
+# /etc/default/raspotify -- Arguments/configuration for librespot
 
 # Device name on Spotify Connect
 #DEVICE_NAME="raspotify"
@@ -102,7 +102,9 @@ which passes arguments to [librespot](https://github.com/librespot-org/librespot
 #BITRATE="160"
 
 # Additional command line arguments for librespot can be set below.
-# See `librespot -h` for more info.
+# See `librespot -h` for more info. Make sure whatever arguments you specify
+# aren't already covered by other variables in this file. (See the daemon's
+# config at `/lib/systemd/system/raspotify.service` for more technical details.)
 #
 # To make your device visible on Spotify Connect across the Internet add your
 # username and password which can be set via "Set device password", on your
@@ -113,9 +115,14 @@ which passes arguments to [librespot](https://github.com/librespot-org/librespot
 #
 #OPTIONS="--username <USERNAME> --password <PASSWORD>"
 
-# Uncomment to use a cache for downloaded audio files. It's best to leave this
-# as-is since permissions are properly set on directory `/var/cache/raspotify'.
+# Uncomment to use a cache for downloaded audio files. Cache is disabled by
+# default. It's best to leave this as-is if you want to use it, since
+# permissions are properly set on the directory `/var/cache/raspotify'.
 #CACHE_ARGS="--cache /var/cache/raspotify"
+
+# By default, the volume normalization is enabled, add alternative volume
+# arguments here if you'd like, but these should be fine.
+#VOLUME_ARGS="--enable-volume-normalisation --linear-volume --initial-volume=100"
 ```
 
 After editing restart the daemon by running: `sudo systemctl restart raspotify`

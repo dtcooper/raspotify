@@ -25,6 +25,6 @@
 # permissions are properly set on the directory `/var/cache/raspotify'.
 #CACHE_ARGS="--cache /var/cache/raspotify"
 
-# By default, the volume normalization is enabled, add another volume argument
-# here if you'd like, ie `VOLUME_ARGS=--initial-volume 100`.
-#VOLUME_ARGS="--enable-volume-normalisation"
+# By default, the volume normalization is enabled, add alternative volume
+# arguments here if you'd like, but these should be fine.
+#VOLUME_ARGS="--enable-volume-normalisation --linear-volume --initial-volume=100"
