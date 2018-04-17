@@ -51,6 +51,10 @@ curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
 That's it! Plug a speaker into your Pi on your local network, select the device
 in Spotify et voilà!
 
+### Install with ansible
+
+You can install raspotify with ansible. Just include [t2d.raspotify](https://galaxy.ansible.com/t2d/raspotify/) in your playbook.
+
 ### Hard installation
 
 Essentially, here's what the easy installer does,
