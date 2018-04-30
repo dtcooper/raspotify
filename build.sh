@@ -45,8 +45,8 @@ cd /mnt/raspotify
 mkdir -p raspotify/usr/bin
 cp -v /build/arm-unknown-linux-gnueabihf/release/librespot raspotify/usr/bin
 
-# Strip dramatically decreases the size
-arm-linux-gnueabihf-strip raspotify/usr/bin/librespot
+# Strip dramatically decreases the size -- Disabled so we get tracebacks
+#arm-linux-gnueabihf-strip raspotify/usr/bin/librespot
 
 # Compute final package version + filename for Debian control file
 DEB_PKG_VER="${RASPOTIFY_GIT_VER}~librespot.${LIBRESPOT_DEB_VER}"
