@@ -162,6 +162,10 @@ There should be a built Debian package (a `.deb` file) in your project directory
 
 Have you tried turning the volume up using the command `alsamixer`?
 
+## Final Note
+
+_...and remember kids, have fun!_
+
 ## License
 
 This project is licensed under the MIT License - see the [`LICENSE`](LICENSE)
