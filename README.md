@@ -162,6 +162,17 @@ There should be a built Debian package (a `.deb` file) in your project directory
 
 Have you tried turning the volume up using the command `alsamixer`?
 
+> *Other issues*
+
+File an issue and if we get it sorted, I'll add to this list.
+
+## Donations
+
+If you're so inclined, Bitcoin my address is `1PoDcAStyJoB7zZz2mny4KjtjiEu8S44ns`. :)
+
+(I'd rather you donate to [librespot](https://github.com/librespot-org/librespot)
+instead, but there's no public address for those folks.)
+
 ## Final Note
 
 _...and remember kids, have fun!_
