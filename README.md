@@ -37,7 +37,7 @@ Raspotify should work on _any_ Pi but it has been tested on,
 
 * Raspberry Pi (v1) model B
 * Raspberry Pi 2 model B
-* Raspberry Pi 3 model B
+* Raspberry Pi 3 model B and B+
 
 ### Easy Installation
 
