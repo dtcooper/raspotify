@@ -1,0 +1,35 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Codename: raspotify
+Date: Fri, 19 Nov 2021 20:40:45 UTC
+Architectures: armhf
+Components: main
+MD5Sum:
+ 3dc1936dd59d05feccde61587008a7c2 605 main/binary-armhf/Packages
+ 35b028ba124983eb361a2d4497ea8c5e 426 main/binary-armhf/Packages.gz
+ 12961a515ba3ee17d1840d76faa90087 36 main/binary-armhf/Release
+SHA1:
+ d2c068ea25f9556c26ab8d845793c880b841b0e6 605 main/binary-armhf/Packages
+ 44a84d104f422152e2a6b43811bf96030888bd47 426 main/binary-armhf/Packages.gz
+ 4922cd1d17e2d85529687db8f44c58948bc42f94 36 main/binary-armhf/Release
+SHA256:
+ a2419194e09742e2e527027a2d1f5426d15f358a5a5b519578040433ff604e42 605 main/binary-armhf/Packages
+ 2df63d51592f6febfaf585175a50b999bc120a81c8deedea1951431c82fcef07 426 main/binary-armhf/Packages.gz
+ adaec1ced8009abfb20fa51310087da3b7332d5f3b2c5edfda188ddffe634677 36 main/binary-armhf/Release
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEELMm4D1rit6zv8royCRRvL3lTpFUFAmGYC84ACgkQCRRvL3lT
+pFW2cA/+I8C5u3DFS+dw9LJTAT9+ou+6n8MhPlVw0L73MlwYeo7mdIGixq+CZXWM
+rPGwm+JFhpajpihCfU94yn0hJKw23ONmoLQk3H9UVewWpLQv+Yuigp0NtJ38IFnd
+sGNdTPcaHCG+xbiLKvxv2/bWr+uVRIx17TSwqqRK+Ox4uvrDduVCmntDNjPUZqqz
+VQhtsl+BoOavqN5orZcAP6T5eWjHgIchJTTUBP+8JYu7fYhGHJ08TPEHGeqdWdeA
+wpxbTby6u8tAckBgtxhhLoGIZ/eAFuTdynMmibuWrFOYvVm02PZwXWc105DN/cwC
+ob/a1XplfxdVa4wiRdQEfWSTSPhSvaKYqXHbHxZyLbR6lDhN8IFq30X+mvUeOmb9
+yD5xFrdY1wzlhGUv5fD+87cXXupYw860GqYbKk/3YEr1ocDsveCeUHS73BWJ5Aei
+jUrOjmycSZZRdslRxIPvs54M756V07yApUOU4GZZj+Rj023EDj3dz7Rt8Dw06JnK
+U5F0h5pKonXjaFYbDu6nKXJnziWl9uKyd05cYNMF0daYxJM3UHKcEuYat/ql7zUz
+Q5kBWR4XQTNKm53ZTvimq/H0rRFePvclYEIQ1fWPbI5eCMjhIjg9/bQwDf+LDrD4
+bl2CmlSX33ZRPgJCtMLpBPs0tKsejqJxwsB0nHXpvKYS4vNF2Tg=
+=6URQ
+-----END PGP SIGNATURE-----

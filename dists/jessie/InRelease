@@ -1,0 +1,35 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Codename: jessie
+Date: Fri, 19 Nov 2021 20:40:43 UTC
+Architectures: armhf
+Components: main
+MD5Sum:
+ 3dc1936dd59d05feccde61587008a7c2 605 main/binary-armhf/Packages
+ 35b028ba124983eb361a2d4497ea8c5e 426 main/binary-armhf/Packages.gz
+ 12961a515ba3ee17d1840d76faa90087 36 main/binary-armhf/Release
+SHA1:
+ d2c068ea25f9556c26ab8d845793c880b841b0e6 605 main/binary-armhf/Packages
+ 44a84d104f422152e2a6b43811bf96030888bd47 426 main/binary-armhf/Packages.gz
+ 4922cd1d17e2d85529687db8f44c58948bc42f94 36 main/binary-armhf/Release
+SHA256:
+ a2419194e09742e2e527027a2d1f5426d15f358a5a5b519578040433ff604e42 605 main/binary-armhf/Packages
+ 2df63d51592f6febfaf585175a50b999bc120a81c8deedea1951431c82fcef07 426 main/binary-armhf/Packages.gz
+ adaec1ced8009abfb20fa51310087da3b7332d5f3b2c5edfda188ddffe634677 36 main/binary-armhf/Release
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEELMm4D1rit6zv8royCRRvL3lTpFUFAmGYC80ACgkQCRRvL3lT
+pFWr7A/8D0lfdRvYggWxdGgs4fnevqZXSSF71DP5kZ0GruBrsZ9PFjfIErZaNPbe
+oALsWD7YyaICbFqN+WQu3cpakxnwtx9Pdy9Esdp8r3kVWzhLSj44RmP5zVMKtNTM
+BrDzQjb5jCckJx0FqHPvcREdygB2XMzBssVf/sK9y8NQ9zvs+lsW5adDY2avv/VE
+AbV1a+hb0a+l3rIdRd3OQmB9ubKwngjciG6A8/0I+x9DAtzhhCBlXmY0rfuGr5si
+9enJ+5UuEaZWpuUm1cVJBBuJlaG4RpD++dvhuWvT+vnL7G66HEeScgEGZOUxsU8/
+1WFlp/NT4Ez7Da0QwD+56u+QJprx4KFP6GwLI+EoNVqPmZvWzQ3Z4rr6plNJpmwa
+EJrzlhKSICQpKyXyfHq894trLNM/vyZSQmJu46n3P3Ew3Zvk0ZC5eFKgNyAAnYhm
+cIOZMO4dDNiaOAvC4pGnynq7sMF+gbZiuJtZx7Tt2NH2ErsKredPHGqhsMC7oqvJ
+tLHKwji0sp8Tm9K9wXR69LC1t3KiQQGVfy6haYNowcGr9MHBXbKpfrDlxui3ELhB
+0i7BtTjd3LC6SvtuJrbixf7YVzPt3lIefkEO1h7PfvY6Cz7vj9TUka+/mf0zmwA8
+unpxDTNIZECP7nLWVaB/mVowIKGlP0kG9Qy+BidYb0zlUcVNkwE=
+=pmA7
+-----END PGP SIGNATURE-----
