@@ -28,7 +28,7 @@ if [ "$PREREQ_PACKAGES_TO_INSTALL" ]; then
     sudo apt-get -y install $PREREQ_PACKAGES_TO_INSTALL
 fi
 
-if lsb_release -si | fgrep -ivq raspbian; then
+if uname -a | grep -Eivq 'armv7|armv6'; then
     run_on_pi_only
 fi
 
