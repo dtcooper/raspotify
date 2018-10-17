@@ -15,7 +15,7 @@ if ! which apt-get apt-key > /dev/null; then
 fi
 
 # You probably have these
-PREREQ_PACKAGES="curl apt-transport-https lsb-release"
+PREREQ_PACKAGES="curl apt-transport-https"
 PREREQ_PACKAGES_TO_INSTALL=
 for package in $PREREQ_PACKAGES; do
     if ! dpkg-query --show --showformat='${db:Status-Status}\n' "$package" 2> /dev/null | grep -q '^installed$'; then
@@ -28,7 +28,8 @@ if [ "$PREREQ_PACKAGES_TO_INSTALL" ]; then
     sudo apt-get -y install $PREREQ_PACKAGES_TO_INSTALL
 fi
 
-if uname -a | grep -Eivq 'armv7|armv6'; then
+# By popular demand, do softer checking for other OS versions
+if uname -a | fgrep -ivq arm; then
     run_on_pi_only
 fi
 
