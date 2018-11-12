@@ -162,6 +162,20 @@ There should be a built Debian package (a `.deb` file) in your project directory
 
 Have you tried turning the volume up using the command `alsamixer`?
 
+> *My Raspberry Pi does not use my USB sound card!*
+
+Try to replace the following in the file `/usr/share/alsa/alsa.conf`:
+
+```
+defaults.ctl.card 0
+defaults.pcm.card 0
+```
+with
+```
+defaults.ctl.card 1
+defaults.pcm.card 1
+```
+
 > *Other issues*
 
 File an issue and if we get it sorted, I'll add to this list.
