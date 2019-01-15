@@ -175,6 +175,15 @@ with
 defaults.ctl.card 1
 defaults.pcm.card 1
 ```
+> *The audio output buzzes a few seconds after audio stops!*
+
+This is likely to be ALSA's Dynamic Audio Power Management (DAPM) shutting down
+the sound module of your device to save power. If you want to disable this feature,
+create a file called `snd_soc_core.conf` in `/etc/modprobe.d` with this line in:
+```
+options snd_soc_core pmdown_time -1
+```
+Once you reboot and play some sound, the issue should be gone.
 
 > *Other issues*
 
