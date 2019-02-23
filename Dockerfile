@@ -38,7 +38,7 @@ RUN echo '#!/bin/sh\narm-linux-gnueabihf-gcc --sysroot /toolchain/rpi-tools/arm-
     && ln -s ld-linux.so.3 rpi-tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/lib/ld-linux-armhf.so.3
 
 # Install 1.0.x alsa-utils which is needed for compilation
-RUN curl -O ftp://ftp.alsa-project.org/pub/lib/alsa-lib-1.0.29.tar.bz2 \
+RUN curl -O https://www.mirrorservice.org/sites/ftp.alsa-project.org/pub/lib/alsa-lib-1.0.29.tar.bz2 \
     && tar xvjf alsa-lib-1.0.29.tar.bz2 && cd alsa-lib-1.0.29 \
     && CC=arm-linux-gnueabihf-gcc ./configure --host=arm-linux-gnueabihf --disable-python \
         --prefix=/toolchain/rpi-tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot \
