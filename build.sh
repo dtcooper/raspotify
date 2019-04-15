@@ -17,7 +17,7 @@ export CARGO_TARGET_DIR="/build"
 export CARGO_HOME="/build/cache"
 
 # Install the gcc wrapper in container into cargo
-mkdir /.cargo
+mkdir -p /.cargo
 echo '[target.arm-unknown-linux-gnueabihf]\nlinker = "gcc-wrapper"' > /.cargo/config
 rustup target add arm-unknown-linux-gnueabihf
 
