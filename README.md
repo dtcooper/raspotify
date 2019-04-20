@@ -6,7 +6,7 @@ _**Spotify Connect client for the Raspberry Pi that Just Works™.**_
 
 Install the Spotify Connect client on your Raspberry Pi,
 
-```
+```bash
 curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
 ```
 
@@ -44,7 +44,7 @@ Raspotify should work on _any_ Pi but it has been tested on,
 This command downloads and installs the Debian package and adds its apt repository,
 which ensures you'll always be up to date with upstream changes.
 
-```
+```bash
 curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
 ```
 
@@ -55,7 +55,7 @@ in Spotify et voilà!
 
 Essentially, here's what the easy installer does,
 
-```
+```bash
 # Install curl and https apt transport
 sudo apt-get -y install curl apt-transport-https
 
@@ -68,20 +68,24 @@ sudo apt-get update
 sudo apt-get -y install raspotify
 ```
 
-Or just download the latest .deb package and install it manually:
+Or you can just download the latest .deb package and install it manually from
+here ([`raspotify-latest.deb`](https://dtcooper.github.io/raspotify/raspotify-latest.deb)),
 
- * [`raspotify-latest.deb`](https://dtcooper.github.io/raspotify/raspotify-latest.deb)
+```bash
+wget https://dtcooper.github.io/raspotify/raspotify-latest.deb
+sudo dpkg -i raspotify-latest.deb
+```
 
 ### Uninstalling
 
 To uninstall, remove the package,
 
-```
+```bash
 sudo apt-get remove -y raspotify
 ```
 
 To completely remove Raspotify and its Debian repository from your system try,
-```
+```bash
 sudo apt-get remove -y --purge raspotify
 sudo rm -v /etc/apt/sources.list.d/raspotify.list
 ```
@@ -138,7 +142,7 @@ All that's required is [Docker](https://www.docker.com/) on a \*nix system with
 can be built on any amd64 platform that runs docker using Raspberry Pi's
 cross-compiler (tested on Ubuntu 16.04 LTS and macOS El Capitan).
 
-```
+```bash
 git clone https://github.com/dtcooper/raspotify
 cd raspotify
 make
