@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SOURCE_REPO="deb https://dtcooper.github.io/raspotify jessie main"
+SOURCE_REPO="deb https://dtcooper.github.io/raspotify raspotify main"
 
 # Install script for Raspotify. Adds the Debian repo and installs.
 set -e

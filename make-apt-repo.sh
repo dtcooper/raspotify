@@ -29,14 +29,21 @@ cd apt-repo
 rm -rf conf db pool dists
 
 mkdir conf
+# Keep jessie for backward compatibility
 cat <<EOF > conf/distributions
 Codename: jessie
+Components: main
+Architectures: armhf
+SignWith: $GPG_KEY
+
+Codename: raspotify
 Components: main
 Architectures: armhf
 SignWith: $GPG_KEY
 EOF
 
 reprepro includedeb jessie "../$DEB_PKG_NAME"
+reprepro includedeb raspotify "../$DEB_PKG_NAME"
 rm -rf conf db
 
 ln -fs "$(find . -name '*.deb' -type f -printf '%P\n' -quit)" raspotify-latest.deb

@@ -61,7 +61,7 @@ sudo apt-get -y install curl apt-transport-https
 
 # Add repo and its GPG key
 curl -sSL https://dtcooper.github.io/raspotify/key.asc | sudo apt-key add -v -
-echo 'deb https://dtcooper.github.io/raspotify jessie main' | sudo tee /etc/apt/sources.list.d/raspotify.list
+echo 'deb https://dtcooper.github.io/raspotify raspotify main' | sudo tee /etc/apt/sources.list.d/raspotify.list
 
 # Install package
 sudo apt-get update
