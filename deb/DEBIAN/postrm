@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# Based off what debhelper would have added
+
+set -e
+
+if [ "$1" = "remove" ]; then
+    if [ -x "/usr/bin/deb-systemd-helper" ]; then
+        deb-systemd-helper mask raspotify.service >/dev/null
+    fi
+fi
+
+if [ "$1" = "purge" ]; then
+    if [ -x "/usr/bin/deb-systemd-helper" ]; then
+        deb-systemd-helper purge raspotify.service >/dev/null
+        deb-systemd-helper unmask raspotify.service >/dev/null
+    fi
+
+    deluser --force raspotify || true
+    delgroup --force raspotify >/dev/null 2>&1 || true
+    rm -rf /var/cache/raspotify
+    rm -rf /opt/raspotify
+fi
+
+if [ -d /run/systemd/system ]; then
+    systemctl --system daemon-reload >/dev/null || true
+fi

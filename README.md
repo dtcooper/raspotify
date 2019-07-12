@@ -2,7 +2,6 @@
 
 _**Spotify Connect client for the Raspberry Pi that Just Works™.**_
 
-## tl;dr
 
 Install the Spotify Connect client on your Raspberry Pi,
 
@@ -17,8 +16,8 @@ Raspotify is a [Spotify Connect](https://www.spotify.com/connect/) client for
 that Just Works™. Raspotify is a
 [Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_\(file_format\))
 which thinly wraps the awesome
-[librespot](https://github.com/librespot-org/librespot) library by
-[Paul Lietar](https://github.com/plietar) and others. It works out of the box on
+[librespot-java](https://github.com/librespot-org/librespot-java) library by
+[Luca Altomanigian](https://github.com/devgianlu) and others. It works out of the box on
 all three revisions of the Pi, immediately after installation.
 
 ## Download Latest Version
@@ -93,44 +92,55 @@ sudo rm -v /etc/apt/sources.list.d/raspotify.list
 ## Configuration
 
 Raspotify works out of the box and should be discoverable by Spotify Connect on
-your local network, however you can configure it by editing `/etc/default/raspotify`
-which passes arguments to [librespot](https://github.com/librespot-org/librespot).
+your local network, however you can configure it by editing `/opt/raspotify/conf.properties`
+which passes arguments to [librespot-java](https://github.com/librespot-org/librespot-java).
 
 ```
-# /etc/default/raspotify -- Arguments/configuration for librespot
-
-# Device name on Spotify Connect
-#DEVICE_NAME="raspotify"
-
-# Bitrate, one of 96 (low quality), 160 (default quality), or 320 (high quality)
-#BITRATE="160"
-
-# Additional command line arguments for librespot can be set below.
-# See `librespot -h` for more info. Make sure whatever arguments you specify
-# aren't already covered by other variables in this file. (See the daemon's
-# config at `/lib/systemd/system/raspotify.service` for more technical details.)
-#
-# To make your device visible on Spotify Connect across the Internet add your
-# username and password which can be set via "Set device password", on your
-# account settings, use `--username` and `--password`.
-#
-# To choose a different output device (ie a USB audio dongle or HDMI audio out),
-# use `--device` with something like `--device hw:0,1`. Your mileage may vary.
-#
-#OPTIONS="--username <USERNAME> --password <PASSWORD>"
-
-# Uncomment to use a cache for downloaded audio files. Cache is disabled by
-# default. It's best to leave this as-is if you want to use it, since
-# permissions are properly set on the directory `/var/cache/raspotify'.
-#CACHE_ARGS="--cache /var/cache/raspotify"
-
-# By default, the volume normalization is enabled, add alternative volume
-# arguments here if you'd like, but these should be fine.
-#VOLUME_ARGS="--enable-volume-normalisation --linear-volume --initial-volume=100"
-
-# Backend could be set to pipe here, but it's for very advanced use cases of
-# librespot, so you shouldn't need to change this under normal circumstances.
-#BACKEND_ARGS="--backend alsa"
+### Device name ###
+deviceName=librespot-java
+### Device type (Computer, Tablet, Smartphone, Speaker, TV, AVR, STB, AudioDongle, Unknown) ###
+deviceType=Computer
+### Authentication ###
+# Strategy (USER_PASS, ZEROCONF, BLOB, FACEBOOK)
+auth.strategy=ZEROCONF
+# Spotify username (BLOB, USER_PASS only)
+auth.username=
+# Spotify password (USER_PASS only)
+auth.password=
+# Spotify authentication blob (BLOB only)
+auth.blob=
+### Zeroconf ###
+# Listen on this port (`-1` for random)
+zeroconf.listenPort=-1
+# Listen on all interfaces (overrides `zeroconf.interfaces`)
+zeroconf.listenAll=true
+# Listen on these interfaces (comma separated list of names)
+zeroconf.interfaces=
+### Cache ###
+# Cache enabled
+cache.enabled=true
+### Preload ###
+# Preload enabled
+preload.enabled=true
+### Player ###
+# Autoplay similar songs when your music ends
+player.autoplayEnabled=true
+# Preferred audio quality (VORBIS_96, VORBIS_160, VORBIS_320)
+player.preferredAudioQuality=VORBIS_160
+# Normalisation pregain
+player.normalisationPregain=0
+# Initial volume (0-65536)
+player.initialVolume=65536
+# Log available mixers
+player.logAvailableMixers=true
+# Mixer/backend search keywords
+player.mixerSearchKeywords=
+# Use CDN to download tracks
+player.tracks.useCdn=true
+# Use CDN to download episodes
+player.episodes.useCdn=true
+# Enable loading state (useful for slow connections)
+player.enableLoadingState=true
 ```
 
 After editing restart the daemon by running: `sudo systemctl restart raspotify`
@@ -197,7 +207,7 @@ File an issue and if we get it sorted, I'll add to this list.
 
 If you're so inclined, Bitcoin my address is `1PoDcAStyJoB7zZz2mny4KjtjiEu8S44ns`. :)
 
-(I'd rather you donate to [librespot](https://github.com/librespot-org/librespot)
+(I'd rather you donate to [librespot-java](https://github.com/librespot-org/librespot-java)
 instead, but there's no public address for those folks.)
 
 ## Final Note

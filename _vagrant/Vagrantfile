@@ -1,0 +1,22 @@
+Vagrant.configure(2) do |config|
+
+    config.vagrant.plugins = ["vagrant-vbguest"]
+    config.vbguest.auto_update = true
+    config.ssh.insert_key = true
+    config.vm.define "raspotify" do |system|
+        system.vm.network "private_network", ip: "10.0.0.11"
+        system.vm.network "forwarded_port", guest: 22, host: 5555
+        system.vm.box = "ubuntu/bionic64"
+
+        system.vm.hostname = "raspotify"
+           system.vm.provider :virtualbox do |vb|
+             vb.name = "raspotify"
+             vb.gui = false
+             vb.memory = 4096
+             vb.cpus = 2
+           end
+        end
+        config.vm.synced_folder "../", "/home/vagrant/workspace", type: "virtualbox"
+        config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
+        config.vm.provision :shell, :path => "./bootstrap.sh"
+    end
