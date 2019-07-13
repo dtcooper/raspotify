@@ -92,7 +92,7 @@ sudo rm -v /etc/apt/sources.list.d/raspotify.list
 ## Configuration
 after installation is done 
 ```
-mv /opt/raspotify/conf.properties.example mv /opt/raspotify/conf.properties
+mv /opt/raspotify/conf.properties.example /opt/raspotify/conf.properties
 sudo service raspotify restart
 ```
 
