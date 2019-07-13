@@ -1,0 +1,10 @@
+---
+- name: Building Deb package
+  hosts: localhost
+  become_user: vagrant
+
+  vars:
+    workspace: "{{ lookup('env','WORKSPACE') | default('..', true) }}"
+
+  roles:
+    - raspotify

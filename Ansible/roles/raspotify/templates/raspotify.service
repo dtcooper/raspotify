@@ -9,7 +9,7 @@ Restart=always
 RestartSec=10
 PermissionsStartOnly=true
 WorkingDirectory=/opt/raspotify
-ExecStart=/usr/bin/java -jar /opt/raspotify/librespot-core-jar-with-dependencies.jar
+ExecStart=/usr/bin/java -jar /opt/raspotify/librespot-v{{ librespot_version }}.jar
 
 [Install]
 WantedBy=multi-user.target

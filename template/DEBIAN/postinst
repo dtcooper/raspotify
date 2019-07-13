@@ -13,7 +13,7 @@ if ! id raspotify >/dev/null 2>&1; then
 fi
 
 mkdir -m 0755 -p /opt/raspotify
-chown raspotify:raspotify /opt/raspotify
+chown -R raspotify:raspotify /opt/raspotify
 adduser raspotify audio
 
 # Based off what debhelper would have added

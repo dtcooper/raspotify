@@ -1,0 +1,9 @@
+Package: raspotify
+Version: {{ raspotify_version }}
+Architecture: all
+Maintainer: Zerginator <zerginator@gmx.de>
+Depends: libasound2, adduser, openjdk-11-jre
+Installed-Size: in_kb
+Homepage: https://github.com/zerginator
+Description: raspotify with librespot-java v{{ librespot_version }} https://github.com/librespot-org/librespot-java
+
