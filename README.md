@@ -90,8 +90,13 @@ sudo rm -v /etc/apt/sources.list.d/raspotify.list
 ```
 
 ## Configuration
+after installation is done 
+```
+mv /opt/raspotify/conf.properties.example mv /opt/raspotify/conf.properties
+sudo service raspotify restart
+```
 
-Raspotify works out of the box and should be discoverable by Spotify Connect on
+Raspotify should be discoverable by Spotify Connect on
 your local network, however you can configure it by editing `/opt/raspotify/conf.properties`
 which passes arguments to [librespot-java](https://github.com/librespot-org/librespot-java).
 
@@ -147,18 +152,21 @@ After editing restart the daemon by running: `sudo systemctl restart raspotify`
 
 ## Building the Package Yourself
 
-All that's required is [Docker](https://www.docker.com/) on a \*nix system with
-[git](https://git-scm.com/) and [Make](https://www.gnu.org/software/make/). It
-can be built on any amd64 platform that runs docker using Raspberry Pi's
-cross-compiler (tested on Ubuntu 16.04 LTS and macOS El Capitan).
+###Requirements
+
+- Vagrant installed ( https://www.vagrantup.com/ )
+- Virtualbox installed ( https://www.virtualbox.org/wiki/Downloads )
+
 
 ```bash
-git clone https://github.com/dtcooper/raspotify
-cd raspotify
-make
+cd Vagrant
+vagrant up # start your environment
+vagrant ssh # login into you environment
+cd workspace
+ansible-playbook Ansible/start.yml -e librespot_version=0.5.2 -e raspotify_version=0.14.0
 ```
 
-There should be a built Debian package (a `.deb` file) in your project directory.
+There should be a built Debian package (a `.deb` file) in your project directory /package.
 
 > #### Note About Raspotify's APT Repository
 >

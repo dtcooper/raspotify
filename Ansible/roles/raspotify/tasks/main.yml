@@ -1,0 +1,58 @@
+---
+
+- set_fact:
+    tmpFolder: /tmp/raspotify
+
+- name: Removing old build folder
+  file:
+    path: "{{ tmpFolder }}/build"
+    state: absent
+
+- name: Create build folder
+  file:
+    path: "{{ tmpFolder }}/{{ item }}"
+    state: directory
+    recurse: true
+  with_items:
+    - build
+
+- name: Copy deb folder to {{ workspace }}/build
+  copy:
+    src: "{{ workspace }}/template/"
+    dest: "{{ tmpFolder }}/build/"
+
+- name: Put info file in package
+  template:
+    src: control
+    dest: "{{ tmpFolder }}/build/DEBIAN/control"
+
+- name: Put service in package
+  template:
+    src: raspotify.service
+    dest: "{{ tmpFolder }}/build/lib/systemd/system/raspotify.service"
+
+
+- name: Downloading librespot-java {{ librespot_version }}
+  get_url:
+    url: "https://github.com/librespot-org/librespot-java/releases/download/v{{ librespot_version }}/librespot-api-jar-with-dependencies.jar"
+    dest: "{{ tmpFolder }}/build/opt/raspotify/librespot-v{{ librespot_version }}.jar"
+
+- name: Fixing permissions for DEBIAN folder
+  file:
+     path: "{{ tmpFolder }}/build/DEBIAN"
+     mode: 0755
+     recurse: true
+
+- name: Building deb package {{ tmpFolder }}
+  shell: "dpkg -b {{ tmpFolder }}/build"
+
+- name: Rename deb package {{ tmpFolder }}
+  shell: "dpkg-name {{ tmpFolder }}/build.deb -a"
+
+- name: Remove build.deb package
+  file:
+     path: "{{ tmpFolder }}/build.deb"
+     state: absent
+
+- name: Move file to package folder
+  shell: "mv {{ tmpFolder }}/*.deb /home/vagrant/workspace/package"

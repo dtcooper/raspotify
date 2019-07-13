@@ -1,9 +1,0 @@
-Package: raspotify
-Version: 1.0.0
-Architecture: all
-Maintainer: Zerginator <zerginator@gmx.de>
-Depends: openjdk-11-jre
-Installed-Size: in_kb
-Homepage: https://github.com/zerginator
-Description: raspotify version with java version of librespot (spotify server) https://github.com/librespot-org/librespot-java
-
