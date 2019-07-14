@@ -34,8 +34,8 @@
 
 - name: Downloading librespot-java {{ librespot_version }}
   get_url:
-    url: "https://github.com/librespot-org/librespot-java/releases/download/v{{ librespot_version }}/librespot-api-jar-with-dependencies.jar"
-    dest: "{{ tmpFolder }}/build/opt/raspotify/librespot-v{{ librespot_version }}.jar"
+    url: "https://github.com/librespot-org/librespot-java/releases/download/v{{ librespot_version }}/librespot-core-jar-with-dependencies.jar"
+    dest: "{{ tmpFolder }}/build/opt/raspotify/librespot-java-core-v{{ librespot_version }}.jar"
 
 - name: Fixing permissions for DEBIAN folder
   file:

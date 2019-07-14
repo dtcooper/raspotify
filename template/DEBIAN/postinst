@@ -14,6 +14,12 @@ fi
 
 mkdir -m 0755 -p /opt/raspotify
 chown -R raspotify:raspotify /opt/raspotify
+
+if test -f "/opt/raspotify/conf.usercustom"; then
+    mv /opt/raspotify/conf.properties /opt/raspotify/conf.example
+    mv /opt/raspotify/conf.usercustom /opt/raspotify/conf.properties
+fi
+
 adduser raspotify audio
 
 # Based off what debhelper would have added

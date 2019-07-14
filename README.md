@@ -90,13 +90,9 @@ sudo rm -v /etc/apt/sources.list.d/raspotify.list
 ```
 
 ## Configuration
-after installation is done 
-```
-mv /opt/raspotify/conf.properties.example /opt/raspotify/conf.properties
-sudo service raspotify restart
-```
 
-Raspotify should be discoverable by Spotify Connect on
+
+Raspotify should work out of the box and should be discoverable by Spotify Connect on
 your local network, however you can configure it by editing `/opt/raspotify/conf.properties`
 which passes arguments to [librespot-java](https://github.com/librespot-org/librespot-java).
 
@@ -152,7 +148,7 @@ After editing restart the daemon by running: `sudo systemctl restart raspotify`
 
 ## Building the Package Yourself
 
-###Requirements
+### Requirements
 
 - Vagrant installed ( https://www.vagrantup.com/ )
 - Virtualbox installed ( https://www.virtualbox.org/wiki/Downloads )

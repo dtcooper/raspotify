@@ -8,6 +8,7 @@ if [ "$1" = "remove" ]; then
     if [ -x "/usr/bin/deb-systemd-helper" ]; then
         deb-systemd-helper mask raspotify.service >/dev/null
     fi
+    rm -rf /opt/raspotify
 fi
 
 if [ "$1" = "purge" ]; then
@@ -16,10 +17,11 @@ if [ "$1" = "purge" ]; then
         deb-systemd-helper unmask raspotify.service >/dev/null
     fi
 
-    deluser --force raspotify || true
-    delgroup --force raspotify >/dev/null 2>&1 || true
     rm -rf /var/cache/raspotify
     rm -rf /opt/raspotify
+    deluser --force raspotify || true
+    delgroup --force raspotify >/dev/null 2>&1 || true
+
 fi
 
 if [ -d /run/systemd/system ]; then
