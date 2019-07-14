@@ -2,6 +2,7 @@
 Description=Raspotify
 Wants=network-online.target
 After=network.target network-online.target
+Requires=network-online.target
 
 [Service]
 User=raspotify
@@ -10,6 +11,7 @@ Restart=always
 RestartSec=10
 PermissionsStartOnly=true
 WorkingDirectory=/opt/raspotify
+ExecStartPre=/bin/sleep 15
 ExecStart=/usr/bin/java -jar /opt/raspotify/librespot-java-core-v{{ librespot_version }}.jar
 
 [Install]
