@@ -1,6 +1,7 @@
 [Unit]
 Description=Raspotify
-After=network.target
+Wants=network-online.target
+After=network.target network-online.target
 
 [Service]
 User=raspotify
