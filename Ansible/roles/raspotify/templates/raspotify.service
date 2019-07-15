@@ -5,13 +5,14 @@ After=network.target network-online.target
 Requires=network-online.target
 
 [Service]
+Type=simple
 User=raspotify
 Group=raspotify
 Restart=always
 RestartSec=10
 PermissionsStartOnly=true
 WorkingDirectory=/opt/raspotify
-ExecStartPre=/bin/sleep 15
+ExecStartPre=/bin/sh -c 'until ping -c1 google.com; do sleep 5; done;'
 ExecStart=/usr/bin/java -jar /opt/raspotify/librespot-java-core-v{{ librespot_version }}.jar
 
 [Install]
