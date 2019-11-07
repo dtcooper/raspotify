@@ -201,6 +201,9 @@ If you're so inclined, Bitcoin my address is `1PoDcAStyJoB7zZz2mny4KjtjiEu8S44ns
 (I'd rather you donate to [librespot](https://github.com/librespot-org/librespot)
 instead, but there's no public address for those folks.)
 
+## Related Projects
+[ansible-role-librespot](https://github.com/xMordax/ansible-role-librespot/tree/master) - Ansible role that will build, install and configure Raspotify.
+
 ## Final Note
 
 _...and remember kids, have fun!_
