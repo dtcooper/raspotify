@@ -12,13 +12,14 @@
 # config at `/lib/systemd/system/raspotify.service` for more technical details.)
 #
 # To make your device visible on Spotify Connect across the Internet add your
-# username and password which can be set via "Set device password", on your
-# account settings, use `--username` and `--password`.
+# username and password which can be set via "Set device password"
 #
 # To choose a different output device (ie a USB audio dongle or HDMI audio out),
 # use `--device` with something like `--device hw:0,1`. Your mileage may vary.
 #
-#OPTIONS="--username <USERNAME> --password <PASSWORD>"
+#OPTIONS="--device hw:0,0"
+#USERNAME="<USERNAME>"
+#PASSWORD="<PASSWORD>"
 
 # Uncomment to use a cache for downloaded audio files. Cache is disabled by
 # default. It's best to leave this as-is if you want to use it, since
