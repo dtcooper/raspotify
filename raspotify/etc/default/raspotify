@@ -32,3 +32,8 @@
 # Backend could be set to pipe here, but it's for very advanced use cases of
 # librespot, so you shouldn't need to change this under normal circumstances.
 #BACKEND_ARGS="--backend alsa"
+
+# The server port advertised via zeroconf mDNS and the port clients connect to
+# By default, it's a random high port that changes after service restart
+# Setting a static port allows for more fine grained firewall control
+#ZEROCONF_PORT="--zeroconf-port 8080"
