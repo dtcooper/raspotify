@@ -24,7 +24,7 @@ all three revisions of the Pi, immediately after installation.
 ## Download Latest Version
 
 Head on over to the [releases](https://github.com/dtcooper/raspotify/releases/latest)
-page to download themost recent version and install the Debian package. Or follow
+page to download the most recent version and install the Debian package. Or follow
 the [directions below](#easy-installation).
 
 ### Requirements
