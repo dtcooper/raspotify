@@ -205,6 +205,12 @@ instead, but there's no public address for those folks.)
 
 _...and remember kids, have fun!_
 
+## Disclaimer
+
+Per librespot's disclaimer, using librespot &mdash; the underlying library behind
+raspotify &mdash; to connect to Spotify's API _"is probably forbidden by them."_
+We've not received word about that, however use at your own risk.
+
 ## License
 
 This project is licensed under the MIT License - see the [`LICENSE`](LICENSE)
