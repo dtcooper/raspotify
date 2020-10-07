@@ -77,6 +77,41 @@ wget https://dtcooper.github.io/raspotify/raspotify-latest.deb
 sudo dpkg -i raspotify-latest.deb
 ```
 
+### Play via Bluetooth Speaker
+
+1. Edit `/etc/asound.conf`:
+`> vim /etc/asound.conf
+
+2. Add your bluetooth MAC adresss instead of `XX:XX:XX:XX:XX`:
+
+```
+defaults.bluealsa.interface "hci0"
+defaults.bluealsa.device "XX:XX:XX:XX:XX"
+defaults.bluealsa.profile "a2dp"
+
+pcm.btheadset {
+    type plug
+    slave {
+        pcm {
+              type bluealsa
+              device XX:XX:XX:XX:XX:XX 
+              profile "auto"
+         }   
+    }   
+    hint {
+         show on
+         description "BT Headset"
+    }   
+}
+ctl.btheadset {
+    type bluetooth
+} 
+```
+
+3. Restart service:
+
+`> sudo service raspotify restart`
+
 ### Uninstalling
 
 To uninstall, remove the package,
