@@ -79,6 +79,8 @@ sudo dpkg -i raspotify-latest.deb
 
 ### Play via Bluetooth Speaker
 
+#### via asound.conf
+
 1. Edit `/etc/asound.conf`:
 `> vim /etc/asound.conf
 
@@ -111,6 +113,12 @@ ctl.btheadset {
 3. Restart service:
 
 `> sudo service raspotify restart`
+
+####  via pi-btaudio
+
+Another way to resolve any issues to install `pi-btaudio` alongside with `raspotify`: https://github.com/bablokb/pi-btaudio
+(remove pulseaudio if you have it).
+
 
 ### Uninstalling
 
