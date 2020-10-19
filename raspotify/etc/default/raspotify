@@ -32,3 +32,6 @@
 # Backend could be set to pipe here, but it's for very advanced use cases of
 # librespot, so you shouldn't need to change this under normal circumstances.
 #BACKEND_ARGS="--backend alsa"
+
+# Log level for librespot. Possible values are: debug, error, info, warn or trace
+#RUST_LOG=error
