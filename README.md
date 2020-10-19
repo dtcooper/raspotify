@@ -24,7 +24,7 @@ all three revisions of the Pi, immediately after installation.
 ## Download Latest Version
 
 Head on over to the [releases](https://github.com/dtcooper/raspotify/releases/latest)
-page to download themost recent version and install the Debian package. Or follow
+page to download the most recent version and install the Debian package. Or follow
 the [directions below](#easy-installation).
 
 ### Requirements
@@ -76,6 +76,49 @@ here ([`raspotify-latest.deb`](https://dtcooper.github.io/raspotify/raspotify-la
 wget https://dtcooper.github.io/raspotify/raspotify-latest.deb
 sudo dpkg -i raspotify-latest.deb
 ```
+
+### Play via Bluetooth Speaker
+
+#### via asound.conf
+
+1. Edit `/etc/asound.conf`:
+`> vim /etc/asound.conf
+
+2. Add your bluetooth MAC adresss instead of `XX:XX:XX:XX:XX`:
+
+```
+defaults.bluealsa.interface "hci0"
+defaults.bluealsa.device "XX:XX:XX:XX:XX"
+defaults.bluealsa.profile "a2dp"
+
+pcm.btheadset {
+    type plug
+    slave {
+        pcm {
+              type bluealsa
+              device XX:XX:XX:XX:XX:XX 
+              profile "auto"
+         }   
+    }   
+    hint {
+         show on
+         description "BT Headset"
+    }   
+}
+ctl.btheadset {
+    type bluetooth
+} 
+```
+
+3. Restart service:
+
+`> sudo service raspotify restart`
+
+####  via pi-btaudio
+
+Another way to resolve any issues to install `pi-btaudio` alongside with `raspotify`: https://github.com/bablokb/pi-btaudio
+(remove pulseaudio if you have it).
+
 
 ### Uninstalling
 

@@ -31,9 +31,7 @@ fi
 
 # Get the git rev of librespot for .deb versioning
 cd librespot
-git checkout master
-LIBRESPOT_GIT_REV="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
-LIBRESPOT_DEB_VER="$(TZ=UTC git show --quiet --date='format-local:%Y%m%dT%H%M%SZ' --format="%cd.%h" "$LIBRESPOT_GIT_REV" 2>/dev/null || echo "unknown")"
+LIBRESPOT_GIT_VER="$(git describe --tags --always --dirty 2>/dev/null || echo unknown)"
 
 # Build librespot
 sed -i "s/\(librespot\)\( {} ({})\. Built on {}\. Build ID: {}\)/\1 (raspotify v$RASPOTIFY_GIT_VER)\2/" src/main.rs
@@ -50,7 +48,7 @@ cp -v /build/arm-unknown-linux-gnueabihf/release/librespot raspotify/usr/bin
 #arm-linux-gnueabihf-strip raspotify/usr/bin/librespot
 
 # Compute final package version + filename for Debian control file
-DEB_PKG_VER="${RASPOTIFY_GIT_VER}~librespot.${LIBRESPOT_DEB_VER}"
+DEB_PKG_VER="${RASPOTIFY_GIT_VER}~librespot.${LIBRESPOT_GIT_VER}"
 DEB_PKG_NAME="raspotify_${DEB_PKG_VER}_armhf.deb"
 echo "$DEB_PKG_NAME"
 
@@ -75,6 +73,6 @@ pandoc -f markdown -t plain --columns=80 README.md \
 dpkg-deb -b raspotify "$DEB_PKG_NAME"
 
 # Perm fixup. Not needed on macOS, but is on Linux
-chown -R "$PERMFIX_UID:$PERMFIX_GID" /mnt/raspotify 2> /dev/null
+chown -R "$PERMFIX_UID:$PERMFIX_GID" /mnt/raspotify 2> /dev/null || true
 
 echo "Package built as $DEB_PKG_NAME"
