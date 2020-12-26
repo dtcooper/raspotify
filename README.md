@@ -175,6 +175,11 @@ which passes arguments to [librespot](https://github.com/librespot-org/librespot
 # Backend could be set to pipe here, but it's for very advanced use cases of
 # librespot, so you shouldn't need to change this under normal circumstances.
 #BACKEND_ARGS="--backend alsa"
+
+# The displayed device type in Spotify clients. 
+# Can be "unknown", "computer", "tablet", "smartphone", "speaker", "tv",
+# "avr" (Audio/Video Receiver), "stb" (Set-Top Box), and "audiodongle".
+#DEVICE_TYPE="speaker"
 ```
 
 After editing restart the daemon by running: `sudo systemctl restart raspotify`
