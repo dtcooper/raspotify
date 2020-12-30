@@ -1,5 +1,0 @@
-#!/bin/sh
-
-# Fix changes in command line arguments for librespot v0.1.3
-
-test -e /etc/default/raspotify && sed -i 's/--linear-volume/--volume-ctrl=linear/' /etc/default/raspotify >/dev/null 2>&1

@@ -16,6 +16,15 @@ mkdir -m 0755 -p /var/cache/raspotify
 chown raspotify:raspotify /var/cache/raspotify
 adduser raspotify audio
 
+# Make sure `--linear-volume' is properly renamed
+if [ -f /etc/default/raspotify ]; then
+    sed -i 's/--linear-volume/--volume-ctrl linear/' /etc/default/raspotify
+fi
+
+if [ -f /etc/systemd/system/raspotify.service ]; then
+    sed -i 's/--linear-volume/--volume-ctrl linear/' /etc/systemd/system/raspotify.service
+fi
+
 # Based off what debhelper would have added
 
 # This will only remove masks created by d-s-h on package removal.
