@@ -39,6 +39,7 @@ Raspotify should work on _any_ Pi but it has been tested on,
 * Raspberry Pi 2 model B
 * Raspberry Pi 3 model B and B+
 * Raspberry Pi 4
+* Orange Pi Zero LTS with Expansion board (for the 3.5mm jack)
 
 ### Easy Installation
 
