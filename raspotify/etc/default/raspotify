@@ -32,7 +32,8 @@
 
 # By default, the volume normalization is enabled, add alternative volume
 # arguments here if you'd like, but these should be fine.
-#VOLUME_ARGS="--enable-volume-normalisation --volume-ctrl linear --initial-volume=100"
+# If you have issues with low default volume, edit the dB value for normalisation pregain.
+#VOLUME_ARGS="--enable-volume-normalisation --normalisation-pregain 0 --volume-ctrl linear --initial-volume=100"
 
 # Backend could be set to pipe here, but it's for very advanced use cases of
 # librespot, so you shouldn't need to change this under normal circumstances.
