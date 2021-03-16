@@ -97,7 +97,7 @@ pcm.btheadset {
     slave {
         pcm {
               type bluealsa
-              device XX:XX:XX:XX:XX:XX 
+              device XX:XX:XX:XX:XX:XX
               profile "auto"
          }   
     }   
@@ -108,7 +108,7 @@ pcm.btheadset {
 }
 ctl.btheadset {
     type bluetooth
-} 
+}
 ```
 
 3. Restart service:
@@ -177,7 +177,7 @@ which passes arguments to [librespot](https://github.com/librespot-org/librespot
 # librespot, so you shouldn't need to change this under normal circumstances.
 #BACKEND_ARGS="--backend alsa"
 
-# The displayed device type in Spotify clients. 
+# The displayed device type in Spotify clients.
 # Can be "unknown", "computer", "tablet", "smartphone", "speaker", "tv",
 # "avr" (Audio/Video Receiver), "stb" (Set-Top Box), and "audiodongle".
 #DEVICE_TYPE="speaker"
@@ -215,6 +215,16 @@ There should be a built Debian package (a `.deb` file) in your project directory
 > *My volume on Spotify is 100% and it's still too quiet!*
 
 Have you tried turning the volume up using the command `alsamixer`?
+
+No satisfactory results? Try adding normalisation-pregain to the VOLUME_ARGS
+to higher the initial volume
+
+```
+-normalisation-pregain 2
+```
+
+NOTE: dB is a logarithmic scale, so small values have a lot more impact
+than in a linear one.
 
 > *My Raspberry Pi does not use my USB sound card!*
 
