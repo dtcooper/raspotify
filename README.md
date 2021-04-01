@@ -78,7 +78,67 @@ wget https://dtcooper.github.io/raspotify/raspotify-latest.deb
 sudo dpkg -i raspotify-latest.deb
 ```
 
-### Play via Bluetooth Speaker
+### Play via Bluetooth Speaker on Raspberry Pi Desktop
+
+When running Raspotify with Raspberry Pi Desktop, Raspotify needs to be 
+installed as a user service, rather than a system service.  This causes
+Raspotify to be in the same process as the PulseAudio service, where the 
+PulseAudio service is what is providing sound to your output device.
+
+To configure Raspotify as a user service for your pi user, open a terminal and:
+1. `cd ~`
+2. `mkdir -p .config/systemd/user`
+3. `cd .config/system/user`
+4. create a file named `raspotify.service` containing:
+
+```
+[Unit]
+Description=Raspotify
+Wants=pulseaudio.service
+
+
+[Service]
+Restart=always
+RestartSec=10
+Environment="DEVICE_NAME=raspotify (%H)"                                                               
+Environment="BITRATE=160"
+Environment="CACHE_ARGS=--disable-audio-cache"
+Environment="VOLUME_ARGS=--enable-volume-normalisation --linear-volume --initial-volume=100"
+Environment="BACKEND_ARGS=--backend alsa"
+EnvironmentFile=-/etc/default/raspotify
+ExecStart=/usr/bin/librespot --name ${DEVICE_NAME} $BACKEND_ARGS --bitrate ${BITRATE} $CACHE_ARGS $VOLUME_ARGS $OPTIONS
+
+[Install]      
+WantedBy=default.target
+```
+
+The main difference betweeen this file and the file Raspotify lands in 
+`/usr/lib/systemd/system/raspotify.service` is that the following lines are removed:
+```
+After=network.target
+
+User=raspotify
+Group=raspotify
+PermissionsStartOnly=true
+ExecStartPre=/bin/mkdir -m 0755 -p /var/cache/raspotify ; /bin/chown raspotify:raspotify /var/cache/raspotify
+
+WantedBy=multi-user.target
+```
+
+And the following lines have been added:
+```
+Wants=pulseaudio.service
+
+WantedBy=default.target
+```
+
+Once this file is created, run `systemctl --user enable raspotify.service` to 
+register and start the service.
+
+At this point, Raspotify should play via whatever audio device is configured 
+using the PulseAudio Volume Control on Raspberry Pi Desktop Panel. 
+
+### Play via Bluetooth Speaker without Raspberry Pi Desktop
 
 #### via asound.conf
 
