@@ -24,7 +24,7 @@
 # librespot --name hello --device ? | grep plughw -v | grep hwdep -v | grep hw
 # This lists available devices (note b1=HDMI1, b2=HDMI2 etc.). 
 # If you can’t find your device with that command, try running:
-# librespot –name hello –device ?
+# librespot --name hello --device ?
 # This gives a more verbose output, which can help you identify the target
 # sound card if it has a weird name
 # Say you want Spotify to play out of HDMI1, you run that command, and copy the 
@@ -35,6 +35,8 @@
 # DAC would be '--device hw:CARD=IQaudIODAC,DEV=0'
 # This method is useful, as the name wont change depending on which devices are
 # connected to the Pi, as was with the old way (i.e. --device hw:0)
+# This might not work if you're using a USB sound card, and you'll be stuck to
+# specifying devices like --device hw:0,0
 
 #OPTIONS="--username <USERNAME> --password <PASSWORD>"
 
