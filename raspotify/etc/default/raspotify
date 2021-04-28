@@ -34,7 +34,7 @@
 # add '--device hw:CARD=b1,DEV=0' to options. Another example using a hardware 
 # DAC would be '--device hw:CARD=IQaudIODAC,DEV=0'
 # This method is useful, as the name wont change depending on which devices are
-# connected to the Pi, as was with the old way (i.e. --device hw:0)
+# connected to the Pi, as was with the old way (i.e. --device hw:0,0)
 # This might not work if you're using a USB sound card, and you'll be stuck to
 # specifying devices like --device hw:0,0
 
