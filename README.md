@@ -103,7 +103,7 @@ RestartSec=10
 Environment="DEVICE_NAME=raspotify (%H)"                                                               
 Environment="BITRATE=160"
 Environment="CACHE_ARGS=--disable-audio-cache"
-Environment="VOLUME_ARGS=--enable-volume-normalisation --linear-volume --initial-volume=100"
+Environment="VOLUME_ARGS=--enable-volume-normalisation --volume-ctrl linear --initial-volume=100"
 Environment="BACKEND_ARGS=--backend alsa"
 EnvironmentFile=-/etc/default/raspotify
 ExecStart=/usr/bin/librespot --name ${DEVICE_NAME} $BACKEND_ARGS --bitrate ${BITRATE} $CACHE_ARGS $VOLUME_ARGS $OPTIONS
