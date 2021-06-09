@@ -88,7 +88,7 @@ PulseAudio service is what is providing sound to your output device.
 To configure Raspotify as a user service for your pi user, open a terminal and:
 1. `cd ~`
 2. `mkdir -p .config/systemd/user`
-3. `cd .config/system/user`
+3. `cd .config/systemd/user`
 4. create a file named `raspotify.service` containing:
 
 ```
