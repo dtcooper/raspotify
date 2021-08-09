@@ -15,7 +15,7 @@ Environment="CACHE_ARGS=--disable-audio-cache"
 Environment="VOLUME_ARGS=--enable-volume-normalisation --volume-ctrl linear --initial-volume 100"
 Environment="BACKEND_ARGS=--backend alsa"
 Environment="DEVICE_TYPE=speaker"
-EnvironmentFile=-/etc/default/raspotify
+EnvironmentFile=/etc/default/raspotify
 ExecStart=/usr/bin/librespot --name ${DEVICE_NAME} --device-type ${DEVICE_TYPE} $BACKEND_ARGS --bitrate ${BITRATE} $CACHE_ARGS $VOLUME_ARGS $OPTIONS
 
 [Install]
