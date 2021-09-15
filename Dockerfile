@@ -21,7 +21,7 @@ RUN apt-get update \
 
 RUN pip install \
         jinja2-cli  \
-        unidecode
+        unidecode==1.2.0
 
 RUN mkdir /toolchain
 WORKDIR /toolchain
