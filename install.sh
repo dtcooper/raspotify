@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SOURCE_REPO="deb https://dtcooper.github.io/raspotify raspotify main"
+SOURCE_REPO="deb [signed-by=/usr/share/keyrings/raspotify_key.asc] https://dtcooper.github.io/raspotify raspotify main"
 
 # Install script for Raspotify. Adds the Debian repo and installs.
 set -e
@@ -34,7 +34,8 @@ if uname -a | fgrep -ivq arm; then
 fi
 
 # Add public key to apt
-curl -sSL https://dtcooper.github.io/raspotify/key.asc | sudo apt-key add -v -
+curl -sSL https://dtcooper.github.io/raspotify/key.asc | sudo tee /usr/share/keyrings/raspotify_key.asc  > /dev/null
+sudo chmod 644 /usr/share/keyrings/raspotify_key.asc
 echo "$SOURCE_REPO" | sudo tee /etc/apt/sources.list.d/raspotify.list
 
 sudo apt-get update
