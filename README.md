@@ -1,5 +1,15 @@
 # Raspotify
 
+> :warning: **NOTE:** *I have **limited to no time** to work on this package
+> these days!*
+> 
+> I am looking for a maintainer to help with issues and updating the package.
+> Please reach out via email at <david@jew.pizza> if you have interest in helping.
+>
+> Cheers,
+>
+> David
+
 _**Spotify Connect client for the Raspberry Pi that Just Works™.**_
 
 ## tl;dr
