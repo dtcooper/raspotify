@@ -1,4 +1,4 @@
-FROM debian:stretch
+FROM debian:bullseye
 
 ENV INSIDE_DOCKER_CONTAINER 1
 
@@ -13,13 +13,13 @@ RUN apt-get update \
         gnupg \
         pandoc \
         pkg-config \
-        python-pip \
-        python-setuptools \
-        python-wheel \
+        python3-pip \
+        python3-setuptools \
+        python3-wheel \
         reprepro \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install \
+RUN pip3 install \
         jinja2-cli  \
         unidecode
 
@@ -38,14 +38,14 @@ RUN echo '#!/bin/sh\narm-linux-gnueabihf-gcc --sysroot /toolchain/rpi-tools/arm-
     && chmod +x rpi-tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/gcc-wrapper \
     && ln -s ld-linux.so.3 rpi-tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/lib/ld-linux-armhf.so.3
 
-# Install 1.0.x alsa-utils which is needed for compilation
+# Install alsa-utils which is needed for compilation
 ENV PKG_CONFIG_ALLOW_CROSS 1
 ENV PKG_CONFIG_PATH "/toolchain/rpi-tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/lib/pkgconfig"
-RUN curl -O https://www.mirrorservice.org/sites/ftp.alsa-project.org/pub/lib/alsa-lib-1.0.29.tar.bz2 \
-    && tar xvjf alsa-lib-1.0.29.tar.bz2 && cd alsa-lib-1.0.29 \
+RUN curl -O https://www.alsa-project.org/files/pub/lib/alsa-lib-1.2.4.tar.bz2 \
+    && tar xvjf alsa-lib-1.2.4.tar.bz2 && cd alsa-lib-1.2.4 \
     && CC=arm-linux-gnueabihf-gcc ./configure --host=arm-linux-gnueabihf --disable-python \
         --prefix=/toolchain/rpi-tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot \
     && make -j $(nproc --all) && make install \
-    && cd .. && rm -rf alsa-lib-1.0.29.tar.bz2 alsa-lib-1.0.29
+    && cd .. && rm -rf alsa-lib-1.2.4.tar.bz2 alsa-lib-1.2.4
 
 RUN mkdir /build
