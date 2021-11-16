@@ -1,6 +1,6 @@
 # Raspotify
 
-_**[Spotify Connect](https://www.spotify.com/connect/) client for
+_**A [Spotify Connect](https://www.spotify.com/connect/) client for
 [Raspberry Pi OS](https://www.raspberrypi.org/downloads/raspbian/) on the Raspberry Pi
 that Just Works™.**_ 
 
