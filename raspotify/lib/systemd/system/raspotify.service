@@ -1,21 +1,74 @@
 [Unit]
-Description=Raspotify
+Description=Raspotify (Spotify Connect Client)
+Documentation=https://github.com/dtcooper/raspotify
+Documentation=https://github.com/librespot-org/librespot
+Documentation=https://github.com/dtcooper/raspotify/wiki
+Documentation=https://github.com/librespot-org/librespot/wiki/Options
+Requires=network.target
 After=network.target
+Requires=sound.target
+After=sound.target
 
 [Service]
 User=raspotify
 Group=raspotify
+
 Restart=always
 RestartSec=10
+
+RestrictRealtime=true
+RestrictSUIDSGID=true
+RestrictNamespaces=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_NETLINK
+
+ProtectHostname=true
+ProtectControlGroups=true
+ProtectKernelLogs=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectProc=invisible
+ProtectHome=true
+ProtectSystem=strict
+ProtectClock=yes
+
+DevicePolicy=strict
+
+DeviceAllow=char-alsa rw
+DeviceAllow=/dev/null r
+DeviceAllow=/dev/random r
+DeviceAllow=/dev/urandom r
+
+UMask=077
+CacheDirectory=raspotify
+ReadWritePaths=/var/cache/raspotify
+
+PrivateTmp=true
+PrivateUsers=true
+
+ProcSubset=pid
+NoNewPrivileges=true
 PermissionsStartOnly=true
-ExecStartPre=/bin/mkdir -m 0755 -p /var/cache/raspotify ; /bin/chown raspotify:raspotify /var/cache/raspotify
-Environment="DEVICE_NAME=raspotify (%H)"
+LockPersonality=true
+MemoryDenyWriteExecute=true
+RemoveIPC=true
+
+CapabilityBoundingSet=
+
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources
+SystemCallErrorNumber=EPERM
+
+Environment="DEVICE_NAME=Raspotify (%H)"
 Environment="BITRATE=160"
 Environment="CACHE_ARGS=--disable-audio-cache"
 Environment="VOLUME_ARGS=--enable-volume-normalisation --volume-ctrl linear --initial-volume 100"
 Environment="BACKEND_ARGS=--backend alsa"
 Environment="DEVICE_TYPE=speaker"
+
+ConfigurationDirectory=default
 EnvironmentFile=-/etc/default/raspotify
+
 ExecStart=/usr/bin/librespot --name ${DEVICE_NAME} --device-type ${DEVICE_TYPE} $BACKEND_ARGS --bitrate ${BITRATE} $CACHE_ARGS $VOLUME_ARGS $OPTIONS
 
 [Install]
