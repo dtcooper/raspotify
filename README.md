@@ -96,29 +96,28 @@ Raspotify to be in the same process as the PulseAudio service, where the
 PulseAudio service is what is providing sound to your output device.
 
 To configure Raspotify as a user service for your pi user, open a terminal and:
-1. `cd ~`
-2. `mkdir -p .config/systemd/user`
-3. `cd .config/systemd/user`
-4. create a file named `raspotify.service` containing:
+1. `mkdir -p ~/.config/systemd/user`
+2. `cd ~/.config/systemd/user`
+3. create a file named `raspotify.service` containing:
 
 ```
 [Unit]
 Description=Raspotify
 Wants=pulseaudio.service
 
-
 [Service]
 Restart=always
 RestartSec=10
-Environment="DEVICE_NAME=raspotify (%H)"                                                               
+Environment="DEVICE_NAME=raspotify (%H)"
 Environment="BITRATE=160"
 Environment="CACHE_ARGS=--disable-audio-cache"
-Environment="VOLUME_ARGS=--enable-volume-normalisation --volume-ctrl linear --initial-volume=100"
+Environment="VOLUME_ARGS=--enable-volume-normalisation --volume-ctrl linear --initial-volume 100"
 Environment="BACKEND_ARGS=--backend alsa"
+Environment="DEVICE_TYPE=speaker"
 EnvironmentFile=-/etc/default/raspotify
-ExecStart=/usr/bin/librespot --name ${DEVICE_NAME} $BACKEND_ARGS --bitrate ${BITRATE} $CACHE_ARGS $VOLUME_ARGS $OPTIONS
+ExecStart=/usr/bin/librespot --name ${DEVICE_NAME} --device-type ${DEVICE_TYPE} $BACKEND_ARGS --bitrate ${BITRATE} $CACHE_ARGS $VOLUME_ARGS $OPTIONS
 
-[Install]      
+[Install]
 WantedBy=default.target
 ```
 
@@ -142,8 +141,9 @@ Wants=pulseaudio.service
 WantedBy=default.target
 ```
 
-Once this file is created, run `systemctl --user enable raspotify.service` to 
-register and start the service.
+Once this file is created, run 
+`sudo systemctl disable --now raspotify.service` to disable the system service and
+`systemctl --user enable --now raspotify.service` to register and start the user service.
 
 At this point, Raspotify should play via whatever audio device is configured 
 using the PulseAudio Volume Control on Raspberry Pi Desktop Panel. 
