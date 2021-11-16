@@ -71,9 +71,12 @@ Essentially, here's what the easy installer does,
 # Install curl and https apt transport
 sudo apt-get -y install curl apt-transport-https
 
-# Add repo and its GPG key
-curl -sSL https://dtcooper.github.io/raspotify/key.asc | sudo apt-key add -v -
-echo 'deb https://dtcooper.github.io/raspotify raspotify main' | sudo tee /etc/apt/sources.list.d/raspotify.list
+# Add the raspotify key to the keyring
+curl -sSL https://dtcooper.github.io/raspotify/key.asc | sudo tee /usr/share/keyrings/raspotify_key.asc  > /dev/null
+sudo chmod 644 /usr/share/keyrings/raspotify_key.asc
+
+# Create the apt repo
+echo 'deb [signed-by=/usr/share/keyrings/raspotify_key.asc] https://dtcooper.github.io/raspotify raspotify main' | sudo tee /etc/apt/sources.list.d/raspotify.list
 
 # Install package
 sudo apt-get update
