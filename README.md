@@ -287,7 +287,6 @@ There should be a built Debian package (a `.deb` file) in your project directory
 Have you tried turning the volume up using the command `alsamixer`?
 If you still don't get satisfactory results, try adding `--normalisation-pregain 2`
 to VOLUME_ARGS in the configuration file to increase the initial volume.
-The supplied value is measured in dB, so increasing it by 20 increases the volume by a factor of 10.
 
 > *My Raspberry Pi does not use my USB sound card!*
 
