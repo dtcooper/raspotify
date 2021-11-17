@@ -4,12 +4,12 @@ _**A [Spotify Connect](https://www.spotify.com/connect/) client for Raspberry Pi
 that Just Works™**_ *(Premium account required)*
 
 More precisely Raspotify is a
-[Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_\(file_format\)) for [Raspberry Pi OS](https://www.raspberrypi.org/downloads/raspbian/)
+[Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_\(file_format\)) for [Raspberry Pi OS lite](https://www.raspberrypi.org/downloads/raspbian/)
 which thinly wraps the awesome
 [librespot](https://github.com/librespot-org/librespot) library by
-[Paul Lietar](https://github.com/plietar) and others up.
+[Paul Lietar](https://github.com/plietar) and others up as a [systemd](https://en.wikipedia.org/wiki/Systemd) [daemon](https://en.wikipedia.org/wiki/Daemon_(computing)) that can easily installed on [Raspberry Pi's](https://www.raspberrypi.com/products).
 
-Raspotify should work on _any_ Pi but it has been tested on:
+Raspotify is primarily intended to be used in a _[headless enviroment](https://en.wikipedia.org/wiki/Headless_software) (Raspberry Pi OS lite)_ and has been verified to work on:
 
 * Raspberry Pi (v1) model B
 * Raspberry Pi Zero
@@ -18,6 +18,7 @@ Raspotify should work on _any_ Pi but it has been tested on:
 * Raspberry Pi 4
 * Orange Pi Zero LTS with Expansion board (for the 3.5mm jack)
 
+_For Desktop versions Raspberry Pi OS [spotifyd](https://spotifyd.github.io/spotifyd/installation/Raspberry-Pi.html) offers similar functionality, much better PulseAudio compatibility and is a better choice._
 
 ## Installation
 
@@ -29,7 +30,6 @@ curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
 
 That's it! Plug a speaker into your Pi on your local network, select the device
 in Spotify et voilà!
-
 
 _**The hard way**_
 
