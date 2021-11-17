@@ -9,12 +9,10 @@ fi
 
 if ! id raspotify >/dev/null 2>&1; then
     adduser --system --disabled-password --disabled-login \
-        --home /var/cache/raspotify --ingroup raspotify raspotify
-fi
+        --no-create-home --ingroup raspotify raspotify
 
-mkdir -m 0755 -p /var/cache/raspotify
-chown raspotify:raspotify /var/cache/raspotify
-adduser raspotify audio
+    adduser raspotify audio
+fi
 
 # Make sure `--linear-volume' is properly renamed
 if [ -f /etc/default/raspotify ]; then
