@@ -22,7 +22,7 @@ jobs:
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         days-before-stale: 366
-        operations-per-run: 600
+        operations-per-run: 2000
         stale-issue-message: 'This issue is over a year old and has been marked as stale. It will closed in 7 days if there is no activity.'
         close-issue-message: 'This issue has been closed due to lack of activity.'
         stale-pr-message: 'This pull request is over a year old and has been marked as stale. It will closed in 7 days if there is no activity.'
