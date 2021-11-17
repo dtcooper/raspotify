@@ -18,7 +18,7 @@ Raspotify is primarily intended to be used in a _[headless enviroment](https://e
 * Raspberry Pi 4
 * Orange Pi Zero LTS with Expansion board (for the 3.5mm jack)
 
-_For desktop versions of Raspberry Pi OS [spotifyd](https://spotifyd.github.io/spotifyd/installation/Raspberry-Pi.html) offers similar functionality, much better PulseAudio compatibility and is a better choice._
+_For desktop versions of Raspberry Pi OS (and/or systems with PulseAudio installed) [spotifyd](https://spotifyd.github.io/spotifyd/installation/Raspberry-Pi.html) offers similar functionality, much better PulseAudio compatibility and is a better choice._
 
 ## Installation
 
