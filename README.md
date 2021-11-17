@@ -1,14 +1,13 @@
 # Raspotify
 
-_**A [Spotify Connect](https://www.spotify.com/connect/) client for
-[Raspberry Pi OS](https://www.raspberrypi.org/downloads/raspbian/) on the Raspberry Pi
-that Just Works™.**_ 
+_**A [Spotify Connect](https://www.spotify.com/connect/) client for Raspberry Pi's
+that Just Works™**_ *(Premium account required)*
 
 More precisely Raspotify is a
-[Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_\(file_format\))
+[Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_\(file_format\)) for [Raspberry Pi OS](https://www.raspberrypi.org/downloads/raspbian/)
 which thinly wraps the awesome
 [librespot](https://github.com/librespot-org/librespot) library by
-[Paul Lietar](https://github.com/plietar) and others.
+[Paul Lietar](https://github.com/plietar) and others up.
 
 Raspotify should work on _any_ Pi but it has been tested on:
 
