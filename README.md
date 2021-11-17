@@ -20,6 +20,8 @@ Raspotify is primarily intended to be used in a _[headless enviroment](https://e
 
 _For desktop versions of Raspberry Pi OS (and/or systems with PulseAudio installed) [spotifyd](https://spotifyd.github.io/spotifyd/installation/Raspberry-Pi.html) offers similar functionality, much better PulseAudio compatibility and is a better choice._
 
+If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify Connect support we recommend [moOde™ audio player](https://moodeaudio.org/).
+
 ## Installation
 
 _**The easy way**_
