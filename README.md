@@ -56,6 +56,10 @@ here ([`raspotify-latest.deb`](https://dtcooper.github.io/raspotify/raspotify-la
 
 _**Don't forget to checkout the [wiki](https://github.com/dtcooper/raspotify/wiki) for tips, tricks and configuration info!!!**_
 
+## Bug Reports and Feature Requests
+
+As stated above Raspotify is just a package. The actual program that's run by the service is [librespot](https://github.com/librespot-org/librespot). Unless it's a packaging issue or a basic confguration question this is the wrong place to file your bug reports and/or feature requests.
+
 ## Donations
 
 If you're so inclined, Bitcoin my address is `1PoDcAStyJoB7zZz2mny4KjtjiEu8S44ns`. :)
