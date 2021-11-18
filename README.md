@@ -22,6 +22,12 @@ _For desktop versions of Raspberry Pi OS (and/or systems with PulseAudio install
 
 If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify Connect support we recommend [moOde™ audio player](https://moodeaudio.org/).
 
+## Aarch64
+
+64bit packages are not provided and installing on 64bit systems is not _officially_ supported but is possible.
+
+**Pull Requests are welcome to add Aarch64 and x86-64 builds.**  
+
 ## Installation
 
 _**The easy way**_
