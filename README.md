@@ -68,7 +68,7 @@ _**Don't forget to checkout the [wiki](https://github.com/dtcooper/raspotify/wik
 
 As stated above Raspotify is just a package. The actual program that's run by the service is [librespot](https://github.com/librespot-org/librespot). Unless it's a packaging issue or a basic confguration question this is the wrong place to file your bug reports and/or feature requests.
 
-**Only the most current version of Raspberry Pi OS lite is supported (_currently Bullseye_).** Raspotify may work on other OS's and/or otherRaspberry Pi OS version but bugs to do with compatibility issues in unsupported systems will be closed. 
+**Only the most current version of Raspberry Pi OS lite is supported (_currently Bullseye_).** Raspotify may work on other OS's and/or other Raspberry Pi OS version but bugs to do with compatibility issues in unsupported systems will be closed. 
 
 ## Donations
 
