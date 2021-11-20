@@ -60,7 +60,6 @@ apt-deploy: apt apt-deploy-warning
 	cp -v README.md LICENSE install.sh apt-repo
 	cd apt-repo && git add -A
 	cd apt-repo && git commit -m "Update gh-pages apt repository (release)"
-# 	# Force push, overwriting gh-pages branch chomping previous versions.
-	cd apt-repo && git push -f origin gh-pages
+	cd apt-repo && git push origin gh-pages
 
 all: raspotify_*.deb
