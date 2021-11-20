@@ -4,12 +4,12 @@ _**A [Spotify Connect](https://www.spotify.com/connect/) client for Raspberry Pi
 that Just Works™**_ *(Premium account required)*
 
 More precisely Raspotify is a
-[Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_\(file_format\)) for [Raspberry Pi OS lite](https://www.raspberrypi.org/downloads/raspbian/)
+[Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_\(file_format\)) for [Raspberry Pi OS lite (Bullseye)](https://www.raspberrypi.org/downloads/raspbian/)
 which thinly wraps the awesome
 [librespot](https://github.com/librespot-org/librespot) library by
 [Paul Lietar](https://github.com/plietar) and others up as a [systemd](https://en.wikipedia.org/wiki/Systemd) [daemon](https://en.wikipedia.org/wiki/Daemon_(computing)) that can be easily installed on [Raspberry Pi's](https://www.raspberrypi.com/products).
 
-Raspotify is primarily intended to be used in a _[headless enviroment](https://en.wikipedia.org/wiki/Headless_computer) (Raspberry Pi OS lite)_ and has been verified to work on:
+Raspotify is primarily intended to be used in a _[headless enviroment](https://en.wikipedia.org/wiki/Headless_computer) (Raspberry Pi OS lite Bullseye)_ and has been verified to work on:
 
 * Raspberry Pi (v1) model B
 * Raspberry Pi Zero
@@ -67,6 +67,8 @@ _**Don't forget to checkout the [wiki](https://github.com/dtcooper/raspotify/wik
 ## Bug Reports and Feature Requests
 
 As stated above Raspotify is just a package. The actual program that's run by the service is [librespot](https://github.com/librespot-org/librespot). Unless it's a packaging issue or a basic confguration question this is the wrong place to file your bug reports and/or feature requests.
+
+**Only the most current version of Raspberry Pi OS lite is supported (_currently Bullseye_).** Raspotify may work on other OS's and/or otherRaspberry Pi OS version but bugs to do with compatibility issues in unsupported systems will be closed. 
 
 ## Donations
 
