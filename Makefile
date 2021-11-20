@@ -59,7 +59,7 @@ apt-deploy: apt apt-deploy-warning
 	gpg --armor --export "$(APT_GPG_KEY)" > apt-repo/key.asc
 	cp -v README.md LICENSE install.sh apt-repo
 	cd apt-repo && git add -A
-	cd apt-repo && git commit --amend -C HEAD --reset-author
+	cd apt-repo && git commit -m "Update gh-pages apt repository (release)"
 # 	# Force push, overwriting gh-pages branch chomping previous versions.
 	cd apt-repo && git push -f origin gh-pages
 
