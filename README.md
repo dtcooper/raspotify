@@ -70,13 +70,6 @@ As stated above Raspotify is just a package. The actual program that's run by th
 
 **Only the most current version of Raspberry Pi OS lite is supported (_currently Bullseye_).** Raspotify may work on other OS's and/or other Raspberry Pi OS version but bugs to do with compatibility issues in unsupported systems will be closed. 
 
-## Donations
-
-If you're so inclined, Bitcoin my address is `1PoDcAStyJoB7zZz2mny4KjtjiEu8S44ns`. :)
-
-(I'd rather you donate to [librespot](https://github.com/librespot-org/librespot)
-instead, but there's no public address for those folks.)
-
 ## Disclaimer
 
 Per librespot's disclaimer, using librespot &mdash; the underlying library behind
@@ -90,10 +83,19 @@ file for details.
 
 ## Acknowledgments
 
-Special thanks to [Paul Lietar](https://github.com/plietar),  [librespot org](https://github.com/librespot-org) and it's many contributors for 
-[librespot](https://github.com/librespot-org/librespot),
+Special thanks to [Paul Lietar](https://github.com/plietar), [librespot org](https://github.com/librespot-org)
+and its many contributors for [librespot](https://github.com/librespot-org/librespot),
 which Raspotify packages. Without [librespot](https://github.com/librespot-org/librespot),
 Raspotify would simply not exist.
+
+### 📻 _"And Now, For Something Completely Different!"_ 🎙️
+
+Raspotify's author [David Cooper](https://jew.pizza/) has abandoned being a software
+engineer to pursue a career as a radio personality. If you find Raspotify useful, you
+can support him by checking out his [radio work here](https://jew.pizza/).
+
+On a related note, [@JasonLG1979](https://github.com/JasonLG1979) has become the
+de-facto maintainer of the project. So an additional thank you to him as well.
 
 ## Final Note
 
