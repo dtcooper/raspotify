@@ -1,5 +1,9 @@
 # /etc/default/raspotify -- Arguments/configuration for librespot
 
+# Please see https://github.com/dtcooper/raspotify/wiki &
+# https://github.com/librespot-org/librespot/wiki/Options
+# for configuration details and a full list of options and flags.
+
 # Device name on Spotify Connect
 #DEVICE_NAME="raspotify"
 
