@@ -4,10 +4,8 @@ Documentation=https://github.com/dtcooper/raspotify
 Documentation=https://github.com/librespot-org/librespot
 Documentation=https://github.com/dtcooper/raspotify/wiki
 Documentation=https://github.com/librespot-org/librespot/wiki/Options
-Requires=network.target
-After=network.target
-Requires=sound.target
-After=sound.target
+Wants=network.target sound.target
+After=network.target sound.target
 
 [Service]
 User=raspotify
@@ -32,7 +30,6 @@ ProtectSystem=strict
 ProtectClock=yes
 
 DevicePolicy=strict
-
 DeviceAllow=char-alsa rw
 DeviceAllow=/dev/null r
 DeviceAllow=/dev/random r
@@ -40,7 +37,6 @@ DeviceAllow=/dev/urandom r
 
 UMask=077
 CacheDirectory=raspotify
-ReadWritePaths=/var/cache/raspotify
 
 PrivateTmp=true
 PrivateUsers=true
