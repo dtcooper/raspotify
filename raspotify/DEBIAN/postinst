@@ -2,18 +2,6 @@
 
 set -e
 
-
-if ! getent group raspotify >/dev/null 2>&1; then
-    addgroup --system raspotify
-fi
-
-if ! id raspotify >/dev/null 2>&1; then
-    adduser --system --disabled-password --disabled-login \
-        --no-create-home --ingroup raspotify raspotify
-
-    adduser raspotify audio
-fi
-
 # Make sure `--linear-volume' is properly renamed
 if [ -f /etc/default/raspotify ]; then
     sed -i 's/--linear-volume/--volume-ctrl linear/' /etc/default/raspotify

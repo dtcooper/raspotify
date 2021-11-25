@@ -8,12 +8,14 @@ Wants=network.target sound.target
 After=network.target sound.target
 
 [Service]
+DynamicUser=yes
 User=raspotify
-Group=raspotify
+SupplementaryGroups=audio
 
 Restart=always
 RestartSec=10
 
+# Some of these may be implied by DynamicUser=yes
 RestrictRealtime=true
 RestrictSUIDSGID=true
 RestrictNamespaces=true

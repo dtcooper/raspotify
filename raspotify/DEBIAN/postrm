@@ -19,6 +19,10 @@ if [ "$1" = "purge" ]; then
     deluser --force raspotify || true
     delgroup --force raspotify >/dev/null 2>&1 || true
     rm -rf /var/cache/raspotify
+    # Delete the service file
+    rm -rf /etc/systemd/system/raspotify.service
+    # Delete any drop-in overrides.
+    rm -rf /etc/systemd/system/raspotify.service.d
 fi
 
 if [ -d /run/systemd/system ]; then
