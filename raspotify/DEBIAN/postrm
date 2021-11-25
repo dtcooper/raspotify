@@ -16,7 +16,7 @@ if [ "$1" = "purge" ]; then
         deb-systemd-helper unmask raspotify.service >/dev/null
     fi
 
-    deluser --force raspotify || true
+    deluser --force raspotify >/dev/null 2>&1 || true
     delgroup --force raspotify >/dev/null 2>&1 || true
     rm -rf /var/cache/raspotify
     # Delete the service file
