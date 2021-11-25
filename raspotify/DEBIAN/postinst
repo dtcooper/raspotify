@@ -2,6 +2,11 @@
 
 set -e
 
+# Secure the config file, there may be credentials in there
+if [ "$1" = "configure" ]; then
+    chmod 600 /etc/default/raspotify -f
+fi
+
 # Make sure `--linear-volume' is properly renamed
 if [ -f /etc/default/raspotify ]; then
     sed -i 's/--linear-volume/--volume-ctrl linear/' /etc/default/raspotify
