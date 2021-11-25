@@ -37,6 +37,7 @@ DeviceAllow=/dev/random r
 DeviceAllow=/dev/urandom r
 
 UMask=077
+CacheDirectoryMode=0700
 CacheDirectory=raspotify
 
 PrivateTmp=true
@@ -65,6 +66,9 @@ Environment="DEVICE_TYPE=speaker"
 
 ConfigurationDirectory=default
 EnvironmentFile=-/etc/default/raspotify
+
+NoExecPaths=/
+ExecPaths=/usr/bin/librespot
 
 ExecStart=/usr/bin/librespot --name ${DEVICE_NAME} --device-type ${DEVICE_TYPE} $BACKEND_ARGS --bitrate ${BITRATE} $CACHE_ARGS $VOLUME_ARGS $OPTIONS
 
