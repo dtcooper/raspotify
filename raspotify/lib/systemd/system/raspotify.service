@@ -9,7 +9,6 @@ After=network.target sound.target
 
 [Service]
 DynamicUser=yes
-User=raspotify
 SupplementaryGroups=audio
 
 Restart=always
