@@ -67,9 +67,6 @@ Environment="DEVICE_TYPE=speaker"
 ConfigurationDirectory=default
 EnvironmentFile=-/etc/default/raspotify
 
-NoExecPaths=/
-ExecPaths=/usr/bin/librespot
-
 ExecStart=/usr/bin/librespot --name ${DEVICE_NAME} --device-type ${DEVICE_TYPE} $BACKEND_ARGS --bitrate ${BITRATE} $CACHE_ARGS $VOLUME_ARGS $OPTIONS
 
 [Install]
