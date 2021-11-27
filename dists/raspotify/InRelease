@@ -2,34 +2,34 @@
 Hash: SHA512
 
 Codename: raspotify
-Date: Fri, 19 Nov 2021 20:40:45 UTC
+Date: Sat, 27 Nov 2021 05:09:44 UTC
 Architectures: armhf
 Components: main
 MD5Sum:
- 3dc1936dd59d05feccde61587008a7c2 605 main/binary-armhf/Packages
- 35b028ba124983eb361a2d4497ea8c5e 426 main/binary-armhf/Packages.gz
+ cf08b5a34693f8bcccd4054412351af8 605 main/binary-armhf/Packages
+ 1f7ce4d2192a0354293f95caf20ad82c 425 main/binary-armhf/Packages.gz
  12961a515ba3ee17d1840d76faa90087 36 main/binary-armhf/Release
 SHA1:
- d2c068ea25f9556c26ab8d845793c880b841b0e6 605 main/binary-armhf/Packages
- 44a84d104f422152e2a6b43811bf96030888bd47 426 main/binary-armhf/Packages.gz
+ b9ec2895013473079b9262e663a298b07dd7ab0f 605 main/binary-armhf/Packages
+ 2f3933513eaf7b087eddc47f8ecc8f7462090ada 425 main/binary-armhf/Packages.gz
  4922cd1d17e2d85529687db8f44c58948bc42f94 36 main/binary-armhf/Release
 SHA256:
- a2419194e09742e2e527027a2d1f5426d15f358a5a5b519578040433ff604e42 605 main/binary-armhf/Packages
- 2df63d51592f6febfaf585175a50b999bc120a81c8deedea1951431c82fcef07 426 main/binary-armhf/Packages.gz
+ 56cc54b6cb018271b67c08011c4b1626dd1cedeb992f2d0ab41fc8812aac3b7c 605 main/binary-armhf/Packages
+ 31032bfd6030c978afd3aac14b6b7430416e4dd984aedfb5b45e2fa34deafa49 425 main/binary-armhf/Packages.gz
  adaec1ced8009abfb20fa51310087da3b7332d5f3b2c5edfda188ddffe634677 36 main/binary-armhf/Release
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEELMm4D1rit6zv8royCRRvL3lTpFUFAmGYC84ACgkQCRRvL3lT
-pFW2cA/+I8C5u3DFS+dw9LJTAT9+ou+6n8MhPlVw0L73MlwYeo7mdIGixq+CZXWM
-rPGwm+JFhpajpihCfU94yn0hJKw23ONmoLQk3H9UVewWpLQv+Yuigp0NtJ38IFnd
-sGNdTPcaHCG+xbiLKvxv2/bWr+uVRIx17TSwqqRK+Ox4uvrDduVCmntDNjPUZqqz
-VQhtsl+BoOavqN5orZcAP6T5eWjHgIchJTTUBP+8JYu7fYhGHJ08TPEHGeqdWdeA
-wpxbTby6u8tAckBgtxhhLoGIZ/eAFuTdynMmibuWrFOYvVm02PZwXWc105DN/cwC
-ob/a1XplfxdVa4wiRdQEfWSTSPhSvaKYqXHbHxZyLbR6lDhN8IFq30X+mvUeOmb9
-yD5xFrdY1wzlhGUv5fD+87cXXupYw860GqYbKk/3YEr1ocDsveCeUHS73BWJ5Aei
-jUrOjmycSZZRdslRxIPvs54M756V07yApUOU4GZZj+Rj023EDj3dz7Rt8Dw06JnK
-U5F0h5pKonXjaFYbDu6nKXJnziWl9uKyd05cYNMF0daYxJM3UHKcEuYat/ql7zUz
-Q5kBWR4XQTNKm53ZTvimq/H0rRFePvclYEIQ1fWPbI5eCMjhIjg9/bQwDf+LDrD4
-bl2CmlSX33ZRPgJCtMLpBPs0tKsejqJxwsB0nHXpvKYS4vNF2Tg=
-=6URQ
+iQIzBAEBCgAdFiEELMm4D1rit6zv8royCRRvL3lTpFUFAmGhvZgACgkQCRRvL3lT
+pFV3xA//a2qN+ZN11AQq8hvvpSCPfQtnsYjZxMFcPT6MvRVOBZbhwvNCQ7LpIRjj
+XfN0h7jjcXRvwZeOWcxZaV4HQqlAftyI9Re4hNKh3kZrMl3ln4moqiz5gOYQFkXo
+c/oB97xzQpLi9mXVM7ZZAVf8S4LlBDrmPsrJfbo8p44tIXLDGf0XW1XdNFjy1RkH
+PEe4mJovGKX+vXxyEiPrTXzn1OiURh3Xmdzjv+3vMzUINjDbpp5sF0rwdJuMulLj
+lDYzbvbgg+4oVpP5M1WQeVnWkK2pArpsipCUmYBuHu46b2k/aXlTJNNUDOYw2/1R
+Btft57iC4L06vhZuuk+z4HWqQZKlqCznElKWu+lB2cEBjh0Kd5CxwjIPnzimtPs0
+dl3NOSlfpv4wKGOoftNfeHsdvuNkJ3l1hxJUJ7rTyth25yiROwMqsRlcDXWKGQGJ
+yNxcfOnhd9fMULQZP5aLmslJ+DcQNOa2m5xr/SFQC8U6N5EChs/3qNseBlIIiZ2d
+LUW0Ku6dwuTXRaUETWVMBmpWCGs20cf3nR06680Lq405U7ejOf1iBSVT6U4Dox0V
+gem5tM1j1uh0wmU7y5KwpkKQb5pPXs5miy7sXvkHxHukHqDlUolGhus59hoRia7o
+Ij62EN5zQh9JlVqloLFGB1MmXgNAE8le3fXNP5tDdwUE719Z3xo=
+=qdPe
 -----END PGP SIGNATURE-----
