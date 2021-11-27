@@ -1,0 +1,97 @@
+name: Tag Automation
+on:
+  issues:
+    types:
+      - labeled
+jobs:
+  close-read-the-field-manual:
+    if: github.event.label.name == 'read-the-field-manual'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Close read-the-field-manual
+        uses: peter-evans/close-issue@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          comment: |
+            This question or issue can probably be easily answered or resolved by reading the docs/wiki.
+  comment-unreleased-fix:
+    if: github.event.label.name == 'unreleased-fix'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Comment unreleased-fix
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            The fix has been pushed to master and will appear in a release soon.
+  close-unsupported-os:
+    if: github.event.label.name == 'unsupported-os'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Close unsupported-os
+        uses: peter-evans/close-issue@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          comment: |
+            The OS referenced is unsupported.
+  comment-upstream:
+    if: github.event.label.name == 'upstream'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Comment upstream
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            This is an upstream issue. You should file an issue with librespot.
+  close-invalid:
+    if: github.event.label.name == 'invalid'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Close invalid
+        uses: peter-evans/close-issue@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          comment: |
+            This issue is invalid.
+  comment-out-of-scope:
+    if: github.event.label.name == 'out-of-scope'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Comment out-of-scope
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            This issue/bug/feature request is out of scope of the Raspotify project.
+  close-wontfix:
+    if: github.event.label.name == 'wontfix'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Close wontfix
+        uses: peter-evans/close-issue@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          comment: |
+            This issue has been marked wontfix and may not be a bug at all.
