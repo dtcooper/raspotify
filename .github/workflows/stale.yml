@@ -21,12 +21,12 @@ jobs:
     - uses: actions/stale@v3
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
-        days-before-stale: 366
+        days-before-stale: 90
         operations-per-run: 2000
         exempt-issue-labels: help-wanted, bug, packaging-bug
-        stale-issue-message: 'This issue is over a year old and has been marked as stale. It will closed in 7 days if there is no activity.'
+        stale-issue-message: 'This issue has been marked as stale. It will closed in 7 days if there is no activity.'
         close-issue-message: 'This issue has been closed due to lack of activity.'
-        stale-pr-message: 'This pull request is over a year old and has been marked as stale. It will closed in 7 days if there is no activity.'
+        stale-pr-message: 'This pull request has been marked as stale. It will closed in 7 days if there is no activity.'
         close-pr-message: 'This pull request has been closed due to lack of activity.'
         stale-issue-label: 'stale-issue'
         stale-pr-label: 'stale-pr'
