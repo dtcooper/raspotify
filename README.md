@@ -92,7 +92,8 @@ Raspotify would simply not exist.
 
 Raspotify's author [David Cooper](https://jew.pizza/) has abandoned being a software
 engineer to pursue a career as a radio personality. If you find Raspotify useful, you
-can support him by checking out his [radio work here](https://jew.pizza/).
+can support him by checking out his [radio work here](https://jew.pizza/) or
+[give him a follow on Twitter](https://dtcooper.com/dtcooper).
 
 On a related note, [@JasonLG1979](https://github.com/JasonLG1979) has become the
 de-facto maintainer of the project. So an additional thank you to him as well.
