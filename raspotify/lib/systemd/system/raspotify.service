@@ -38,7 +38,11 @@ DeviceAllow=/dev/urandom r
 
 UMask=077
 CacheDirectoryMode=0700
-CacheDirectory=raspotify
+CacheDirectory=%N
+StateDirectoryMode=0700
+StateDirectory=%N
+ConfigurationDirectoryMode=0600
+ConfigurationDirectory=%N
 
 PrivateTmp=true
 PrivateUsers=true
@@ -57,17 +61,13 @@ SystemCallFilter=@system-service
 SystemCallFilter=~@privileged @resources
 SystemCallErrorNumber=EPERM
 
-Environment="DEVICE_NAME=Raspotify (%H)"
-Environment="BITRATE=160"
-Environment="CACHE_ARGS=--disable-audio-cache"
-Environment="VOLUME_ARGS=--enable-volume-normalisation --volume-ctrl linear --initial-volume 100"
-Environment="BACKEND_ARGS=--backend alsa"
-Environment="DEVICE_TYPE=speaker"
+Environment=LIBRESPOT_NAME="%N (%H)"
+Environment=LIBRESPOT_CACHE=%C/%N
+Environment=LIBRESPOT_SYSTEM_CACHE=%S/%N
 
-ConfigurationDirectory=default
-EnvironmentFile=-/etc/default/raspotify
+EnvironmentFile=-%E/%N/conf
 
-ExecStart=/usr/bin/librespot --name ${DEVICE_NAME} --device-type ${DEVICE_TYPE} $BACKEND_ARGS --bitrate ${BITRATE} $CACHE_ARGS $VOLUME_ARGS $OPTIONS
+ExecStart=/usr/bin/librespot
 
 [Install]
 WantedBy=multi-user.target
