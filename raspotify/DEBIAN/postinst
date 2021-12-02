@@ -2,46 +2,11 @@
 
 set -e
 
-# Secure the config file, there may be credentials in there
-if [ -f /etc/default/raspotify ]; then
-    chmod 600 /etc/default/raspotify -f
-    chown root:root /etc/default/raspotify -f
+# Secure the config, there may be credentials in there
+if [ -d /etc/raspotify ]; then
+    chmod 600 /etc/raspotify -Rf
+    chown root:root /etc/raspotify -Rf
 fi
-
-# Make sure `--linear-volume' is properly renamed
-if [ -f /etc/default/raspotify ]; then
-    sed -i 's/--linear-volume/--volume-ctrl linear/' /etc/default/raspotify
-fi
-
-if [ -f /etc/systemd/system/raspotify.service ]; then
-    sed -i 's/--linear-volume/--volume-ctrl linear/' /etc/systemd/system/raspotify.service
-fi
-
-# Rename deprecated option names
-if [ -f /etc/default/raspotify ]; then
-    sed -i 's/--mixer-card/--alsa-mixer-device/' /etc/default/raspotify
-fi
-
-if [ -f /etc/systemd/system/raspotify.service ]; then
-    sed -i 's/--mixer-card/--alsa-mixer-device/' /etc/systemd/system/raspotify.service
-fi
-
-if [ -f /etc/default/raspotify ]; then
-    sed -i 's/--mixer-index/--alsa-mixer-index/' /etc/default/raspotify
-fi
-
-if [ -f /etc/systemd/system/raspotify.service ]; then
-    sed -i 's/--mixer-index/--alsa-mixer-index/' /etc/systemd/system/raspotify.service
-fi
-
-if [ -f /etc/default/raspotify ]; then
-    sed -i 's/--mixer-name/--alsa-mixer-name/' /etc/default/raspotify
-fi
-
-if [ -f /etc/systemd/system/raspotify.service ]; then
-    sed -i 's/--mixer-name/--alsa-mixer-name/' /etc/systemd/system/raspotify.service
-fi
-
 
 # Based off what debhelper would have added
 
