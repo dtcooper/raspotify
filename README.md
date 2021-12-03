@@ -108,7 +108,7 @@ can support him by checking out his [radio work here](https://jew.pizza/) or
 On a related note, [@JasonLG1979](https://github.com/JasonLG1979) has become the
 de-facto maintainer of the project. So an additional thank you to him as well.
 
-If you'd like to buy Jason a Red Bull you can [:heart: Sponsor Him](https://github.com/sponsors/JasonLG1979).
+If you'd like to buy Jason a Red Bull you can [❤️ Sponsor Him](https://github.com/sponsors/JasonLG1979).
 
 ## Final Note
 
