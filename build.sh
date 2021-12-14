@@ -33,10 +33,11 @@ fi
 cd librespot
 LIBRESPOT_GIT_VER="$(git describe --tags --always --dirty 2>/dev/null || echo unknown)"
 
-# Build librespot
-sed -i "s/\(librespot\)\( {} ({})\. Built on {}\. Build ID: {}\)/\1 (raspotify v$RASPOTIFY_GIT_VER)\2/" src/main.rs
-sed -i 's/librespot\(_{}_{}\)/raspotify\1/' core/src/connection/mod.rs
+# These lines don't work anymore anyway...
+#sed -i "s/\(librespot\)\( {} ({})\. Built on {}\. Build ID: {}\)/\1 (raspotify v$RASPOTIFY_GIT_VER)\2/" src/main.rs
+#sed -i 's/librespot\(_{}_{}\)/raspotify\1/' core/src/connection/mod.rs
 
+# Build librespot
 cargo build --release --target arm-unknown-linux-gnueabihf --no-default-features --features alsa-backend
 
 # Copy librespot to pkg root
