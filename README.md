@@ -24,7 +24,7 @@ If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify C
 
 # Migration from version <= 0.31.3 to 0.31.4+
 
-⚠️ _**The upcomming 0.31.4 release will introduce breaking changes to the Raspotify Package!!!**_ ⚠️
+⚠️ _**Version 0.31.4 introduces breaking changes to the Raspotify Package!!!**_ ⚠️
 
 Please see the [wiki for details](https://github.com/dtcooper/raspotify/wiki/Migration-from-older-versions-to-0.31.4-and-beyond).
 
