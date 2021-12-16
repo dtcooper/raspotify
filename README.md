@@ -28,7 +28,7 @@ If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify C
 
 Please see the [wiki for details](https://github.com/dtcooper/raspotify/wiki/Migration-from-older-versions-to-0.31.4-and-beyond).
 
-The short version is that you'll need to `sudo apt purge raspotify` and `sudo apt install raspotfy` to make sure Raspotify is not left in a broken state if you're upgrading to 0.31.4.
+The short version is that you'll need to `sudo apt purge raspotify` and `sudo apt install raspotify` to make sure Raspotify is not left in a broken state if you're upgrading to 0.31.4.
 
 If you've installed Raspotify after that version there's nothing to see here move along.
 
