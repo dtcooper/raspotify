@@ -22,6 +22,16 @@ _For desktop versions of Raspberry Pi OS (and/or systems with PulseAudio install
 
 If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify Connect support we recommend [moOde™ audio player](https://moodeaudio.org/).
 
+# Migration from version <= 0.31.3 to 0.31.4+
+
+⚠️ _**Version 0.31.4 introduces breaking changes to the Raspotify Package!!!**_ ⚠️
+
+Please see the [wiki for details](https://github.com/dtcooper/raspotify/wiki/Migration-from-older-versions-to-0.31.4-and-beyond).
+
+The short version is that you'll need to `sudo apt purge raspotify` and `sudo apt install raspotify` to make sure Raspotify is not left in a broken state if you're upgrading to 0.31.4.
+
+If you've installed Raspotify after that version there's nothing to see here move along.
+
 ## Aarch64
 
 64bit packages are not provided and installing on 64bit systems is not _officially_ supported but is possible.
@@ -98,7 +108,7 @@ can support him by checking out his [radio work here](https://jew.pizza/) or
 On a related note, [@JasonLG1979](https://github.com/JasonLG1979) has become the
 de-facto maintainer of the project. So an additional thank you to him as well.
 
-If you'd like to buy Jason a Red Bull you can [:heart: Sponsor Him](https://github.com/sponsors/JasonLG1979).
+If you'd like to buy Jason a Red Bull you can [❤️ Sponsor Him](https://github.com/sponsors/JasonLG1979).
 
 ## Final Note
 
