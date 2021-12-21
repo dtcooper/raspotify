@@ -1,0 +1,21 @@
+name: Question
+description: Ask a question about Raspotify
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to ask your question!
+  - type: checkboxes
+    id: due-diligence
+    attributes:
+      label: Due Diligence
+      description: Before asking this question you have made sure to read the README, wiki and seach though the issues (open and closed) 
+      options:
+        - label: I have done my due diligence
+          required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What can we help you with?
+    validations:
+      required: true
