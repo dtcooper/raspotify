@@ -15,13 +15,7 @@ if [ "$1" = "purge" ]; then
         deb-systemd-helper purge raspotify.service >/dev/null
         deb-systemd-helper unmask raspotify.service >/dev/null
     fi
-
-    # This will go away after a couple releases
-    # we don't even create a raspotify user anymore
-    deluser --force raspotify >/dev/null 2>&1 || true
-    delgroup --force raspotify >/dev/null 2>&1 || true
     # Delete any config files
-    rm -rf /etc/default/raspotify
     rm -rf /etc/raspotify
     # Delete any cache files created by systemd
     rm -rf /var/cache/private/raspotify
