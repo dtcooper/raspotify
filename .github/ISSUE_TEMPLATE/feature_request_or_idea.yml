@@ -1,0 +1,30 @@
+name: Feature request or idea
+description: Suggest an improvement to Raspotify
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this feature request!
+  - type: checkboxes
+    id: is-a-package
+    attributes:
+      label: Raspotify is just a package
+      description: Before submitting this feature request you acknowledge that you realize that Raspotify is just a packaged version of librespot
+      options:
+        - label: I know Raspotify is just a package
+          required: true
+  - type: checkboxes
+    id: due-diligence
+    attributes:
+      label: Due Diligence
+      description: Before submitting this feature request you have made sure to read the README, wiki and seach though the issues (open and closed) 
+      options:
+        - label: I have done my due diligence
+          required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What can we do to make Raspotify more awesome?
+      placeholder: Tell us what your idea!
+    validations:
+      required: true
