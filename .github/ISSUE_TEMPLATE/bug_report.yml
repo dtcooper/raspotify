@@ -1,0 +1,46 @@
+name: Bug Report
+description: File a bug report
+title: ""
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: checkboxes
+    id: os-version
+    attributes:
+      label: Compatible OS
+      description: Before submitting this issue you have made sure that you are running Raspotify on Raspberry Pi OS Bullseye (or at least something based on Debian Bulleye or newer)
+      options:
+        - label: I'm running Raspotify on a compatible OS
+          required: true
+  - type: checkboxes
+    id: latest-version
+    attributes:
+      label: Latest Version
+      description: Before submitting this issue you have made sure that you are running the latest version of Raspotify
+      options:
+        - label: I'm running the latest version of Raspotify
+          required: true
+  - type: checkboxes
+    id: due-diligence
+    attributes:
+      label: Due Diligence
+      description: Before submitting this issue you have made sure to read the README, wiki and seach though the issues (open and closed) 
+      options:
+        - label: I have done my due diligence
+          required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Also tell us, what did you expect to happen?
+      placeholder: Tell us what you see!
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      render: shell
