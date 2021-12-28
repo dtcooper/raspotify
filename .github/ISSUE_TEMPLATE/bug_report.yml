@@ -4,7 +4,11 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to fill out this bug report! Please take the time to read the [README](https://github.com/dtcooper/raspotify#readme) & [Wiki](https://github.com/dtcooper/raspotify/wiki)
+        Thank you for taking the time to fill out this bug report.
+
+        Please take the time to read the [README](https://github.com/dtcooper/raspotify#readme), [Wiki](https://github.com/dtcooper/raspotify/wiki) and search though open and closed [isssues](https://github.com/dtcooper/raspotify/issues).
+        
+        **Duplicate and/or issues that can easily be solved by reading said information will be closed with little to no explanation** 
   - type: checkboxes
     id: os-version
     attributes:
