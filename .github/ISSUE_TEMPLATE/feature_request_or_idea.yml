@@ -4,7 +4,11 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to fill out this feature request!
+        Thank you for taking the time to fill out this feature request.
+
+        Please take the time to read the [README](https://github.com/dtcooper/raspotify#readme), [Wiki](https://github.com/dtcooper/raspotify/wiki) and search though open and closed [isssues](https://github.com/dtcooper/raspotify/issues).
+        
+        **Raspotify is a packaged version of [librespot](https://github.com/librespot-org/librespot) if your feature request is not releated to packaging it's most likely out of scope.** 
   - type: checkboxes
     id: is-a-package
     attributes:
