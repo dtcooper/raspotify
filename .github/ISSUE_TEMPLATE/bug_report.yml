@@ -4,7 +4,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to fill out this bug report!
+        Thanks for taking the time to fill out this bug report! Please take the time to read the [README](https://github.com/dtcooper/raspotify#readme) & [Wiki](https://github.com/dtcooper/raspotify/wiki)
   - type: checkboxes
     id: os-version
     attributes:
