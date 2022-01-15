@@ -1,0 +1,47 @@
+name: Deploy Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag of release with .deb file asset attached it, for example 0.31.5'
+        required: true
+
+jobs:
+  apt_deploy:
+    runs-on: ubuntu-latest
+    name: Deploy Release
+    env:
+      GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+      GPG_SECRET_KEY_BASE64: ${{ secrets.GPG_SECRET_KEY_BASE64 }}
+      RELEASE_TAG: ${{ github.event.inputs.tag }}
+
+    steps:
+      -
+        name: Checkout repo
+        uses: actions/checkout@v2
+
+      -
+        name: Checkout gh-pages branch
+        uses: actions/checkout@v2
+        with:
+          ref: gh-pages
+          path: apt-repo
+
+      -
+        name: Download .deb file
+        uses: robinraju/release-downloader@v1.3
+        with:
+          repository: dtcooper/raspotify
+          tag: ${{ github.event.inputs.tag }}
+          fileName: "*"
+
+      -
+        name: Install reprepro
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y reprepro
+
+      -
+        name: Create and deploy repo
+        run: ./deploy-apt-repo.sh
