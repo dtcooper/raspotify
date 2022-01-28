@@ -2,12 +2,16 @@ FROM debian:bullseye
 
 ENV INSIDE_DOCKER_CONTAINER 1
 
+RUN dpkg --add-architecture arm64
+
 # Install git and compilers, let's toss gnupg and reprepro in there so we can
 # use this container to make the apt repo as well
 RUN apt-get update \
     && apt-get -y upgrade \
     && apt-get install -y --no-install-recommends \
         build-essential \
+        crossbuild-essential-arm64 \
+        libasound2-dev:arm64 \
         curl \
         git \
         gnupg \

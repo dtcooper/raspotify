@@ -34,9 +34,7 @@ If you've installed Raspotify after that version there's nothing to see here mov
 
 ## Aarch64
 
-64bit packages are not provided and installing on 64bit systems is not _officially_ supported but is possible.
-
-**Pull Requests are welcome to add Aarch64 and x86-64 builds.**  
+64bit packages provided and installing on 64bit systems supported.
 
 ## Installation
 
@@ -69,8 +67,9 @@ sudo apt-get update
 sudo apt-get -y install raspotify
 ```
 
-Or you can just download the latest .deb package and install it manually from
-here ([`raspotify-latest.deb`](https://dtcooper.github.io/raspotify/raspotify-latest.deb)),
+Or you can just download the latest .deb package and install it manually from here:
+* armhf: [`raspotify-latest.deb`](https://dtcooper.github.io/raspoify-latest_armhf.deb)
+* arm64: [`raspotify-latest.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_arm64.deb)
 
 _**Don't forget to checkout the [wiki](https://github.com/dtcooper/raspotify/wiki) for tips, tricks and configuration info!!!**_
 
