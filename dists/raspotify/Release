@@ -1,16 +1,25 @@
 Codename: raspotify
-Date: Sat, 29 Jan 2022 01:37:41 UTC
-Architectures: armhf
+Date: Sat, 29 Jan 2022 03:52:15 UTC
+Architectures: armhf arm64
 Components: main
 MD5Sum:
- 5ae7c5997ff3e25a21ced74a243e9492 596 main/binary-armhf/Packages
- f9e22bacdf13d2074093d049ce3ebda9 421 main/binary-armhf/Packages.gz
+ 03e3f667c9e7a6718680adae51dcbf32 618 main/binary-armhf/Packages
+ 2a25238656254f68ddada450a8015951 429 main/binary-armhf/Packages.gz
  12961a515ba3ee17d1840d76faa90087 36 main/binary-armhf/Release
+ a755a58ab25b2ed51efc3982871572df 618 main/binary-arm64/Packages
+ 0255b48da03162dd13ef7d6ceb152e62 429 main/binary-arm64/Packages.gz
+ e89c28b1abf5bb6bbd1e9a3ebe9fe004 36 main/binary-arm64/Release
 SHA1:
- 49e2db7c9334bdb6ed5031e234ebb2b3713d0149 596 main/binary-armhf/Packages
- e8dc9a885caf4a96168070de587ccc060e113039 421 main/binary-armhf/Packages.gz
+ 4bef053a02ca9511ef9d545d4832cabf28fb92a9 618 main/binary-armhf/Packages
+ 9c2754f7edcc10f9625562e20f0aa4756a814458 429 main/binary-armhf/Packages.gz
  4922cd1d17e2d85529687db8f44c58948bc42f94 36 main/binary-armhf/Release
+ 4dccbc92505371ff9c2413ec3eaf3cd6799e416b 618 main/binary-arm64/Packages
+ 47fbcd43f12dd9e01cd83790a9b54eccf1f608cd 429 main/binary-arm64/Packages.gz
+ 26519fde445e683e74519b33601c3901c8a45e3b 36 main/binary-arm64/Release
 SHA256:
- ac2ca92ad9ddbee021cf5abb8ad583fbf50a3b73f2ea1e3ef39d5213b6161331 596 main/binary-armhf/Packages
- 396fd1dab61358a351c82b7b19f9ee32a59aafb0f76fde8e665c26031a2ed303 421 main/binary-armhf/Packages.gz
+ 4e61aceb5eb0eb8ca1363abbe189bb780c1d033d9935ccad9a303396a89c5901 618 main/binary-armhf/Packages
+ 86e3a9f1ddafba797da8d2cbf900533fd14b7065e18aaa8739eb57fa2f98b3be 429 main/binary-armhf/Packages.gz
  adaec1ced8009abfb20fa51310087da3b7332d5f3b2c5edfda188ddffe634677 36 main/binary-armhf/Release
+ 6160c9033f84a290a9355d2142b29caabd9b0ba3b8cbe5db24610924f4dc641d 618 main/binary-arm64/Packages
+ b40757986adebf1e3b9186978ee7a9b6a8700601d3d7b04d42debc2b6ce454f3 429 main/binary-arm64/Packages.gz
+ 1d2a5a16922021225a06cc93f71f6e6008afdf7049fe22e22d7e98be73c59edf 36 main/binary-arm64/Release
