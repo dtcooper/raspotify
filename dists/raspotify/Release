@@ -1,25 +1,25 @@
 Codename: raspotify
-Date: Sat, 29 Jan 2022 03:52:15 UTC
+Date: Sat, 29 Jan 2022 04:11:59 UTC
 Architectures: armhf arm64
 Components: main
 MD5Sum:
- 03e3f667c9e7a6718680adae51dcbf32 618 main/binary-armhf/Packages
- 2a25238656254f68ddada450a8015951 429 main/binary-armhf/Packages.gz
+ 2c2b502c46e56d989ef7d68e7d5206be 596 main/binary-armhf/Packages
+ 0e63628aabdad53e9778d1e4cb9b590d 419 main/binary-armhf/Packages.gz
  12961a515ba3ee17d1840d76faa90087 36 main/binary-armhf/Release
- a755a58ab25b2ed51efc3982871572df 618 main/binary-arm64/Packages
- 0255b48da03162dd13ef7d6ceb152e62 429 main/binary-arm64/Packages.gz
+ 58e2fddeff605e9e8b1b46abda80b661 596 main/binary-arm64/Packages
+ 71eb6de49f8a08be02eec8e4db19e62a 421 main/binary-arm64/Packages.gz
  e89c28b1abf5bb6bbd1e9a3ebe9fe004 36 main/binary-arm64/Release
 SHA1:
- 4bef053a02ca9511ef9d545d4832cabf28fb92a9 618 main/binary-armhf/Packages
- 9c2754f7edcc10f9625562e20f0aa4756a814458 429 main/binary-armhf/Packages.gz
+ db752496854edaeb0a260baca774795d568555e0 596 main/binary-armhf/Packages
+ e4bfe9f332328e55613b55558a8b10197d995949 419 main/binary-armhf/Packages.gz
  4922cd1d17e2d85529687db8f44c58948bc42f94 36 main/binary-armhf/Release
- 4dccbc92505371ff9c2413ec3eaf3cd6799e416b 618 main/binary-arm64/Packages
- 47fbcd43f12dd9e01cd83790a9b54eccf1f608cd 429 main/binary-arm64/Packages.gz
+ 17fb36b84cc9692419dc15740274ca592460dfbb 596 main/binary-arm64/Packages
+ 7fa17e6b5a3da64f42cb9692e635fd82b41fa4e8 421 main/binary-arm64/Packages.gz
  26519fde445e683e74519b33601c3901c8a45e3b 36 main/binary-arm64/Release
 SHA256:
- 4e61aceb5eb0eb8ca1363abbe189bb780c1d033d9935ccad9a303396a89c5901 618 main/binary-armhf/Packages
- 86e3a9f1ddafba797da8d2cbf900533fd14b7065e18aaa8739eb57fa2f98b3be 429 main/binary-armhf/Packages.gz
+ d4ed1363b1676f9d05febb34f0ef3ea26a21e54a947c401fae521c9d11bb8ad5 596 main/binary-armhf/Packages
+ cec13b341be10538476110f6d293191de39ff08aa777acf1923e93328ddbccac 419 main/binary-armhf/Packages.gz
  adaec1ced8009abfb20fa51310087da3b7332d5f3b2c5edfda188ddffe634677 36 main/binary-armhf/Release
- 6160c9033f84a290a9355d2142b29caabd9b0ba3b8cbe5db24610924f4dc641d 618 main/binary-arm64/Packages
- b40757986adebf1e3b9186978ee7a9b6a8700601d3d7b04d42debc2b6ce454f3 429 main/binary-arm64/Packages.gz
+ be84bdf9ed5e5671e07808da5f5f99e8dfbdd74eb47aa4d115f7e34d8e277d1e 596 main/binary-arm64/Packages
+ 61084b84fd7a20a0ec1309d1beece075a05f61cca63f92d93efab7a4ba3d1c6a 421 main/binary-arm64/Packages.gz
  1d2a5a16922021225a06cc93f71f6e6008afdf7049fe22e22d7e98be73c59edf 36 main/binary-arm64/Release
