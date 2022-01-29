@@ -32,10 +32,6 @@ The short version is that you'll need to `sudo apt purge raspotify` and `sudo ap
 
 If you've installed Raspotify after that version there's nothing to see here move along.
 
-## Aarch64
-
-64bit packages provided and installing on 64bit systems supported.
-
 ## Installation
 
 _**The easy way**_
