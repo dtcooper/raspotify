@@ -11,8 +11,8 @@ which thinly wraps the awesome
 
 Raspotify is primarily intended to be used in a _[headless enviroment](https://en.wikipedia.org/wiki/Headless_computer) (Raspberry Pi OS lite Bullseye)_ and has been verified to work on:
 
-* Raspberry Pi (v1) model B
-* Raspberry Pi Zero
+* ~~Raspberry Pi (v1) model B~~
+* Raspberry Pi Zero * *(Your mileage may vary)*
 * Raspberry Pi 2 model B
 * Raspberry Pi 3 model B and B+
 * Raspberry Pi 4
