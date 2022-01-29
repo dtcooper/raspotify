@@ -29,7 +29,7 @@ if [ "$PREREQ_PACKAGES_TO_INSTALL" ]; then
 fi
 
 # By popular demand, do softer checking for other OS versions
-if uname -a | fgrep -ivq arm; then
+if uname -a | fgrep -ivq -e arm -e aarch64; then
     run_on_pi_only
 fi
 

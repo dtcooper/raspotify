@@ -23,13 +23,21 @@ if [ -z "$RELEASE_TAG" ]; then
     exit 1
 fi
 
-if [ $(ls -1 *.deb | wc -l) -ne 1 ]; then
-    echo 'Exactly one .deb package needs to be in folder.'
+if [ $(ls -1 *_armhf.deb | wc -l) -ne 1 ]; then
+    echo 'Exactly one *_armhf.deb package needs to be in folder.'
     exit 1
 fi
 
-DEB_PKG_NAME="$(ls -1 *.deb | head -n 1)"
-echo "Using package: $DEB_PKG_NAME"
+if [ $(ls -1 *_arm64.deb | wc -l) -ne 1 ]; then
+    echo 'Exactly one *_arm64.deb package needs to be in folder.'
+    exit 1
+fi
+
+ARMHF_DEB_PKG_NAME="$(ls -1 *_armhf.deb | head -n 1)"
+echo "Using package: $ARMHF_DEB_PKG_NAME"
+
+ARM64_DEB_PKG_NAME="$(ls -1 *_arm64.deb | head -n 1)"
+echo "Using package: $ARM64_DEB_PKG_NAME"
 
 echo "Importing gpg key"
 echo "$GPG_SECRET_KEY_BASE64" | base64 -d | gpg --import
@@ -49,17 +57,19 @@ SignWith: $GPG_KEY_ID
 
 Codename: raspotify
 Components: main
-Architectures: armhf
+Architectures: armhf arm64
 SignWith: $GPG_KEY_ID
 EOF
 
-reprepro includedeb jessie "../$DEB_PKG_NAME"
-reprepro includedeb raspotify "../$DEB_PKG_NAME"
+reprepro includedeb jessie "../$ARMHF_DEB_PKG_NAME"
+reprepro includedeb raspotify "../$ARMHF_DEB_PKG_NAME"
+reprepro includedeb raspotify "../$ARM64_DEB_PKG_NAME"
 rm -rf conf db
 
-ln -fs "$(find . -name '*.deb' -type f -printf '%P\n' -quit)" raspotify-latest.deb
+ln -fs "$(find . -name '*_armhf.deb' -type f -printf '%P\n' -quit)" raspotify-latest_armhf.deb
+ln -fs "$(find . -name '*_arm64.deb' -type f -printf '%P\n' -quit)" raspotify-latest_arm64.deb
 
-echo "Repo created in directory apt-repo with package $DEB_PKG_NAME"
+echo "Repo created in directory apt-repo with packages $ARMHF_DEB_PKG_NAME and $ARM64_DEB_PKG_NAME"
 
 gpg --armor --export "$GPG_KEY_ID" > key.asc
 cp -v ../README.md ../LICENSE ../install.sh .
