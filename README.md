@@ -1,6 +1,6 @@
 # Raspotify
 
-_**A [Spotify Connect](https://www.spotify.com/connect/) client that mostly that Just Works™**_ *(Now featuring arm64 & amd64 builds!!!)*
+_**A [Spotify Connect](https://www.spotify.com/connect/) client that mostly Just Works™**_ *(Now featuring arm64 & amd64 builds!!!)*
 
 More precisely Raspotify is a
 [Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_\(file_format\)) for [Raspberry Pi OS lite (Bullseye)](https://www.raspberrypi.org/downloads/raspbian/) and other up to date Debian based OS's
@@ -50,9 +50,9 @@ sudo apt-get -y install raspotify
 ```
 
 Or you can just download the latest .deb package and install it manually from here:
-* armhf: [`raspotify-latest_armhf.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_armhf.deb)
-* arm64: [`raspotify-latest_arm64.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_arm64.deb)
-* arm64: [`raspotify-latest_amd64.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_amd64.deb)
+* [`raspotify-latest_armhf.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_armhf.deb)
+* [`raspotify-latest_arm64.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_arm64.deb)
+* [`raspotify-latest_amd64.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_amd64.deb)
 
 _**Don't forget to checkout the [wiki](https://github.com/dtcooper/raspotify/wiki) for tips, tricks and configuration info!!!**_
 
