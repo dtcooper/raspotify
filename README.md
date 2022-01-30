@@ -23,7 +23,7 @@ If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify C
 
 ## Dependencies
 
-* [libasound2](https://tracker.debian.org/pkg/libasound2)
+* [libasound2 (>= 1.2.4)](https://tracker.debian.org/pkg/libasound2)
 * [systemd (>= 247.3)](https://tracker.debian.org/pkg/systemd)
 
 ## Installation
