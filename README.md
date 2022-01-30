@@ -21,6 +21,11 @@ _For desktop OS's (and/or systems with PulseAudio installed) [spotifyd](https://
 
 If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify Connect support we recommend [moOde™ audio player](https://moodeaudio.org/).
 
+## Dependencies
+
+* [libasound2](https://tracker.debian.org/pkg/libasound2)
+* [systemd (>= 247.3)](https://tracker.debian.org/pkg/systemd)
+
 ## Installation
 
 _**The easy way**_
