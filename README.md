@@ -25,6 +25,7 @@ If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify C
 
 * [libasound2 (>= 1.2.4)](https://tracker.debian.org/pkg/libasound2)
 * [systemd (>= 247.3)](https://tracker.debian.org/pkg/systemd)
+* [init-system-helpers (>= 1.60)](https://tracker.debian.org/pkg/init-system-helpers)
 
 ## Installation
 
