@@ -1,15 +1,15 @@
 Package: raspotify
-Version: 0.31.7~librespot.v0.3.1-54-gf4be9bb
+Version: 0.31.8~librespot.v0.3.1-54-gf4be9bb
 Architecture: arm64
 Depends: libasound2
 Maintainer: David Cooper <david@dtcooper.com>
 Priority: optional
 Section: base
-Filename: pool/main/r/raspotify/raspotify_0.31.7~librespot.v0.3.1-54-gf4be9bb_arm64.deb
-Size: 2716632
-SHA256: f9babdef86c3e8a2ff9f04c0a1f5ddd0db3e5b0b9a5196664dc2883aad1489da
-SHA1: 7c5e9ac348ec6722d121db07e6457a6b556e650d
-MD5sum: 933b54c0df0b4454ed3b53cbb50fc4a3
+Filename: pool/main/r/raspotify/raspotify_0.31.8~librespot.v0.3.1-54-gf4be9bb_arm64.deb
+Size: 2724656
+SHA256: d1e4d5c8e65db2409f29030fc7e1a76f1cf18f01a2d9aca5e55be8fd013e741b
+SHA1: 9349d570498a6f8813316502b3b61f850b2b1eb4
+MD5sum: e0e2441f32bd6980836d91d241451013
 Description: Raspotify
  Spotify Connect client + daemon for the Raspberry Pi, based off librespot.
  [Built with rustc 1.58.1 (db9d1b20b 2022-01-20)]
