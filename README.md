@@ -1,6 +1,6 @@
 # Raspotify
 
-_**A [Spotify Connect](https://www.spotify.com/connect/) client that mostly that Just Works™**_ *(Now featuring arm64 & amd64 builds!!!)*
+_**A [Spotify Connect](https://www.spotify.com/connect/) client that mostly Just Works™**_ *(Now featuring arm64 & amd64 builds!!!)*
 
 More precisely Raspotify is a
 [Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_\(file_format\)) for [Raspberry Pi OS lite (Bullseye)](https://www.raspberrypi.org/downloads/raspbian/) and other up to date Debian based OS's
