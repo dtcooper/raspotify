@@ -24,6 +24,16 @@ raspotify_*.deb:
 			--env BUILD_LINKER="aarch64-linux-gnu-gcc" \
 			--env ARCHITECTURE="arm64" \
 		raspotify /mnt/raspotify/build.sh
+	docker run \
+			--rm \
+			--volume "$(CURDIR):/mnt/raspotify" \
+			--env PERMFIX_UID="$$(id -u)" \
+			--env PERMFIX_GID="$$(id -g)" \
+			--env RASPOTIFY_AUTHOR="$(RASPOTIFY_AUTHOR)" \
+			--env BUILD_TARGET="x86_64-unknown-linux-gnu" \
+			--env BUILD_LINKER="x86_64-linux-gnu-gcc" \
+			--env ARCHITECTURE="amd64" \
+		raspotify /mnt/raspotify/build.sh
 
 clean:
 	rm -rf *.deb librespot raspotify/usr raspotify/DEBIAN/control apt-repo

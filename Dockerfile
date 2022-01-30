@@ -1,4 +1,4 @@
-FROM debian:bullseye
+FROM debian:stable
 
 ENV INSIDE_DOCKER_CONTAINER 1
 
@@ -10,6 +10,7 @@ RUN apt-get update \
     && apt-get -y upgrade \
     && apt-get install -y --no-install-recommends \
         build-essential \
+        libasound2-dev \
         crossbuild-essential-arm64 \
         libasound2-dev:arm64 \
         curl \
@@ -24,7 +25,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install \
-        jinja2-cli  \
+        jinja2-cli \
         unidecode
 
 RUN mkdir /toolchain
@@ -53,3 +54,9 @@ RUN curl -O https://www.alsa-project.org/files/pub/lib/alsa-lib-1.2.6.tar.bz2 \
     && cd .. && rm -rf alsa-lib-1.2.6.tar.bz2 alsa-lib-1.2.6
 
 RUN mkdir /build
+
+# Install most recent version of rust
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
+ENV PATH "/root/.cargo/bin/:$PATH"
+ENV CARGO_TARGET_DIR "/build"
+ENV CARGO_HOME "/build/cache"

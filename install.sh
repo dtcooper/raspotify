@@ -5,13 +5,13 @@ SOURCE_REPO="deb [signed-by=/usr/share/keyrings/raspotify_key.asc] https://dtcoo
 # Install script for Raspotify. Adds the Debian repo and installs.
 set -e
 
-run_on_pi_only() {
-    echo "Raspotify installer only runs on a Raspberry Pi"
+debian_based_only() {
+    echo "The Raspotify installer only runs on armhf, arm64, and amd64 Debian based systems."
     exit 1
 }
 
 if ! which apt-get apt-key > /dev/null; then
-    run_on_pi_only
+    debian_based_only
 fi
 
 # You probably have these
@@ -29,8 +29,8 @@ if [ "$PREREQ_PACKAGES_TO_INSTALL" ]; then
 fi
 
 # By popular demand, do softer checking for other OS versions
-if uname -a | fgrep -ivq -e arm -e aarch64; then
-    run_on_pi_only
+if uname -a | fgrep -ivq -e arm -e aarch64 -e x86_64; then
+    debian_based_only
 fi
 
 # Add public key to apt

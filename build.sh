@@ -10,12 +10,6 @@ echo 'Building in docker container'
 set -e
 cd /mnt/raspotify
 
-# Install most recent version of rust
-curl https://sh.rustup.rs -sSf | sh -s -- -y
-export PATH="/root/.cargo/bin/:$PATH"
-export CARGO_TARGET_DIR="/build"
-export CARGO_HOME="/build/cache"
-
 # Install the gcc wrapper in container into cargo
 mkdir -p /.cargo
 echo "[target.${BUILD_TARGET}]\nlinker = \"${BUILD_LINKER}\"" > /.cargo/config
@@ -32,11 +26,6 @@ fi
 # Get the git rev of librespot for .deb versioning
 cd librespot
 LIBRESPOT_GIT_VER="$(git describe --tags --always --dirty 2>/dev/null || echo unknown)"
-
-# These lines don't work anymore anyway...
-#sed -i "s/\(librespot\)\( {} ({})\. Built on {}\. Build ID: {}\)/\1 (raspotify v$RASPOTIFY_GIT_VER)\2/" src/main.rs
-#sed -i 's/librespot\(_{}_{}\)/raspotify\1/' core/src/connection/mod.rs
-
 
 # Build librespot
 cargo build --release --target $BUILD_TARGET --no-default-features --features alsa-backend
