@@ -4,8 +4,6 @@ ENV INSIDE_DOCKER_CONTAINER 1
 
 RUN dpkg --add-architecture arm64
 
-# Install git and compilers, let's toss gnupg and reprepro in there so we can
-# use this container to make the apt repo as well
 RUN apt-get update \
     && apt-get -y upgrade \
     && apt-get install -y --no-install-recommends \
@@ -15,13 +13,11 @@ RUN apt-get update \
         libasound2-dev:arm64 \
         curl \
         git \
-        gnupg \
         pandoc \
         pkg-config \
         python3-pip \
         python3-setuptools \
         python3-wheel \
-        reprepro \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install \
