@@ -10,12 +10,14 @@ which thinly wraps the awesome
 
 Raspotify is primarily intended to be used in a _[headless enviroment](https://en.wikipedia.org/wiki/Headless_computer)_ and has been verified to work on:
 
-* ~~Raspberry Pi (v1) model B~~
-* Raspberry Pi Zero * *(Your mileage may vary)*
+* Raspberry Pi (v1) model B * *(Your mileage may vary and you are on barrowed time)*
+* Raspberry Pi Zero v1.x * *(Your mileage may vary and you are on barrowed time)*
 * Raspberry Pi 2 model B
 * Raspberry Pi 3 model B and B+
 * Raspberry Pi 4
 * Orange Pi Zero LTS with Expansion board (for the 3.5mm jack)
+
+* ***Support for ARMv6 (Pi v1 and Pi Zero v1.x) will be dropped at some point in the near future due to a rewrite of librespot that is soon to be merged that will make it incompatible with ARMv6.***
 
 _For desktop OS's (and/or systems with PulseAudio installed) [spotifyd](https://spotifyd.github.io/spotifyd/installation/Raspberry-Pi.html) offers similar functionality, much better PulseAudio compatibility and is a better choice._
 
