@@ -2,22 +2,15 @@
 
 _**A [Spotify Connect](https://www.spotify.com/connect/) client that mostly Just Works™**_ *(Now featuring arm64 & amd64 builds!!!)*
 
+<sup>_Support for ARMv6 (Pi v1 and Pi Zero v1.x) will be dropped at some point in the near future due to a rewrite of librespot that is soon to be merged that will make it incompatible with ARMv6._</sup>
+
 More precisely Raspotify is a
 [Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_\(file_format\)) for [Raspberry Pi OS lite (Bullseye)](https://www.raspberrypi.org/downloads/raspbian/) and other up to date Debian based OS's
 which thinly wraps the awesome
 [librespot](https://github.com/librespot-org/librespot) library by
 [Paul Lietar](https://github.com/plietar) and others up as a [systemd](https://en.wikipedia.org/wiki/Systemd) [daemon](https://en.wikipedia.org/wiki/Daemon_(computing)).
 
-Raspotify is primarily intended to be used in a _[headless enviroment](https://en.wikipedia.org/wiki/Headless_computer)_ and has been verified to work on:
-
-* Raspberry Pi (v1) model B * *(Your mileage may vary and you are on barrowed time)*
-* Raspberry Pi Zero v1.x * *(Your mileage may vary and you are on barrowed time)*
-* Raspberry Pi 2 model B
-* Raspberry Pi 3 model B and B+
-* Raspberry Pi 4
-* Orange Pi Zero LTS with Expansion board (for the 3.5mm jack)
-
-* ***Support for ARMv6 (Pi v1 and Pi Zero v1.x) will be dropped at some point in the near future due to a rewrite of librespot that is soon to be merged that will make it incompatible with ARMv6.***
+Raspotify is primarily intended to be used in a _[headless enviroment](https://en.wikipedia.org/wiki/Headless_computer)_
 
 _For desktop OS's (and/or systems with PulseAudio installed) [spotifyd](https://spotifyd.github.io/spotifyd/installation/Raspberry-Pi.html) offers similar functionality, much better PulseAudio compatibility and is a better choice._
 
