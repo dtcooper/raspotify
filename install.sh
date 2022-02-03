@@ -5,13 +5,9 @@ SOURCE_REPO="deb [signed-by=/usr/share/keyrings/raspotify_key.asc] https://dtcoo
 # Install script for Raspotify. Adds the Debian repo and installs.
 set -e
 
-debian_based_only() {
+if ! which apt-get apt-key > /dev/null || uname -a | fgrep -ivq -e arm -e aarch64 -e x86_64; then
     echo "The Raspotify installer only runs on armhf, arm64, and amd64 Debian based systems."
     exit 1
-}
-
-if ! which apt-get apt-key > /dev/null; then
-    debian_based_only
 fi
 
 # You probably have these
@@ -26,11 +22,6 @@ done
 if [ "$PREREQ_PACKAGES_TO_INSTALL" ]; then
     sudo apt-get update
     sudo apt-get -y install $PREREQ_PACKAGES_TO_INSTALL
-fi
-
-# By popular demand, do softer checking for other OS versions
-if uname -a | fgrep -ivq -e arm -e aarch64 -e x86_64; then
-    debian_based_only
 fi
 
 # Add public key to apt
