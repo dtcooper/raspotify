@@ -2,8 +2,8 @@
 
 _**A [Spotify Connect](https://www.spotify.com/connect/) client that mostly Just Works™**_ *(Now featuring arm64 & amd64 builds!!!)*
 
-More precisely Raspotify is a
-[Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_\(file_format\)) for [Raspberry Pi OS lite (Bullseye)](https://www.raspberrypi.org/downloads/raspbian/) and other up to date Debian based OS's
+Raspotify is a
+[Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_\(file_format\)) for Debian Stable (and other Debian Stable based/compatible OS's) 
 which thinly wraps the awesome
 [librespot](https://github.com/librespot-org/librespot) library by
 [Paul Lietar](https://github.com/plietar) and others up as a [systemd](https://en.wikipedia.org/wiki/Systemd) [daemon](https://en.wikipedia.org/wiki/Daemon_(computing)).
@@ -14,7 +14,7 @@ _For desktop OS's (and/or systems with PulseAudio installed) [spotifyd](https://
 
 If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify Connect support we recommend [moOde™ audio player](https://moodeaudio.org/).
 
-<sup>_Support for ARMv6 (Pi v1 and Pi Zero v1.x) will be dropped at some point in the near future due to a rewrite of librespot that is soon to be merged that will make it incompatible with ARMv6._</sup>
+[Support for ARMv6 (Pi v1 and Pi Zero v1.x) has been dropped.](https://github.com/dtcooper/raspotify/commit/345f15c5d695736db8f90d1acc7e542803db5ca0)
 
 ## Dependencies
 
@@ -51,7 +51,7 @@ sudo apt-get -y install raspotify
 ```
 
 Or you can just download the latest .deb package and install it manually from here:
-* [`raspotify-latest_armhf.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_armhf.deb)
+* [`raspotify-latest_armhf.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_armhf.deb) *_ARMv7_ (Not compatabile with ARMv6 devices)
 * [`raspotify-latest_arm64.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_arm64.deb)
 * [`raspotify-latest_amd64.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_amd64.deb)
 
