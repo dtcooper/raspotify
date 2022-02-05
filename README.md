@@ -51,7 +51,7 @@ sudo apt-get -y install raspotify
 ```
 
 Or you can just download the latest .deb package and install it manually from here:
-* [`raspotify-latest_armhf.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_armhf.deb) *_ARMv7_ (Not compatabile with ARMv6 devices)
+* [`raspotify-latest_armhf.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_armhf.deb) *_ARMv7_ (Not compatible with ARMv6 devices)
 * [`raspotify-latest_arm64.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_arm64.deb)
 * [`raspotify-latest_amd64.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_amd64.deb)
 
