@@ -56,20 +56,13 @@ cd apt-repo
 rm -rf conf db pool dists
 
 mkdir conf
-# Keep jessie for backward compatibility
 cat <<EOF > conf/distributions
-Codename: jessie
-Components: main
-Architectures: armhf
-SignWith: $GPG_KEY_ID
-
 Codename: raspotify
 Components: main
 Architectures: armhf arm64 amd64
 SignWith: $GPG_KEY_ID
 EOF
 
-reprepro includedeb jessie "../$ARMHF_DEB_PKG_NAME"
 reprepro includedeb raspotify "../$ARMHF_DEB_PKG_NAME"
 reprepro includedeb raspotify "../$ARM64_DEB_PKG_NAME"
 reprepro includedeb raspotify "../$AMD64_DEB_PKG_NAME"
