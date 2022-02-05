@@ -10,11 +10,6 @@ echo 'Building in docker container'
 set -e
 cd /mnt/raspotify
 
-# Install the gcc wrapper in container into cargo
-mkdir -p /.cargo
-echo "[target.${BUILD_TARGET}]\nlinker = \"${BUILD_LINKER}\"" > /.cargo/config
-rustup target add $BUILD_TARGET
-
 # Get the git rev of raspotify for .deb versioning
 RASPOTIFY_GIT_VER="$(git describe --tags --always --dirty 2>/dev/null || echo unknown)"
 

@@ -56,7 +56,7 @@ RemoveIPC=true
 
 CapabilityBoundingSet=
 
-#SystemCallArchitectures=native
+SystemCallArchitectures=native
 SystemCallFilter=@system-service
 SystemCallFilter=~@privileged @resources
 SystemCallErrorNumber=EPERM

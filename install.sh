@@ -5,8 +5,8 @@ SOURCE_REPO="deb [signed-by=/usr/share/keyrings/raspotify_key.asc] https://dtcoo
 # Install script for Raspotify. Adds the Debian repo and installs.
 set -e
 
-if ! which apt-get apt-key > /dev/null || uname -a | fgrep -ivq -e arm -e aarch64 -e x86_64; then
-    echo "The Raspotify installer only runs on armhf, arm64, and amd64 Debian based systems."
+if ! which apt-get apt-key > /dev/null || uname -a | fgrep -ivq -e armv7 -e aarch64 -e x86_64; then
+    echo "The Raspotify installer only runs on armhf (ARMv7), arm64, and amd64 Debian based systems."
     exit 1
 fi
 
