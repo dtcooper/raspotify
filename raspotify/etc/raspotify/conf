@@ -38,9 +38,7 @@ LIBRESPOT_DISABLE_AUDIO_CACHE=
 LIBRESPOT_DISABLE_CREDENTIAL_CACHE=
 
 # Play all tracks at approximately the same apparent volume.
-# Pi 1 and Zero v1.x CPU's can't handle this feature.
-# See: https://github.com/dtcooper/raspotify/issues/504
-#LIBRESPOT_ENABLE_VOLUME_NORMALISATION=
+LIBRESPOT_ENABLE_VOLUME_NORMALISATION=
 
 # Enable verbose log output.
 #LIBRESPOT_VERBOSE=
