@@ -23,11 +23,6 @@ Raspotify will not install without these packages and minimum versions _(Hard De
 * [systemd (>= 247.3)](https://tracker.debian.org/pkg/systemd)
 * [init-system-helpers (>= 1.60)](https://tracker.debian.org/pkg/init-system-helpers)
 
-If you choose to use the PulseAudio backend _(Soft Dependency)_:
-* [pulseaudio (>= 14.2)](https://tracker.debian.org/pkg/pulseaudio)
-
-<sup>_*PulseAudio is otherwise optional. Raspotify will not pull in PulseAudio as a dependency when installing._</sup>
-
 ## Installation
 
 _**The easy way**_
