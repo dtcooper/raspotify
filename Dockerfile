@@ -10,13 +10,10 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential \
         libasound2-dev \
-        libpulse-dev \
         crossbuild-essential-arm64 \
         libasound2-dev:arm64 \
-        libpulse-dev:arm64 \
         crossbuild-essential-armhf \
         libasound2-dev:armhf \
-        libpulse-dev:armhf \
         curl \
         git \
         pandoc \
