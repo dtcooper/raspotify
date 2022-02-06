@@ -26,7 +26,7 @@ Raspotify will not install without these packages and minimum versions _(Hard De
 If you choose to use the PulseAudio backend _(Soft Dependency)_:
 * [pulseaudio (>= 14.2)](https://tracker.debian.org/pkg/pulseaudio)
 
-<sup>_*PulseAudio is otherwise optional. Raspotify will not pull in PulseAudio as a Dependency when installing._</sup>
+<sup>_*PulseAudio is otherwise optional. Raspotify will not pull in PulseAudio as a dependency when installing._</sup>
 
 ## Installation
 
