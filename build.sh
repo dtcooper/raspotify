@@ -23,7 +23,7 @@ cd librespot
 LIBRESPOT_GIT_VER="$(git describe --tags --always --dirty 2>/dev/null || echo unknown)"
 
 # Build librespot
-cargo build --release --target $BUILD_TARGET --no-default-features --features alsa-backend
+cargo build --release --target $BUILD_TARGET --no-default-features --features "alsa-backend pulseaudio-backend"
 
 
 # Copy librespot to pkg root

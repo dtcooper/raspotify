@@ -69,7 +69,7 @@ LIBRESPOT_ENABLE_VOLUME_NORMALISATION=
 # size is only limited by disk space.
 #LIBRESPOT_CACHE_SIZE_LIMIT=""
 
-# Audio backend to use, alsa or pipe. Defaults to alsa.
+# Audio backend to use, alsa, pulseaudio or pipe. Defaults to alsa.
 #LIBRESPOT_BACKEND="alsa"
 
 # Username used to sign in with.
