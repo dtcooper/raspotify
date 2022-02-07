@@ -72,7 +72,7 @@ echo "$SOURCE_REPO" | sudo tee /etc/apt/sources.list.d/raspotify.list
 sudo apt-get update
 sudo apt-get -y install raspotify
 
-echo -e "\nThanks for install Raspotify and don't forget to checkout the wiki for tips, tricks and configuration info!:\n"
+echo -e "\nThanks for install Raspotify! Don't forget to checkout the wiki for tips, tricks and configuration info!:\n"
 echo "https://github.com/dtcooper/raspotify/wiki"
 echo -e "\nAnd if you're feeling generous you could buy me a RedBull:\n"
 echo "https://github.com/sponsors/JasonLG1979"
