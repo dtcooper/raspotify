@@ -28,17 +28,17 @@ check_packages () {
     fi
 
     if ! dpkg-query -W -f='${db:Status-Status}\n' systemd 2> /dev/null | grep -q '^installed$' \
-        || eval dpkg --compare-versions "$(dpkg-query -W -f='${Version}' systemd)" gt "$SYSTEMD_MIN_VER"; then
+        || eval dpkg --compare-versions "$(dpkg-query -W -f='${Version}' systemd)" lt "$SYSTEMD_MIN_VER"; then
         MISSING_PACKAGES="systemd (>= $SYSTEMD_MIN_VER)\n$MISSING_PACKAGES"
     fi
 
     if ! dpkg-query -W -f='${db:Status-Status}\n' init-system-helpers 2> /dev/null | grep -q '^installed$' \
-        || eval dpkg --compare-versions "$(dpkg-query -W -f='${Version}' init-system-helpers)" gt "$HELPER_MIN_VER"; then
+        || eval dpkg --compare-versions "$(dpkg-query -W -f='${Version}' init-system-helpers)" lt "$HELPER_MIN_VER"; then
         MISSING_PACKAGES="init-system-helpers (>= $HELPER_MIN_VER)\n$MISSING_PACKAGES"
     fi
 
     if ! dpkg-query -W -f='${db:Status-Status}\n' libasound2 2> /dev/null | grep -q '^installed$' \
-        || eval dpkg --compare-versions "$(dpkg-query -W -f='${Version}' libasound2)" gt "$LIBASOUND_MIN_VER"; then
+        || eval dpkg --compare-versions "$(dpkg-query -W -f='${Version}' libasound2)" lt "$LIBASOUND_MIN_VER"; then
         MISSING_PACKAGES="libasound2 (>= $LIBASOUND_MIN_VER)\n$MISSING_PACKAGES"
     fi
 }
