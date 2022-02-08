@@ -35,7 +35,7 @@ if ! which sudo > /dev/null; then
     fi
 fi
 
-# Make sure Raspotify's (systemd init-system-helpers libasound2),
+# Make sure Raspotify's (systemd init-system-helpers libasound2 libpulse0),
 # the script's (curl) and the repo's (apt-transport-https)
 # dependencies are installed.
 PACKAGES_TO_INSTALL=
