@@ -62,6 +62,7 @@ SystemCallFilter=~@privileged @resources
 SystemCallErrorNumber=EPERM
 
 Environment=LIBRESPOT_NAME="%N (%H)"
+Environment=LIBRESPOT_BACKEND="alsa"
 Environment=LIBRESPOT_CACHE=%C/%N
 Environment=LIBRESPOT_SYSTEM_CACHE=%S/%N
 
