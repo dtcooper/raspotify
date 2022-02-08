@@ -18,7 +18,7 @@ if ! which apt-get apt-key > /dev/null; then
     exit 1
 fi
 
-# Check if we're running on supported architecture?
+# Check if we're running on a supported architecture?
 if uname -a | grep -F -ivq -e armv7 -e aarch64 -e x86_64; then
     echo -e "Unspported architecture:\n\n$ERROR_MESG"
     exit 1
@@ -27,7 +27,7 @@ fi
 # Can we maybe get privileges with sudo?
 if ! which sudo > /dev/null; then
     MAYBE_SUDO=""
-    # If not are we root?
+    # If not, are we root?
     if ! [ "$(id -u)" -eq 0 ]; then
         echo -e "Insufficient privileges:\n\nPlease run this script as root."
         exit 1
