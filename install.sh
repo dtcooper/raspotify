@@ -11,24 +11,32 @@ MAYBE_SUDO="sudo"
 
 REQ_PACKAGES="systemd init-system-helpers libasound2 curl apt-transport-https"
 
+# Check if we're running on Debian or a derivative of Debian.
+# Are we running on an OS with apt?
 if ! which apt-get apt-key > /dev/null; then
     echo -e "Unspported OS:\n\n$ERROR_MESG"
     exit 1
 fi
 
+# Check if we're running on supported architecture?
 if uname -a | grep -F -ivq -e armv7 -e aarch64 -e x86_64; then
     echo -e "Unspported architecture:\n\n$ERROR_MESG"
     exit 1
 fi
 
+# Can we maybe get privileges with sudo?
 if ! which sudo > /dev/null; then
     MAYBE_SUDO=""
+    # If not are we root?
     if ! [ "$(id -u)" -eq 0 ]; then
         echo -e "Insufficient privileges:\n\nPlease run this script as root."
         exit 1
     fi
 fi
 
+# Make sure Raspotify's (systemd init-system-helpers libasound2),
+# the script's (curl) and the repo's (apt-transport-https)
+# dependencies are installed.
 PACKAGES_TO_INSTALL=
 for package in $REQ_PACKAGES; do
     if ! dpkg-query -W -f='${db:Status-Status}\n' "$package" 2> /dev/null | grep -q '^installed$'; then
@@ -36,6 +44,7 @@ for package in $REQ_PACKAGES; do
     fi
 done
 
+# If not offer to install them.
 if [ "$PACKAGES_TO_INSTALL" ]; then
     echo -e "Unmet dependencies:\n\n"
 
@@ -56,10 +65,14 @@ if [ "$PACKAGES_TO_INSTALL" ]; then
     $MAYBE_SUDO apt-get -y install "$PREREQ_PACKAGES_TO_INSTALL"
 fi
 
+# Check the installed versions of Raspotify's dependencies.
 SYSTEMD_VER="$(dpkg-query -W -f='${Version}' systemd)"
 HELPER_VER="$(dpkg-query -W -f='${Version}' init-system-helpers)"
 LIBASOUND_VER="$(dpkg-query -W -f='${Version}' libasound2)"
 
+# Make sure they meet the minimum required package versions before we add the repo.
+# A person could add the repo without making sure the minimum required package versions
+# were met but the package would just refuse to install, so I'm not sure what good that would be? 
 MIN_NOT_MET=
 if eval dpkg --compare-versions "$SYSTEMD_VER" lt "$SYSTEMD_MIN_VER"; then
     MIN_NOT_MET="systemd (>= $SYSTEMD_MIN_VER) but $SYSTEMD_VER is installed."
@@ -78,6 +91,7 @@ if [ "$MIN_NOT_MET" ]; then
     exit 1
 fi
 
+# Add the repos and install Raspotify.
 curl -sSL https://dtcooper.github.io/raspotify/key.asc | $MAYBE_SUDO tee /usr/share/keyrings/raspotify_key.asc > /dev/null
 $MAYBE_SUDO chmod 644 /usr/share/keyrings/raspotify_key.asc
 echo "$SOURCE_REPO" | $MAYBE_SUDO tee /etc/apt/sources.list.d/raspotify.list
@@ -85,6 +99,7 @@ echo "$SOURCE_REPO" | $MAYBE_SUDO tee /etc/apt/sources.list.d/raspotify.list
 $MAYBE_SUDO apt-get update
 $MAYBE_SUDO apt-get -y install raspotify
 
+# Thanks and shameless money grab.
 echo -e "\nThanks for install Raspotify! Don't forget to checkout the wiki for tips, tricks and configuration info!:\n"
 echo "https://github.com/dtcooper/raspotify/wiki"
 echo -e "\nAnd if you're feeling generous you could buy me a RedBull:\n"
