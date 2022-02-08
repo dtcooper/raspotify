@@ -34,7 +34,7 @@ curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
 
 _**The hard way**_
 
-Essentially, here's what the easy installer does,
+Essentially, here's what the easy installer does minus compatbility checks,
 
 ```bash
 # Install curl and https apt transport
