@@ -6,10 +6,11 @@ ERROR_MESG="Please make sure you are running a compatible armhf (ARMv7), arm64, 
 SYSTEMD_MIN_VER="247.3"
 HELPER_MIN_VER="1.6"
 LIBASOUND_MIN_VER="1.2.4"
+LIBPULSE_MIN_VER="14.2"
 
 MAYBE_SUDO="sudo"
 
-REQ_PACKAGES="systemd init-system-helpers libasound2 curl apt-transport-https"
+REQ_PACKAGES="systemd init-system-helpers libasound2 libpulse0 curl apt-transport-https"
 
 # Check if we're running on Debian or a derivative of Debian.
 # Are we running on an OS with apt?
@@ -69,6 +70,7 @@ fi
 SYSTEMD_VER="$(dpkg-query -W -f='${Version}' systemd)"
 HELPER_VER="$(dpkg-query -W -f='${Version}' init-system-helpers)"
 LIBASOUND_VER="$(dpkg-query -W -f='${Version}' libasound2)"
+LIBPULSE_VER="$(dpkg-query -W -f='${Version}' libpulse0)"
 
 # Make sure they meet the minimum required package versions before we add the repo.
 # A person could add the repo without making sure the minimum required package versions
@@ -86,8 +88,12 @@ if eval dpkg --compare-versions "$LIBASOUND_VER" lt "$LIBASOUND_MIN_VER"; then
     MIN_NOT_MET="$MIN_NOT_MET\nlibasound2 (>= $LIBASOUND_MIN_VER) but $LIBASOUND_VER is installed."
 fi
 
+if eval dpkg --compare-versions "$LIBPULSE_VER" lt "$LIBPULSE_MIN_VER"; then
+    MIN_NOT_MET="$MIN_NOT_MET\nlibpulse0 (>= $LIBPULSE_MIN_VER) but $LIBPULSE_VER is installed."
+fi
+
 if [ "$MIN_NOT_MET" ]; then
-    echo -e "\n\nUnmet minimum required package versions.\nRaspotify requires:\n\n$MIN_NOT_MET\n\n$ERROR_MESG"
+    echo -e "\n\nUnmet minimum required package version(s).\nRaspotify requires:\n\n$MIN_NOT_MET\n\n$ERROR_MESG"
     exit 1
 fi
 
