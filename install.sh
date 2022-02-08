@@ -37,7 +37,7 @@ for package in $REQ_PACKAGES; do
 done
 
 if [ "$PACKAGES_TO_INSTALL" ]; then
-    echo -e "Unmet dependencies:\n"
+    echo -e "Unmet dependencies:\n\n"
 
     for package in $PACKAGES_TO_INSTALL; do
         echo "$package"
