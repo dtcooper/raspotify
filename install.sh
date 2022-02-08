@@ -1,76 +1,89 @@
 #!/bin/bash -e
 
 SOURCE_REPO="deb [signed-by=/usr/share/keyrings/raspotify_key.asc] https://dtcooper.github.io/raspotify raspotify main"
+ERROR_MESG="Please make sure you are running a compatible armhf (ARMv7), arm64, or amd64 Debian based OS."
 
 SYSTEMD_MIN_VER="247.3"
 HELPER_MIN_VER="1.6"
 LIBASOUND_MIN_VER="1.2.4"
 
-# Install script for Raspotify. Adds the Debian repo and installs.
+MAYBE_SUDO="sudo"
 
-if ! which apt-get apt-key sudo > /dev/null || uname -a | grep -F -ivq -e armv7 -e aarch64 -e x86_64; then
-    echo "Unspported architecture:"
-    echo "Please make sure you are running a compatible armhf (ARMv7), arm64, or amd64 Debian based OS."
+REQ_PACKAGES="systemd init-system-helpers libasound2 curl apt-transport-https"
+
+if ! which apt-get apt-key > /dev/null; then
+    echo -e "Unspported OS:\n\n$ERROR_MESG"
     exit 1
 fi
 
-# You should probably have all of these installed unless ofc you're running a systemd-less Debian derivative.
-# If they're installed but the min versions are not meet you're not running a compatible Debian based OS.
+if uname -a | grep -F -ivq -e armv7 -e aarch64 -e x86_64; then
+    echo -e "Unspported architecture:\n\n$ERROR_MESG"
+    exit 1
+fi
 
-check_packages () {
-    MISSING_PACKAGES=
-    if ! dpkg-query -W -f='${db:Status-Status}\n' curl 2> /dev/null | grep -q '^installed$'; then
-        MISSING_PACKAGES="curl\n$MISSING_PACKAGES"
-    fi
-
-    if ! dpkg-query -W -f='${db:Status-Status}\n' apt-transport-https 2> /dev/null | grep -q '^installed$'; then
-        MISSING_PACKAGES="apt-transport-https\n$MISSING_PACKAGES"
-    fi
-
-    if ! dpkg-query -W -f='${db:Status-Status}\n' systemd 2> /dev/null | grep -q '^installed$' \
-        || eval dpkg --compare-versions "$(dpkg-query -W -f='${Version}' systemd)" lt "$SYSTEMD_MIN_VER"; then
-        MISSING_PACKAGES="systemd (>= $SYSTEMD_MIN_VER)\n$MISSING_PACKAGES"
-    fi
-
-    if ! dpkg-query -W -f='${db:Status-Status}\n' init-system-helpers 2> /dev/null | grep -q '^installed$' \
-        || eval dpkg --compare-versions "$(dpkg-query -W -f='${Version}' init-system-helpers)" lt "$HELPER_MIN_VER"; then
-        MISSING_PACKAGES="init-system-helpers (>= $HELPER_MIN_VER)\n$MISSING_PACKAGES"
-    fi
-
-    if ! dpkg-query -W -f='${db:Status-Status}\n' libasound2 2> /dev/null | grep -q '^installed$' \
-        || eval dpkg --compare-versions "$(dpkg-query -W -f='${Version}' libasound2)" lt "$LIBASOUND_MIN_VER"; then
-        MISSING_PACKAGES="libasound2 (>= $LIBASOUND_MIN_VER)\n$MISSING_PACKAGES"
-    fi
-}
-
-check_packages
-
-if [ "$MISSING_PACKAGES" ]; then
-    echo -e "Unmet dependencies:\n\n$MISSING_PACKAGES"
-    echo -n "Do you want to install them? [y/N] "
-    read -r REPLY      
-    if [[ ! "$REPLY" =~ ^(yes|y|Y)$ ]]; then exit 0; fi
-
-    sudo apt update
-    sudo apt install -y systemd init-system-helpers libasound2 curl apt-transport-https
-
-    check_packages
-
-    if [ "$MISSING_PACKAGES" ]; then
-        echo -e "\nThere are still unmet dependencies:\n\n$MISSING_PACKAGES"
-        echo "Please make sure you are running a compatible Debian based OS with the minimum required package versions."
+if ! which sudo > /dev/null; then
+    MAYBE_SUDO=""
+    if ! [ "$(id -u)" -eq 0 ]; then
+        echo -e "Insufficient privileges:\n\nPlease run this script as root."
         exit 1
-
     fi
 fi
 
-# Add public key to apt
-curl -sSL https://dtcooper.github.io/raspotify/key.asc | sudo tee /usr/share/keyrings/raspotify_key.asc > /dev/null
-sudo chmod 644 /usr/share/keyrings/raspotify_key.asc
-echo "$SOURCE_REPO" | sudo tee /etc/apt/sources.list.d/raspotify.list
+PACKAGES_TO_INSTALL=
+for package in $REQ_PACKAGES; do
+    if ! dpkg-query -W -f='${db:Status-Status}\n' "$package" 2> /dev/null | grep -q '^installed$'; then
+        PACKAGES_TO_INSTALL="$package $PACKAGES_TO_INSTALL"
+    fi
+done
 
-sudo apt-get update
-sudo apt-get -y install raspotify
+if [ "$PACKAGES_TO_INSTALL" ]; then
+    echo -e "Unmet dependencies:\n"
+
+    for package in $PACKAGES_TO_INSTALL; do
+        echo "$package"
+    done
+
+    echo -e "\n\nThey must be installed to continue with this script.\n\n"
+    echo -n "Do you want to install them now? [y/N] "
+
+    read -r REPLY      
+    if [[ ! "$REPLY" =~ ^(yes|y|Y)$ ]]; then
+        echo -e "\n\nNo changes to your system were made.\nRaspotify was not installed and it's repository was not added."
+        exit 0
+    fi
+
+    $MAYBE_SUDO apt-get update
+    $MAYBE_SUDO apt-get -y install "$PREREQ_PACKAGES_TO_INSTALL"
+fi
+
+SYSTEMD_VER="$(dpkg-query -W -f='${Version}' systemd)"
+HELPER_VER="$(dpkg-query -W -f='${Version}' init-system-helpers)"
+LIBASOUND_VER="$(dpkg-query -W -f='${Version}' libasound2)"
+
+MIN_NOT_MET=
+if eval dpkg --compare-versions "$SYSTEMD_VER" lt "$SYSTEMD_MIN_VER"; then
+    MIN_NOT_MET="systemd (>= $SYSTEMD_MIN_VER) but $SYSTEMD_VER is installed."
+fi
+
+if eval dpkg --compare-versions "$HELPER_VER" lt "$HELPER_MIN_VER"; then
+    MIN_NOT_MET="$MIN_NOT_MET\ninit-system-helpers (>= $HELPER_MIN_VER) but $HELPER_VER is installed."
+fi
+
+if eval dpkg --compare-versions "$LIBASOUND_VER" lt "$LIBASOUND_MIN_VER"; then
+    MIN_NOT_MET="$MIN_NOT_MET\nlibasound2 (>= $LIBASOUND_MIN_VER) but $LIBASOUND_VER is installed."
+fi
+
+if [ "$MIN_NOT_MET" ]; then
+    echo -e "\n\nUnmet minimum required package versions.\nRaspotify requires:\n\n$MIN_NOT_MET\n\n$ERROR_MESG"
+    exit 1
+fi
+
+curl -sSL https://dtcooper.github.io/raspotify/key.asc | $MAYBE_SUDO tee /usr/share/keyrings/raspotify_key.asc > /dev/null
+$MAYBE_SUDO chmod 644 /usr/share/keyrings/raspotify_key.asc
+echo "$SOURCE_REPO" | $MAYBE_SUDO tee /etc/apt/sources.list.d/raspotify.list
+
+$MAYBE_SUDO apt-get update
+$MAYBE_SUDO apt-get -y install raspotify
 
 echo -e "\nThanks for install Raspotify! Don't forget to checkout the wiki for tips, tricks and configuration info!:\n"
 echo "https://github.com/dtcooper/raspotify/wiki"
