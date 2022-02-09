@@ -10,7 +10,7 @@ which thinly wraps the awesome
 
 Raspotify is primarily intended to be used in a _[headless enviroment](https://en.wikipedia.org/wiki/Headless_computer)_.
 
-_For desktop OS's (and/or systems with PulseAudio installed) [spotifyd](https://spotifyd.github.io/spotifyd/installation/Raspberry-Pi.html) offers similar functionality, much better PulseAudio compatibility and is a better choice._
+_For desktop OS's [spotifyd](https://spotifyd.github.io/spotifyd/installation/Raspberry-Pi.html) offers similar functionality and is probably a better choice._
 
 If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify Connect support we recommend [moOde™ audio player](https://moodeaudio.org/).
 
@@ -18,7 +18,9 @@ If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify C
 
 ## Dependencies
 
+**Raspotify will not install without these packages and minimum versions:**
 * [libasound2 (>= 1.2.4)](https://tracker.debian.org/pkg/libasound2)
+* [libpulse0 (>= 14.2)](https://tracker.debian.org/pkg/libpulse0)
 * [systemd (>= 247.3)](https://tracker.debian.org/pkg/systemd)
 * [init-system-helpers (>= 1.60)](https://tracker.debian.org/pkg/init-system-helpers)
 
@@ -32,7 +34,7 @@ curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
 
 _**The hard way**_
 
-Essentially, here's what the easy installer does,
+Essentially, here's what the easy installer does minus compatbility checks,
 
 ```bash
 # Install curl and https apt transport
