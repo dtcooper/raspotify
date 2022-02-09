@@ -1,4 +1,6 @@
-#!/bin/bash -e
+#!/bin/sh
+
+set -e
 
 SOURCE_REPO="deb [signed-by=/usr/share/keyrings/raspotify_key.asc] https://dtcooper.github.io/raspotify raspotify main"
 ERROR_MESG="Please make sure you are running a compatible armhf (ARMv7), arm64, or amd64 Debian based OS."
@@ -15,13 +17,15 @@ REQ_PACKAGES="systemd init-system-helpers libasound2 libpulse0 curl apt-transpor
 # Check if we're running on Debian or a derivative of Debian.
 # Are we running on an OS with apt?
 if ! which apt-get apt-key > /dev/null; then
-    echo -e "Unspported OS:\n\n$ERROR_MESG"
+    echo "Unspported OS:"
+    echo "$ERROR_MESG"
     exit 1
 fi
 
 # Check if we're running on a supported architecture?
 if uname -a | grep -F -ivq -e armv7 -e aarch64 -e x86_64; then
-    echo -e "Unspported architecture:\n\n$ERROR_MESG"
+    echo "Unspported architecture:"
+    echo "$ERROR_MESG"
     exit 1
 fi
 
@@ -29,8 +33,9 @@ fi
 if ! which sudo > /dev/null; then
     MAYBE_SUDO=""
     # If not, are we root?
-    if ! [ "$(id -u)" -eq 0 ]; then
-        echo -e "Insufficient privileges:\n\nPlease run this script as root."
+    if [ "$(id -u)" -ne 0 ]; then
+        echo "Insufficient privileges:"
+        echo "Please run this script as root."
         exit 1
     fi
 fi
@@ -47,18 +52,19 @@ done
 
 # If not offer to install them.
 if [ "$PACKAGES_TO_INSTALL" ]; then
-    echo -e "Unmet dependencies:\n\n"
+    echo "Unmet dependencies:"
 
     for package in $PACKAGES_TO_INSTALL; do
         echo "$package"
     done
 
-    echo -e "\n\nThey must be installed to continue with this script.\n\n"
-    echo -n "Do you want to install them now? [y/N] "
+    echo "They must be installed to continue with this script."
+    printf "Do you want to install them now? [y/N] "
 
-    read -r REPLY      
-    if [[ ! "$REPLY" =~ ^(yes|y|Y)$ ]]; then
-        echo -e "\n\nNo changes to your system were made.\nRaspotify was not installed and it's repository was not added."
+    read -r REPLY
+    if ! echo "$REPLY" | grep -Eiq "(y|yes)"; then
+        echo "No changes to your system were made."
+        echo "Raspotify was not installed and it's repository was not added."
         exit 0
     fi
 
@@ -77,23 +83,25 @@ LIBPULSE_VER="$(dpkg-query -W -f='${Version}' libpulse0)"
 # were met but the package would just refuse to install, so I'm not sure what good that would be? 
 MIN_NOT_MET=
 if eval dpkg --compare-versions "$SYSTEMD_VER" lt "$SYSTEMD_MIN_VER"; then
-    MIN_NOT_MET="systemd (>= $SYSTEMD_MIN_VER) but $SYSTEMD_VER is installed."
+    MIN_NOT_MET="systemd (>= $SYSTEMD_MIN_VER) but $SYSTEMD_VER is installed.\n"
 fi
 
 if eval dpkg --compare-versions "$HELPER_VER" lt "$HELPER_MIN_VER"; then
-    MIN_NOT_MET="$MIN_NOT_MET\ninit-system-helpers (>= $HELPER_MIN_VER) but $HELPER_VER is installed."
+    MIN_NOT_MET="$MIN_NOT_MET\ninit-system-helpers (>= $HELPER_MIN_VER) but $HELPER_VER is installed.\n"
 fi
 
 if eval dpkg --compare-versions "$LIBASOUND_VER" lt "$LIBASOUND_MIN_VER"; then
-    MIN_NOT_MET="$MIN_NOT_MET\nlibasound2 (>= $LIBASOUND_MIN_VER) but $LIBASOUND_VER is installed."
+    MIN_NOT_MET="$MIN_NOT_MET\nlibasound2 (>= $LIBASOUND_MIN_VER) but $LIBASOUND_VER is installed.\n"
 fi
 
 if eval dpkg --compare-versions "$LIBPULSE_VER" lt "$LIBPULSE_MIN_VER"; then
-    MIN_NOT_MET="$MIN_NOT_MET\nlibpulse0 (>= $LIBPULSE_MIN_VER) but $LIBPULSE_VER is installed."
+    MIN_NOT_MET="$MIN_NOT_MET\nlibpulse0 (>= $LIBPULSE_MIN_VER) but $LIBPULSE_VER is installed.\n"
 fi
 
 if [ "$MIN_NOT_MET" ]; then
-    echo -e "\n\nUnmet minimum required package version(s).\nRaspotify requires:\n\n$MIN_NOT_MET\n\n$ERROR_MESG"
+    echo "Unmet minimum required package version(s):"
+    printf "%b" "$MIN_NOT_MET"
+    echo "$ERROR_MESG"
     exit 1
 fi
 
@@ -106,7 +114,7 @@ $MAYBE_SUDO apt-get update
 $MAYBE_SUDO apt-get -y install raspotify
 
 # Thanks and shameless money grab.
-echo -e "\nThanks for install Raspotify! Don't forget to checkout the wiki for tips, tricks and configuration info!:\n"
+echo "Thanks for install Raspotify! Don't forget to checkout the wiki for tips, tricks and configuration info!:"
 echo "https://github.com/dtcooper/raspotify/wiki"
-echo -e "\nAnd if you're feeling generous you could buy me a RedBull:\n"
+echo "And if you're feeling generous you could buy me a RedBull:"
 echo "https://github.com/sponsors/JasonLG1979"
