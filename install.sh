@@ -68,8 +68,8 @@ if [ "$PACKAGES_TO_INSTALL" ]; then
         exit 0
     fi
 
-    $MAYBE_SUDO apt-get update
-    $MAYBE_SUDO apt-get -y install "$PREREQ_PACKAGES_TO_INSTALL"
+    $MAYBE_SUDO apt update
+    $MAYBE_SUDO apt -y install "$PREREQ_PACKAGES_TO_INSTALL"
 fi
 
 # Check the installed versions of Raspotify's dependencies.
@@ -110,8 +110,8 @@ curl -sSL https://dtcooper.github.io/raspotify/key.asc | $MAYBE_SUDO tee /usr/sh
 $MAYBE_SUDO chmod 644 /usr/share/keyrings/raspotify_key.asc
 echo "$SOURCE_REPO" | $MAYBE_SUDO tee /etc/apt/sources.list.d/raspotify.list
 
-$MAYBE_SUDO apt-get update
-$MAYBE_SUDO apt-get -y install raspotify
+$MAYBE_SUDO apt update
+$MAYBE_SUDO apt install -y raspotify
 
 # Thanks and shameless money grab.
 echo "Thanks for install Raspotify! Don't forget to checkout the wiki for tips, tricks and configuration info!:"
