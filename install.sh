@@ -38,33 +38,9 @@ fi
 # Make sure Raspotify's (systemd init-system-helpers libasound2 libpulse0),
 # the script's (curl) and the repo's (apt-transport-https)
 # dependencies are installed.
-PACKAGES_TO_INSTALL=
-for package in $REQ_PACKAGES; do
-    if ! dpkg-query -W -f='${db:Status-Status}\n' "$package" 2> /dev/null | grep -q '^installed$'; then
-        PACKAGES_TO_INSTALL="$package $PACKAGES_TO_INSTALL"
-    fi
-done
 
-# If not offer to install them.
-if [ "$PACKAGES_TO_INSTALL" ]; then
-    echo -e "Unmet dependencies:\n\n"
-
-    for package in $PACKAGES_TO_INSTALL; do
-        echo "$package"
-    done
-
-    echo -e "\n\nThey must be installed to continue with this script.\n\n"
-    echo -n "Do you want to install them now? [y/N] "
-
-    read -r REPLY      
-    if [[ ! "$REPLY" =~ ^(yes|y|Y)$ ]]; then
-        echo -e "\n\nNo changes to your system were made.\nRaspotify was not installed and it's repository was not added."
-        exit 0
-    fi
-
-    $MAYBE_SUDO apt-get update
-    $MAYBE_SUDO apt-get -y install "$PREREQ_PACKAGES_TO_INSTALL"
-fi
+$MAYBE_SUDO apt-get update
+$MAYBE_SUDO apt-get -y install systemd init-system-helpers libasound2 libpulse0 curl apt-transport-https
 
 # Check the installed versions of Raspotify's dependencies.
 SYSTEMD_VER="$(dpkg-query -W -f='${Version}' systemd)"
