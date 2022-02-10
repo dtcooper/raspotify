@@ -69,7 +69,7 @@ if [ "$PACKAGES_TO_INSTALL" ]; then
     fi
 
     $MAYBE_SUDO apt update
-    $MAYBE_SUDO apt -y install "$PREREQ_PACKAGES_TO_INSTALL"
+    $MAYBE_SUDO apt -y install $PREREQ_PACKAGES_TO_INSTALL
 fi
 
 # Check the installed versions of Raspotify's dependencies.
