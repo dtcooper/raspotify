@@ -37,7 +37,7 @@ if ! which sudo > /dev/null; then
 fi
 
 $MAYBE_SUDO apt-get update
-$MAYBE_SUDO apt-get -y install "$REQ_PACKAGES"
+$MAYBE_SUDO apt-get -y install $REQ_PACKAGES
 
 SYSTEMD_VER="$(dpkg-query -W -f='${Version}' systemd)"
 if eval dpkg --compare-versions "$SYSTEMD_VER" lt "$SYSTEMD_MIN_VER"; then
