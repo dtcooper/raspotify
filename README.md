@@ -29,7 +29,7 @@ If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify C
 _**The easy way**_
 
 ```bash
-curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
+curl -sL https://dtcooper.github.io/raspotify/install.sh | bash
 ```
 
 _**The hard way**_
