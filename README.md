@@ -38,7 +38,7 @@ Essentially, here's what the easy installer does minus compatibility checks,
 
 ```bash
 # Install curl and https apt transport
-sudo apt-get -y install curl apt-transport-https
+sudo apt-get -y install curl
 
 # Add the raspotify key to the keyring
 curl -sSL https://dtcooper.github.io/raspotify/key.asc | sudo tee /usr/share/keyrings/raspotify_key.asc  > /dev/null
