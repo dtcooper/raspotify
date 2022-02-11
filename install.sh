@@ -14,7 +14,7 @@ LIBPULSE_MIN_VER="14.2"
 SUDO="sudo"
 APT="apt"
 
-REQ_PACKAGES="systemd init-system-helpers libasound2 libpulse0 curl apt-transport-https"
+REQ_PACKAGES="systemd init-system-helpers libasound2 libpulse0 curl"
 
 PACKAGES_TO_INSTALL=
 MIN_NOT_MET=
