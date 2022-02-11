@@ -19,10 +19,13 @@ REQ_PACKAGES="systemd init-system-helpers libasound2 libpulse0 curl"
 PACKAGES_TO_INSTALL=
 MIN_NOT_MET=
 
-if ! which apt-get apt-key > /dev/null; then
-    echo "Unspported OS:"
-    echo "$ERROR_MESG"
-    exit 1
+if ! which apt > /dev/null; then
+    APT="apt-get"
+    if ! which apt-get > /dev/null; then
+        echo "Unspported OS:"
+        echo "$ERROR_MESG"
+        exit 1
+    fi
 fi
 
 if uname -a | grep -F -ivq -e armv7 -e aarch64 -e x86_64; then
@@ -38,10 +41,6 @@ if ! which sudo > /dev/null; then
         echo "Please run this script as root."
         exit 1
     fi
-fi
-
-if ! which apt > /dev/null; then
-    APT="apt-get"
 fi
 
 for package in $REQ_PACKAGES; do
