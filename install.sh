@@ -4,7 +4,7 @@ set -e
 
 SOURCE_REPO="deb [signed-by=/usr/share/keyrings/raspotify_key.asc] https://dtcooper.github.io/raspotify raspotify main"
 ERROR_MESG="Please make sure you are running a compatible armhf (ARMv7), arm64, or amd64 Debian based OS."
-MIN_NOT_MET_MESG="Unmet minimum required package version(s):"
+MIN_NOT_MET_MESG="\nUnmet minimum required package version(s):\n"
 
 SYSTEMD_MIN_VER="247.3"
 HELPER_MIN_VER="1.6"
@@ -21,23 +21,25 @@ MIN_NOT_MET=
 
 if ! which apt > /dev/null; then
     APT="apt-get"
+
     if ! which apt-get > /dev/null; then
-        echo "Unspported OS:"
+        echo "\nUnspported OS:\n"
         echo "$ERROR_MESG"
         exit 1
     fi
 fi
 
 if uname -a | grep -F -ivq -e armv7 -e aarch64 -e x86_64; then
-    echo "Unspported architecture:"
+    echo "\nUnspported architecture:\n"
     echo "$ERROR_MESG"
     exit 1
 fi
 
 if ! which sudo > /dev/null; then
     SUDO=""
+
     if [ "$(id -u)" -ne 0 ]; then
-        echo "Insufficient privileges:"
+        echo "\nInsufficient privileges:\n"
         echo "Please run this script as root."
         exit 1
     fi
@@ -55,25 +57,28 @@ if [ "$PACKAGES_TO_INSTALL" ]; then
 
 fi
 
-HELPER_VER="$(dpkg-query -W -f='${Version}' init-system-helpers)"
-if eval dpkg --compare-versions "$HELPER_VER" lt "$HELPER_MIN_VER"; then
-    MIN_NOT_MET="init-system-helpers >= $HELPER_MIN_VER is required but $HELPER_VER is installed."
-fi
+for package in $REQ_PACKAGES; do
+    case "$package" in
+       "systemd") MIN_VER=$SYSTEMD_MIN_VER
+       ;;
+       "libasound2") MIN_VER=$LIBASOUND_MIN_VER
+       ;;
+       "libpulse0") MIN_VER=$LIBPULSE_MIN_VER
+       ;;
+       "init-system-helpers") MIN_VER=$HELPER_MIN_VER
+       ;;
+       *) MIN_VER=
+       ;;
+    esac
 
-LIBPULSE_VER="$(dpkg-query -W -f='${Version}' libpulse0)"
-if eval dpkg --compare-versions "$LIBPULSE_VER" lt "$LIBPULSE_MIN_VER"; then
-    MIN_NOT_MET="libpulse0 >= $LIBPULSE_MIN_VER is required but $LIBPULSE_VER is installed.\n$MIN_NOT_MET"
-fi
+    if [ "$MIN_VER" ]; then
+        VER="$(dpkg-query -W -f='${Version}' $package)"
 
-LIBASOUND_VER="$(dpkg-query -W -f='${Version}' libasound2)"
-if eval dpkg --compare-versions "$LIBASOUND_VER" lt "$LIBASOUND_MIN_VER"; then
-    MIN_NOT_MET="libasound2 >= $LIBASOUND_MIN_VER is required but $LIBASOUND_VER is installed.\n$MIN_NOT_MET"
-fi
-
-SYSTEMD_VER="$(dpkg-query -W -f='${Version}' systemd)"
-if eval dpkg --compare-versions "$SYSTEMD_VER" lt "$SYSTEMD_MIN_VER"; then
-    MIN_NOT_MET="systemd >= $SYSTEMD_MIN_VER is required but $SYSTEMD_VER is installed.\n$MIN_NOT_MET"
-fi
+        if eval dpkg --compare-versions "$VER" lt "$MIN_VER"; then
+            MIN_NOT_MET="$MIN_NOT_MET$package >= $MIN_VER is required but $VER is installed.\n"
+        fi
+    fi
+done
 
 if [ "$MIN_NOT_MET" ]; then
     echo "$MIN_NOT_MET_MESG"
@@ -89,7 +94,7 @@ echo "$SOURCE_REPO" | $SUDO tee /etc/apt/sources.list.d/raspotify.list
 $SUDO $APT update
 $SUDO $APT -y install raspotify
 
-echo "Thanks for install Raspotify! Don't forget to checkout the wiki for tips, tricks and configuration info!:"
+echo "\nThanks for installing Raspotify! Don't forget to checkout the wiki for tips, tricks and configuration info!:\n"
 echo "https://github.com/dtcooper/raspotify/wiki"
-echo "And if you're feeling generous you could buy me a RedBull:"
+echo "\nAnd if you're feeling generous you could buy me a RedBull:\n"
 echo "https://github.com/sponsors/JasonLG1979"
