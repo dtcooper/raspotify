@@ -4,7 +4,7 @@ set -e
 
 SOURCE_REPO="deb [signed-by=/usr/share/keyrings/raspotify_key.asc] https://dtcooper.github.io/raspotify raspotify main"
 ERROR_MESG="Please make sure you are running a compatible armhf (ARMv7), arm64, or amd64 Debian based OS."
-MIN_NOT_MET_MESG="Unmet minimum required package version:"
+MIN_NOT_MET_MESG="Unmet minimum required package version(s):"
 
 SYSTEMD_MIN_VER="247.3"
 HELPER_MIN_VER="1.6"
