@@ -37,7 +37,7 @@ _**The hard way**_
 Essentially, here's what the easy installer does minus compatibility checks,
 
 ```bash
-# Install curl and https apt transport
+# Install curl
 sudo apt-get -y install curl
 
 # Add the raspotify key to the keyring

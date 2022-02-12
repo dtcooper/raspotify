@@ -4,7 +4,7 @@ set -e
 
 SOURCE_REPO="deb [signed-by=/usr/share/keyrings/raspotify_key.asc] https://dtcooper.github.io/raspotify raspotify main"
 ERROR_MESG="Please make sure you are running a compatible armhf (ARMv7), arm64, or amd64 Debian based OS."
-MIN_NOT_MET_MESG="Unmet minimum required package version:"
+MIN_NOT_MET_MESG="Unmet minimum required package version(s):"
 
 SYSTEMD_MIN_VER="247.3"
 HELPER_MIN_VER="1.6"
@@ -19,10 +19,13 @@ REQ_PACKAGES="systemd init-system-helpers libasound2 libpulse0 curl"
 PACKAGES_TO_INSTALL=
 MIN_NOT_MET=
 
-if ! which apt-get apt-key > /dev/null; then
-    echo "Unspported OS:"
-    echo "$ERROR_MESG"
-    exit 1
+if ! which apt > /dev/null; then
+    APT="apt-get"
+    if ! which apt-get > /dev/null; then
+        echo "Unspported OS:"
+        echo "$ERROR_MESG"
+        exit 1
+    fi
 fi
 
 if uname -a | grep -F -ivq -e armv7 -e aarch64 -e x86_64; then
@@ -38,10 +41,6 @@ if ! which sudo > /dev/null; then
         echo "Please run this script as root."
         exit 1
     fi
-fi
-
-if ! which apt > /dev/null; then
-    APT="apt-get"
 fi
 
 for package in $REQ_PACKAGES; do
