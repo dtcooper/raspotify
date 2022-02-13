@@ -29,15 +29,15 @@ If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify C
 
 _**The easy way**_
 
-```bash
+```sh
 curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
 ```
 
 _**The hard way**_
 
-Essentially, here's what the easy installer does minus compatibility checks,
+Essentially, here's what the easy installer does minus the compatibility checks:
 
-```bash
+```sh
 # Install curl
 sudo apt-get -y install curl
 
