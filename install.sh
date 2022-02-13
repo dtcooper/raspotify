@@ -54,7 +54,6 @@ done
 if [ "$PACKAGES_TO_INSTALL" ]; then
     $SUDO $APT update
     $SUDO $APT -y install $PACKAGES_TO_INSTALL
-
 fi
 
 for package in $REQ_PACKAGES; do
