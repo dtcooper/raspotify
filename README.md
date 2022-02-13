@@ -1,6 +1,6 @@
 # Raspotify
 
-_**A [Spotify Connect](https://www.spotify.com/connect/) client that mostly Just Works™**_ *(Now featuring arm64 & amd64 builds!!!)*
+***A [Spotify Connect](https://www.spotify.com/connect/) client that mostly Just Works™*** *(Now featuring arm64 & amd64 builds!!!)*
 
 Raspotify is a
 [Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_(file_format)) for Debian Stable and other Debian Stable based/compatible OS's 
@@ -8,13 +8,17 @@ which thinly wraps the awesome
 [librespot](https://github.com/librespot-org/librespot) library by
 [Paul Lietar](https://github.com/plietar) and others up as a [systemd](https://en.wikipedia.org/wiki/Systemd) [daemon](https://en.wikipedia.org/wiki/Daemon_(computing)).
 
-Raspotify is primarily intended to be used in a _[headless enviroment](https://en.wikipedia.org/wiki/Headless_computer)_.
+Raspotify is primarily intended to be used in a *[headless enviroment](https://en.wikipedia.org/wiki/Headless_computer)*.
 
-_For desktop OS's [spotifyd](https://spotifyd.github.io/spotifyd/installation/Raspberry-Pi.html) offers similar functionality and is probably a better choice._
+*For desktop OS's [spotifyd](https://spotifyd.github.io/spotifyd/installation/Raspberry-Pi.html) offers similar functionality and is probably a better choice.*
 
 If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify Connect support we recommend [moOde™ audio player](https://moodeaudio.org/).
 
-[Support for ARMv6 (Pi v1 and Pi Zero v1.x) has been dropped.](https://github.com/dtcooper/raspotify/commit/345f15c5d695736db8f90d1acc7e542803db5ca0)
+### [Support for ARMv6 (Pi v1 and Pi Zero v1.x) has been dropped.](https://github.com/dtcooper/raspotify/commit/345f15c5d695736db8f90d1acc7e542803db5ca0)
+
+[0.31.8.1](https://github.com/dtcooper/raspotify/releases/tag/0.31.8.1) was the last version to be built with ARMv6 support.
+
+*You can install and run that version on an ARMv6 device, but you will never get updates and doing so is completely unsupported.*
 
 ## Dependencies
 
@@ -27,13 +31,13 @@ If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify C
 
 ## Installation
 
-_**The easy way**_
+***The easy way***
 
 ```sh
 curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
 ```
 
-_**The hard way**_
+***The hard way***
 
 Essentially, here's what the easy installer does minus the compatibility checks:
 
@@ -54,11 +58,11 @@ sudo apt-get -y install raspotify
 ```
 
 Or you can just download the latest .deb package and install it manually from here:
-* [`raspotify-latest_armhf.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_armhf.deb) *_ARMv7_ (Not compatible with ARMv6 devices)
+* [`raspotify-latest_armhf.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_armhf.deb)
 * [`raspotify-latest_arm64.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_arm64.deb)
 * [`raspotify-latest_amd64.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_amd64.deb)
 
-_**Don't forget to checkout the [wiki](https://github.com/dtcooper/raspotify/wiki) for tips, tricks and configuration info!!!**_
+***Don't forget to checkout the [wiki](https://github.com/dtcooper/raspotify/wiki) for tips, tricks and configuration info!!!***
 
 ## Bug Reports and Feature Requests
 
@@ -67,7 +71,7 @@ As stated above Raspotify is just a package. The actual program that's run by th
 ## Disclaimer
 
 Per librespot's disclaimer, using librespot &mdash; the underlying library behind
-raspotify &mdash; to connect to Spotify's API _"is probably forbidden by them."_
+raspotify &mdash; to connect to Spotify's API *"is probably forbidden by them."*
 We've not received word about that, however use at your own risk.
 
 ## License
@@ -82,7 +86,7 @@ and its many contributors for [librespot](https://github.com/librespot-org/libre
 which Raspotify packages. Without [librespot](https://github.com/librespot-org/librespot),
 Raspotify would simply not exist.
 
-### 📻 _"And Now, For Something Completely Different!"_ 🎙️
+### 📻 *"And Now, For Something Completely Different!"* 🎙️
 
 Raspotify's author [David Cooper](https://jew.pizza/) has abandoned being a software
 engineer to pursue a career as a radio personality. If you find Raspotify useful, you
@@ -96,4 +100,4 @@ If you'd like to buy Jason a Red Bull you can [❤️ Sponsor Him](https://githu
 
 ## Final Note
 
-_...and remember kids, have fun!_
+***...and remember kids, have fun!***
