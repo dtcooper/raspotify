@@ -19,9 +19,10 @@ If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify C
 ## Dependencies
 
 **Raspotify will not install without these packages and minimum versions:**
+* [libc6 (>= 2.31)](https://tracker.debian.org/pkg/libc6)
+* [systemd (>= 247.3)](https://tracker.debian.org/pkg/systemd)
 * [libasound2 (>= 1.2.4)](https://tracker.debian.org/pkg/libasound2)
 * [libpulse0 (>= 14.2)](https://tracker.debian.org/pkg/libpulse0)
-* [systemd (>= 247.3)](https://tracker.debian.org/pkg/systemd)
 * [init-system-helpers (>= 1.60)](https://tracker.debian.org/pkg/init-system-helpers)
 
 ## Installation
