@@ -30,6 +30,19 @@ jobs:
           issue-number: ${{ github.event.issue.number }}
           body: |
             The fix has been pushed to master and will appear in a release soon.
+  close-unsupported-device:
+    if: github.event.label.name == 'unsupported-device'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Close unsupported-device
+        uses: peter-evans/close-issue@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          comment: |
+            The Device referenced is unsupported. armhf (ARMv7), arm64 and amd64 packages are provided. Support for ARMv6 devices (Pi 1, Pi Zero 1.x) has been dropped.
   close-unsupported-os:
     if: github.event.label.name == 'unsupported-os'
     runs-on: ubuntu-latest
