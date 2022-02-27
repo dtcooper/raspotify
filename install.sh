@@ -10,12 +10,13 @@ LIBC_MIN_VER="2.31"
 SYSTEMD_MIN_VER="247.3"
 HELPER_MIN_VER="1.6"
 LIBASOUND_MIN_VER="1.2.4"
+ALSA_UTILS_VER="1.2.4"
 LIBPULSE_MIN_VER="14.2"
 
 SUDO="sudo"
 APT="apt"
 
-REQ_PACKAGES="libc6 systemd init-system-helpers libasound2 libpulse0 curl"
+REQ_PACKAGES="libc6 systemd init-system-helpers libasound2 alsa-utils libpulse0 curl"
 
 PACKAGES_TO_INSTALL=
 MIN_NOT_MET=
@@ -64,6 +65,8 @@ for package in $REQ_PACKAGES; do
        "systemd") MIN_VER=$SYSTEMD_MIN_VER
        ;;
        "libasound2") MIN_VER=$LIBASOUND_MIN_VER
+       ;;
+       "alsa-utils") MIN_VER=$ALSA_UTILS_VER
        ;;
        "libpulse0") MIN_VER=$LIBPULSE_MIN_VER
        ;;
