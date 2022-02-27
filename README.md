@@ -35,7 +35,7 @@ If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify C
 ***The easy way***
 
 ```sh
-curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
+sudo apt-get -y install curl && curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
 ```
 
 ***The hard way***
