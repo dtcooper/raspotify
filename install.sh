@@ -34,6 +34,11 @@ fi
 if uname -a | grep -F -ivq -e armv7 -e aarch64 -e x86_64; then
     echo "\nUnspported architecture:\n"
     echo "$ERROR_MESG"
+    echo "\nSupport for ARMv6 (Pi v1 and Pi Zero v1.x) has been dropped."
+    echo "0.31.8.1 was the last version to be built with ARMv6 support."
+    echo "\nhttps://github.com/dtcooper/raspotify/releases/tag/0.31.8.1\n"
+    echo "You can install and run that version on an ARMv6 device,"
+    echo "but you will never get updates and doing so is completely unsupported."
     exit 1
 fi
 
