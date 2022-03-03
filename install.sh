@@ -76,16 +76,12 @@ for package in $REQ_PACKAGES; do
        ;;
        "init-system-helpers") MIN_VER=$HELPER_MIN_VER
        ;;
-       *) MIN_VER=
-       ;;
     esac
 
-    if [ "$MIN_VER" ]; then
-        VER="$(dpkg-query -W -f='${Version}' $package)"
+    VER="$(dpkg-query -W -f='${Version}' $package)"
 
-        if eval dpkg --compare-versions "$VER" lt "$MIN_VER"; then
-            MIN_NOT_MET="$MIN_NOT_MET$package >= $MIN_VER is required but $VER is installed.\n"
-        fi
+    if eval dpkg --compare-versions "$VER" lt "$MIN_VER"; then
+        MIN_NOT_MET="$MIN_NOT_MET$package >= $MIN_VER is required but $VER is installed.\n"
     fi
 done
 
