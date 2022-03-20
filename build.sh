@@ -15,7 +15,7 @@ RASPOTIFY_GIT_VER="$(git describe --tags --always --dirty 2>/dev/null || echo un
 
 if [ ! -d librespot ]; then
     echo "No directory named librespot exists! Cloning..."
-    git clone git://github.com/librespot-org/librespot.git
+    git clone https://github.com/librespot-org/librespot.git
 fi
 
 # Get the git rev of librespot for .deb versioning
