@@ -4,7 +4,6 @@ set -e
 
 SOURCE_REPO="deb [signed-by=/usr/share/keyrings/raspotify_key.asc] https://dtcooper.github.io/raspotify raspotify main"
 ERROR_MESG="Please make sure you are running a compatible armhf (ARMv7), arm64, or amd64 Debian based OS."
-MIN_NOT_MET_MESG="\nUnmet minimum required package version(s):\n"
 
 LIBC_MIN_VER="2.31"
 SYSTEMD_MIN_VER="247.3"
@@ -16,7 +15,7 @@ LIBPULSE_MIN_VER="14.2"
 SUDO="sudo"
 APT="apt"
 
-REQ_PACKAGES="libc6 systemd init-system-helpers libasound2 alsa-utils libpulse0 curl"
+REQ_PACKAGES="libc6 systemd init-system-helpers libasound2 alsa-utils libpulse0"
 
 PACKAGES_TO_INSTALL=
 MIN_NOT_MET=
@@ -77,21 +76,17 @@ for package in $REQ_PACKAGES; do
        ;;
        "init-system-helpers") MIN_VER=$HELPER_MIN_VER
        ;;
-       *) MIN_VER=
-       ;;
     esac
 
-    if [ "$MIN_VER" ]; then
-        VER="$(dpkg-query -W -f='${Version}' $package)"
+    VER="$(dpkg-query -W -f='${Version}' $package)"
 
-        if eval dpkg --compare-versions "$VER" lt "$MIN_VER"; then
-            MIN_NOT_MET="$MIN_NOT_MET$package >= $MIN_VER is required but $VER is installed.\n"
-        fi
+    if eval dpkg --compare-versions "$VER" lt "$MIN_VER"; then
+        MIN_NOT_MET="$MIN_NOT_MET$package >= $MIN_VER is required but $VER is installed.\n"
     fi
 done
 
 if [ "$MIN_NOT_MET" ]; then
-    echo "$MIN_NOT_MET_MESG"
+    echo "\nUnmet minimum required package version(s):\n"
     echo "$MIN_NOT_MET"
     echo "$ERROR_MESG"
     exit 1
