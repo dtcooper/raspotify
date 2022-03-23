@@ -32,7 +32,7 @@ ProtectClock=yes
 
 DevicePolicy=strict
 DeviceAllow=char-alsa rw
-DeviceAllow=/dev/null r
+DeviceAllow=/dev/null rw
 DeviceAllow=/dev/random r
 DeviceAllow=/dev/urandom r
 
