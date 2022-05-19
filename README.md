@@ -18,6 +18,13 @@ If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify C
 
 [0.31.8.1](https://github.com/dtcooper/raspotify/releases/tag/0.31.8.1) was the last version to be built with ARMv6 support.
 
+```
+curl https://github.com/dtcooper/raspotify/releases/download/0.31.8.1/raspotify_0.31.8.1.librespot.v0.3.1-54-gf4be9bb_armhf.deb
+```
+```
+sudo apt install ./raspotify_0.31.8.1.librespot.v0.3.1-54-gf4be9bb_armhf.deb
+```
+
 *You can install and run that version on an ARMv6 device, but you will never get updates and doing so is completely unsupported.*
 
 ## Dependencies
