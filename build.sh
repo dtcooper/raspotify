@@ -20,7 +20,7 @@ fi
 
 # Get the git rev of librespot for .deb versioning
 cd librespot
-LIBRESPOT_GIT_VER="$(git describe --tags --always --dirty 2>/dev/null || echo unknown)"
+LIBRESPOT_GIT_VER="$(git describe --tags --always 2>/dev/null || echo unknown)"
 
 # Build librespot
 cargo build --release --target $BUILD_TARGET --no-default-features --features "alsa-backend pulseaudio-backend"
