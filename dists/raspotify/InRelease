@@ -2,52 +2,52 @@
 Hash: SHA512
 
 Codename: raspotify
-Date: Sat, 21 May 2022 17:51:38 UTC
+Date: Sun, 22 May 2022 20:45:21 UTC
 Architectures: armhf arm64 amd64
 Components: main
 MD5Sum:
- fa5d1b737846d1f467ed6f313b18abcf 756 main/binary-armhf/Packages
- 8ea4f9f1816fa45014dee59600745723 504 main/binary-armhf/Packages.gz
+ fb69e7c80a11cef10977a93eb3385bcd 726 main/binary-armhf/Packages
+ 22e1347a48d7023feedb476207418d35 492 main/binary-armhf/Packages.gz
  12961a515ba3ee17d1840d76faa90087 36 main/binary-armhf/Release
- c02299582aa9ee9c9826ee03247f9184 756 main/binary-arm64/Packages
- 346e2a320caef4686e6e444acff8f83b 502 main/binary-arm64/Packages.gz
+ 88ffa369afd977777056e1f432ed89b3 726 main/binary-arm64/Packages
+ c0942dd1383c2c9df851d0878f9f528b 493 main/binary-arm64/Packages.gz
  e89c28b1abf5bb6bbd1e9a3ebe9fe004 36 main/binary-arm64/Release
- 81474dc00bbff0afbf045a355293e576 756 main/binary-amd64/Packages
- d6d959c4dc853c6f73c061b794a436a0 504 main/binary-amd64/Packages.gz
+ e70ab095d88607e7b1719e5e1de53201 726 main/binary-amd64/Packages
+ 20ba9291d4f3510d86a5a567664d35e0 492 main/binary-amd64/Packages.gz
  063287201b2354699acfe229a752201d 36 main/binary-amd64/Release
 SHA1:
- dc63d5740fe6e7f41733f42b073b7066b2b3b592 756 main/binary-armhf/Packages
- 04da6d4861ff16f339ccff9a0d6b519e70920955 504 main/binary-armhf/Packages.gz
+ e34205d389784bc434d599a968c58d20f19ac242 726 main/binary-armhf/Packages
+ 1a7bb57a2be73d982ec4595443b7507b2d830e1b 492 main/binary-armhf/Packages.gz
  4922cd1d17e2d85529687db8f44c58948bc42f94 36 main/binary-armhf/Release
- 4017f598b54c2ae188261fe891e12e88b9acecff 756 main/binary-arm64/Packages
- 974fa3075babbae7dad054b94531a8ff738efee7 502 main/binary-arm64/Packages.gz
+ b39f9a70683236de1837cea130ed8e58d2341e37 726 main/binary-arm64/Packages
+ 368f8a68f0dc51e4c545a596e11dab96e684937e 493 main/binary-arm64/Packages.gz
  26519fde445e683e74519b33601c3901c8a45e3b 36 main/binary-arm64/Release
- 9e044228dcf2d7a0999b47a559fb101c99e74d3e 756 main/binary-amd64/Packages
- b83703b7ca89f8edc7701f88789fa15d3abeb0d7 504 main/binary-amd64/Packages.gz
+ 5bef7ec3c3eb1c6dbc90c85733b6d2dd0bf7ed9c 726 main/binary-amd64/Packages
+ 8e44ed4e5046ae91c63b2c4b4f03e662be94a89b 492 main/binary-amd64/Packages.gz
  f9082edea14092794f38390390e06abf8a922f7d 36 main/binary-amd64/Release
 SHA256:
- 11fd105ad2748addee2b420478739d13e7c67be3afdacd4086dcd4eb2a26ccec 756 main/binary-armhf/Packages
- f965456670c123ea4bac374926ca0b47cae5c06c12913786e6e8b0dfccd458c8 504 main/binary-armhf/Packages.gz
+ accd649ad3c19e9c73f91118f8c5ee98764540d6d432f923a7727f21321d19ef 726 main/binary-armhf/Packages
+ f53d8da196a8ac30dbffadd86c7be5cdb0c35b9d75bb2fae26114e61252cc9a3 492 main/binary-armhf/Packages.gz
  adaec1ced8009abfb20fa51310087da3b7332d5f3b2c5edfda188ddffe634677 36 main/binary-armhf/Release
- 310763c703673b38a0ea00b8adce5fef004ef71d6839a3f7cfb44c4314060cc6 756 main/binary-arm64/Packages
- 649a53c7be95a49ecb545e4ef651edca84fc0b683d41895b3de1a7e296d95c01 502 main/binary-arm64/Packages.gz
+ 2a2e35b3f15dcbf38ba15c02bde37b073d3b1a61461ab40a6f660930fcf506db 726 main/binary-arm64/Packages
+ a882de5a46710bc00030609b0510238d128b1af5ca28168206b02384cb6f774e 493 main/binary-arm64/Packages.gz
  1d2a5a16922021225a06cc93f71f6e6008afdf7049fe22e22d7e98be73c59edf 36 main/binary-arm64/Release
- a166d27f58f0852a64865a4d41e3d8c52597e38732370a34ffbc4203f87a0c1a 756 main/binary-amd64/Packages
- 6d368fcee8e35db339fd70f89fc6907b68a2e709747dac44eac9e8d98db2924f 504 main/binary-amd64/Packages.gz
+ d1b62f17ab5f3f174d983f1cc1c7b5c670116c80f7667ca00cc1c2956513a588 726 main/binary-amd64/Packages
+ 32fbab9cc655571a3e9314ec85d86a33c8f596f28519d569521ab08d00a18aff 492 main/binary-amd64/Packages.gz
  f4aafa353a338baedf9e98523c13d7ffeda979ec3cf745f9fad977dd770595c8 36 main/binary-amd64/Release
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEELMm4D1rit6zv8royCRRvL3lTpFUFAmKJJqoACgkQCRRvL3lT
-pFU0HBAApCvf4P6t3Q0PMs+5pUuBbnGCfGCSL32KQcnqYVErF32qDG+rwU3kYnyp
-8si8yFoRUiv54cHjzDXpmPhEXt0YKVCt3GTaJy6eOke1l4SlOUKjzm8sUehBNviP
-uG3RR/hp3bHErElJXztbmVZ3FFR1gN5ErLN6RAOiUbbay3rSas6XuVRXfpLQFoOi
-e7yYuqLmUGPsbvG1JSq260jaNpCoGNdegpKbQr3WizfCTBPslNQ+jjHCxAUgYxeT
-GYRRlrMApkGeqe4nWnlJdENYWE9hizJ0oGyv/9ZHsIN7kY2ECDwbb21fv3bAka0A
-FKbA3VarRV/pB7+yX6h6BMBCeBWhESP8mtfB9I6ACMt11XWtW0nV4cQokLkhVTvW
-BVhW8ZoJ6D78dmkoKBx077YBYKinnzwAQpRULkYIHEzWtPIGWP0Yl3BOPfSCHGb5
-/gd1veb6Yv1cCjqIL7T25g3OQNG+jbLG31GLNwqzpwQzKpSPxUBChGuHzHGZRIfs
-AOqZovnqPl6mrc6fIaAFS6/noa1Vuv5ZttVbCnMuykTVUhPAJTrRA7alVxlY+Bki
-BJBQQC3VJcsOJz9aGA8QSa13Vkl+mAOctYlqOxw5lMcz6DZCcIO/Nyo61BDdrgC4
-SujfQ2H15jA0pmP80B6zMmkOPjM+dY+1N5iG5L5bsagaq23sV1A=
-=STGI
+iQIzBAEBCgAdFiEELMm4D1rit6zv8royCRRvL3lTpFUFAmKKoOEACgkQCRRvL3lT
+pFWcchAAkshrVlwjuGdvaRcvZo/EjXBfFXj6WALt0X3R3AbyKmQeXvbjZBOA36R9
+fQWgUaddQvtxtPuAgqK/LT49Yxh6nNgMMplN/5aQzQ7GDRRiJpIrgdSAsE7xIViO
+DWL2bKg+Xpjm9qJu1UODJVDZXnhMk+EWGsoiybMcirbdV3RCqkfJlnNVfGlblrB3
+rqEEbXuDgm3D3iQnhnm6Ye97UMgLEu5t+Gu62ni8RtN6r0jjaIPM5CQSdv2TuZv3
+dXvEALWCKDcF39pivbZCfIwHvo+PSJQ20Tc2mh5T533D56s4J1T43vR0iCXt1yBp
+GXpl0RY6tj1+U/b3Y3KC7yHAFBczmHDGGd2q8yDY7Ivu7o20QOCGruDqiP5iZCnc
+WE6uRh/P+1oIKTSjn66GtaDcvvzI2s1RLC1JHAxRfaduFYz4xh7w5hFH+i8EFfYy
+prv39SNyuq6IeNxk2A4134SEgbxAirLAlALCwC6Yo2lsZYI02rTK7zLLFe3E8Kmv
+QyrzicXrWAHlqD97zA5EO5rTMcCVvm0HE5nwMYIOqVdTUgCEq7P8nczgHECLDI8g
+abUVyhYJNAB0YLoYTJmm5tvmPUQ1gGr5hRsVFkxi4pxflroLEfzbz9bN9WH4wuZa
+fDISfKWhAxRYQrBRdUatyUxl0ED6ol74Gq/6wxT8zWtDt1fjDAo=
+=c3ng
 -----END PGP SIGNATURE-----
