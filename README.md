@@ -90,7 +90,7 @@ file for details.
 ## Acknowledgments
 
 Special thanks to [Paul Lietar](https://github.com/plietar), [librespot org](https://github.com/librespot-org)
-and its many contributors for [librespot](https://github.com/librespot-org/librespot/graphs/contributors),
+and its [many contributors](https://github.com/librespot-org/librespot/graphs/contributors) for [librespot](https://github.com/librespot-org/librespot),
 which Raspotify packages. Without [librespot](https://github.com/librespot-org/librespot),
 Raspotify would simply not exist.
 
