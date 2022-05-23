@@ -1,6 +1,5 @@
-# Raspotify
-
-***A [Spotify Connect](https://www.spotify.com/connect/) client that mostly Just Works™*** *(Now featuring arm64 & amd64 builds!!!)*
+![Screenshot](https://github.com/dtcooper/raspotify/blob/master/raspotify.svg)
+#
 
 Raspotify is a
 [Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_(file_format)) for Debian Stable and other Debian Stable based/compatible OS's 
@@ -13,19 +12,6 @@ Raspotify is primarily intended to be used in a *[headless enviroment](https://e
 *For desktop OS's [spotifyd](https://spotifyd.github.io/spotifyd/installation/Raspberry-Pi.html) offers similar functionality and is probably a better choice.*
 
 If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify Connect support we recommend [moOde™ audio player](https://moodeaudio.org/).
-
-### [Support for ARMv6 (Pi v1 and Pi Zero v1.x) has been dropped.](https://github.com/dtcooper/raspotify/commit/345f15c5d695736db8f90d1acc7e542803db5ca0)
-
-[0.31.8.1](https://github.com/dtcooper/raspotify/releases/tag/0.31.8.1) was the last version to be built with ARMv6 support.
-
-*You can install and run that version on an ARMv6 device, but you will never get updates and doing so is completely unsupported.*
-
-```
-curl https://github.com/dtcooper/raspotify/releases/download/0.31.8.1/raspotify_0.31.8.1.librespot.v0.3.1-54-gf4be9bb_armhf.deb
-```
-```
-sudo apt install ./raspotify_0.31.8.1.librespot.v0.3.1-54-gf4be9bb_armhf.deb
-```
 
 ## Dependencies
 
@@ -70,6 +56,19 @@ Or you can just download the latest .deb package and install it manually from he
 * [`raspotify-latest_arm64.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_arm64.deb)
 * [`raspotify-latest_amd64.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_amd64.deb)
 
+### [Support for ARMv6 (Pi v1 and Pi Zero v1.x) has been dropped.](https://github.com/dtcooper/raspotify/commit/345f15c5d695736db8f90d1acc7e542803db5ca0)
+
+[0.31.8.1](https://github.com/dtcooper/raspotify/releases/tag/0.31.8.1) was the last version to be built with ARMv6 support.
+
+*You can install and run that version on an ARMv6 device, but you will never get updates and doing so is completely unsupported.*
+
+```
+curl https://github.com/dtcooper/raspotify/releases/download/0.31.8.1/raspotify_0.31.8.1.librespot.v0.3.1-54-gf4be9bb_armhf.deb
+```
+```
+sudo apt install ./raspotify_0.31.8.1.librespot.v0.3.1-54-gf4be9bb_armhf.deb
+```
+
 ***Don't forget to checkout the [wiki](https://github.com/dtcooper/raspotify/wiki) for tips, tricks and configuration info!!!***
 
 ## Bug Reports and Feature Requests
@@ -90,7 +89,7 @@ file for details.
 ## Acknowledgments
 
 Special thanks to [Paul Lietar](https://github.com/plietar), [librespot org](https://github.com/librespot-org)
-and its many contributors for [librespot](https://github.com/librespot-org/librespot),
+and its [many contributors](https://github.com/librespot-org/librespot/graphs/contributors) for [librespot](https://github.com/librespot-org/librespot),
 which Raspotify packages. Without [librespot](https://github.com/librespot-org/librespot),
 Raspotify would simply not exist.
 
