@@ -1,7 +1,5 @@
 [<img src="https://raw.githubusercontent.com/dtcooper/raspotify/master/raspotify.svg?sanitize=true">](https://github.com/dtcooper/raspotify)
 
-#
-
 Raspotify is a
 [Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_(file_format)) for Debian Stable and other Debian Stable based/compatible OS's 
 which thinly wraps the awesome
