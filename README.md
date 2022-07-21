@@ -1,3 +1,4 @@
+
 [<img src="https://raw.githubusercontent.com/dtcooper/raspotify/master/raspotify.svg?sanitize=true">](https://github.com/dtcooper/raspotify)
 
 Raspotify is a
