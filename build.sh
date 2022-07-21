@@ -20,8 +20,7 @@ fi
 
 cd librespot
 
-# The dev branch is a little unstable at the moment.
-git checkout master
+# git checkout master
 
 # Get the git rev of librespot for .deb versioning
 LIBRESPOT_GIT_VER="$(git describe --tags --always 2>/dev/null || echo unknown)"
