@@ -11,7 +11,7 @@ set -e
 cd /mnt/raspotify
 
 # Get the git rev of raspotify for .deb versioning
-RASPOTIFY_GIT_VER="$(git describe --tags --always --dirty 2>/dev/null || echo unknown)"
+RASPOTIFY_GIT_VER="$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null || echo unknown)"
 
 if [ ! -d librespot ]; then
     echo "No directory named librespot exists! Cloning..."
@@ -23,7 +23,8 @@ cd librespot
 git checkout master
 
 # Get the git rev of librespot for .deb versioning
-LIBRESPOT_GIT_VER="$(git describe --tags --always 2>/dev/null || echo unknown)"
+LIBRESPOT_VER="$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null || echo unknown)"
+LIBRESPOT_HASH="$(git rev-parse HEAD | cut -c 1-8 2>/dev/null || echo unknown)"
 
 # Build librespot
 cargo build --release --target $BUILD_TARGET --no-default-features --features "alsa-backend pulseaudio-backend"
@@ -38,7 +39,7 @@ cp -v /build/$BUILD_TARGET/release/librespot raspotify/usr/bin
 #arm-linux-gnueabihf-strip raspotify/usr/bin/librespot
 
 # Compute final package version + filename for Debian control file
-DEB_PKG_VER="${RASPOTIFY_GIT_VER}~librespot.${LIBRESPOT_GIT_VER}"
+DEB_PKG_VER="${RASPOTIFY_GIT_VER}~librespot.${LIBRESPOT_VER}-${LIBRESPOT_HASH}"
 DEB_PKG_NAME="raspotify_${DEB_PKG_VER}_${ARCHITECTURE}.deb"
 echo "$DEB_PKG_NAME"
 
