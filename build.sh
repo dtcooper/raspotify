@@ -24,7 +24,7 @@ git checkout master
 
 # Get the git rev of librespot for .deb versioning
 LIBRESPOT_VER="$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null || echo unknown)"
-LIBRESPOT_HASH="$(git rev-parse HEAD | cut -c 1-8 2>/dev/null || echo unknown)"
+LIBRESPOT_HASH="$(git rev-parse HEAD | cut -c 1-7 2>/dev/null || echo unknown)"
 
 # Build librespot
 cargo build --release --target $BUILD_TARGET --no-default-features --features "alsa-backend pulseaudio-backend"
