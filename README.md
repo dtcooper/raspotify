@@ -5,7 +5,7 @@ Raspotify is a
 [Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_(file_format)) for Debian Stable and other Debian Stable based/compatible OS's 
 which thinly wraps the awesome
 [librespot](https://github.com/librespot-org/librespot) library by
-[Paul Lietar](https://github.com/plietar) and others up as a [systemd](https://en.wikipedia.org/wiki/Systemd) [daemon](https://en.wikipedia.org/wiki/Daemon_(computing)).
+[Paul Lietar](https://github.com/plietar) and others up as a [systemd](https://en.wikipedia.org/wiki/Systemd) [daemon](https://en.wikipedia.org/wiki/Daemon_(computing)). **Librespot, and therefore Raspotify, requires a premium account.**
 
 Raspotify is primarily intended to be used in a *[headless enviroment](https://en.wikipedia.org/wiki/Headless_computer)*.
 
