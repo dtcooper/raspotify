@@ -62,10 +62,11 @@ Or you can just download the latest .deb package and install it manually from he
 
 *You can install and run that version on an ARMv6 device, but you will never get updates and doing so is completely unsupported.*
 
-```
+```sh
+# Install curl and download raspotify_0.31.8.1
 sudo apt-get -y install curl && curl -sL https://github.com/dtcooper/raspotify/releases/download/0.31.8.1/raspotify_0.31.8.1.librespot.v0.3.1-54-gf4be9bb_armhf.deb
-```
-```
+
+# Install raspotify_0.31.8.1
 sudo apt install ./raspotify_0.31.8.1.librespot.v0.3.1-54-gf4be9bb_armhf.deb
 ```
 
