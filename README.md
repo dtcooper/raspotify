@@ -82,7 +82,7 @@ Per librespot's disclaimer, using librespot &mdash; the underlying library behin
 raspotify &mdash; to connect to Spotify's API *"is probably forbidden by them."*
 We've not received word about that, however use at your own risk.
 
-**Raspotify and librespot are intended for personal private use. Please DO NOT use Raspotify or Librespot in any sort of commercial and/or public presentation. Doing so is a flagrant violation of Spotify's terms of service and could potentially lead to them blocking all Raspotify and librespot users.**
+**Raspotify and librespot are intended for personal private use. Please DO NOT use Raspotify or librespot in any sort of commercial and/or public presentation. Doing so is a flagrant violation of Spotify's terms of service and could potentially lead to them blocking all Raspotify and librespot users.**
 
 ## License
 
