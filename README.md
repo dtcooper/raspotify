@@ -9,7 +9,7 @@ which thinly wraps the awesome
 
 Raspotify is primarily intended to be used in a *[headless enviroment](https://en.wikipedia.org/wiki/Headless_computer)*.
 
-*For desktop OS's [spotifyd](https://spotifyd.github.io/spotifyd/installation/Raspberry-Pi.html) offers similar functionality and is probably a better choice.*
+*For desktop OS's [spotifyd](https://github.com/Spotifyd/spotifyd) offers similar functionality and is probably a better choice.*
 
 If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify Connect support we recommend [moOde™ audio player](https://moodeaudio.org/).
 
@@ -62,10 +62,11 @@ Or you can just download the latest .deb package and install it manually from he
 
 *You can install and run that version on an ARMv6 device, but you will never get updates and doing so is completely unsupported.*
 
-```
-curl https://github.com/dtcooper/raspotify/releases/download/0.31.8.1/raspotify_0.31.8.1.librespot.v0.3.1-54-gf4be9bb_armhf.deb
-```
-```
+```sh
+# Install curl and download raspotify_0.31.8.1
+sudo apt-get -y install curl && curl -sL https://github.com/dtcooper/raspotify/releases/download/0.31.8.1/raspotify_0.31.8.1.librespot.v0.3.1-54-gf4be9bb_armhf.deb
+
+# Install raspotify_0.31.8.1
 sudo apt install ./raspotify_0.31.8.1.librespot.v0.3.1-54-gf4be9bb_armhf.deb
 ```
 
@@ -75,11 +76,15 @@ sudo apt install ./raspotify_0.31.8.1.librespot.v0.3.1-54-gf4be9bb_armhf.deb
 
 As stated above Raspotify is just a package. The actual program that's run by the service is [librespot](https://github.com/librespot-org/librespot). Unless it's a packaging issue or a basic confguration question this is the wrong place to file your bug reports and/or feature requests.
 
+**Please read the [Troubleshooting wiki page](https://github.com/dtcooper/raspotify/wiki/Troubleshooting) before opening an issue or asking a question.**
+
 ## Disclaimer
 
 Per librespot's disclaimer, using librespot &mdash; the underlying library behind
 raspotify &mdash; to connect to Spotify's API *"is probably forbidden by them."*
 We've not received word about that, however use at your own risk.
+
+**Raspotify and librespot are intended for personal private use. Please DO NOT use Raspotify or librespot in any sort of commercial and/or public presentation. Doing so is a flagrant violation of Spotify's terms of service and could potentially lead to them blocking all Raspotify and librespot users.**
 
 ## License
 
