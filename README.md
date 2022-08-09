@@ -76,6 +76,8 @@ sudo apt install ./raspotify_0.31.8.1.librespot.v0.3.1-54-gf4be9bb_armhf.deb
 
 As stated above Raspotify is just a package. The actual program that's run by the service is [librespot](https://github.com/librespot-org/librespot). Unless it's a packaging issue or a basic confguration question this is the wrong place to file your bug reports and/or feature requests.
 
+**Please read the [Troubleshooting wiki page](https://github.com/dtcooper/raspotify/wiki/Troubleshooting) before opening an issue or asking a question.**
+
 ## Disclaimer
 
 Per librespot's disclaimer, using librespot &mdash; the underlying library behind
