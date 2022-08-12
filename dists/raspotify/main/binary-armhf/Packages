@@ -1,16 +1,16 @@
 Package: raspotify
-Version: 0.42.2~librespot.v0.4.2-6537c44
+Version: 0.42.3~librespot.v0.4.2-6537c44
 Architecture: armhf
 Depends: libc6 (>= 2.31), libasound2 (>= 1.2.4), alsa-utils (>= 1.2.4), libpulse0 (>= 14.2), systemd (>= 247.3), init-system-helpers (>= 1.60)
 Maintainer: Jason Gray <jasonlevigray3@gmail.com>
 Priority: optional
 Section: base
-Filename: pool/main/r/raspotify/raspotify_0.42.2~librespot.v0.4.2-6537c44_armhf.deb
-Size: 2763232
-SHA256: d83be3e42bce88654391f1cc5de3325879ae410e0a51c8de9718154bede5cc51
-SHA1: b646b56094192681af1727eb71f69bc837db977d
-MD5sum: 6e0ecb1ac1f1e4a417b52627ad88fcc4
+Filename: pool/main/r/raspotify/raspotify_0.42.3~librespot.v0.4.2-6537c44_armhf.deb
+Size: 2744976
+SHA256: 43976240eea715360c47741152493867c6c5098100e46f8d94a7e9a555810f7b
+SHA1: a68230be69077f128873d7a244df52e3702bb3bd
+MD5sum: 2d24bc138107003237cfab9e5d5a8234
 Description: Raspotify
  Spotify Connect daemon for the Raspberry Pi and other Debian based headless systems, based off librespot.
- [Built with rustc 1.62.1 (e092d0b6b 2022-07-16)]
+ [Built with rustc 1.63.0 (4b91a6ea7 2022-08-08)]
 
