@@ -13,15 +13,23 @@ body:
     id: device
     attributes:
       label: Compatible Device
-      description: Before submitting this issue you have made sure that you are running Raspotify on a compatible device. Support for ARMv6 devices (Pi 1 & Pi Zero v1.x) has been dropped.
+      description: Before submitting this issue you have made sure that you are running Raspotify on a compatible device.
       options:
         - label: I'm running Raspotify on a compatible Device
+          required: true
+  - type: checkboxes
+    id: not-a-piv1
+    attributes:
+      label: Are you sure?
+      description: Support for ARMv6 devices (Pi 1 & Pi Zero v1.x) has been dropped.
+      options:
+        - label: I'm not trying to run Raspotify on a ARMv6 device
           required: true
   - type: checkboxes
     id: os-version
     attributes:
       label: Compatible OS
-      description: Before submitting this issue you have made sure that you are running Raspotify on Raspberry Pi OS Bullseye (or at least something based on Debian Bulleye or newer)
+      description: Before submitting this issue you have made sure that you are running Raspotify on Debian Stable (or at least something based on Debian Stable or newer)
       options:
         - label: I'm running Raspotify on a compatible OS
           required: true
@@ -40,6 +48,14 @@ body:
       description: Before submitting this issue you have made sure that you are running the latest version of Raspotify
       options:
         - label: I'm running the latest version of Raspotify
+          required: true
+  - type: checkboxes
+    id: not-0-31-8-1
+    attributes:
+      label: Are you sure?
+      description: Before submitting this issue you have made sure that you are not running version 0.31.8.1 on a Pi v1 or Pi Zero?
+      options:
+        - label: I'm not running Raspotify 0.31.8.1 on a on a Pi v1 or Pi Zero
           required: true
   - type: checkboxes
     id: due-diligence
