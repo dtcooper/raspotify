@@ -56,6 +56,19 @@ jobs:
           issue-number: ${{ github.event.issue.number }}
           comment: |
             The OS referenced is unsupported.
+  close-unsupported-configuration:
+    if: github.event.label.name == 'unsupported-configuration'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Close unsupported-configuration
+        uses: peter-evans/close-issue@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          comment: |
+            The configuration referenced is unsupported. Examples would be using Raspotify on a desktop system, in a docker container or in conjunction with other audio services/programs.
   comment-upstream:
     if: github.event.label.name == 'upstream'
     runs-on: ubuntu-latest
@@ -69,6 +82,19 @@ jobs:
           issue-number: ${{ github.event.issue.number }}
           body: |
             This is an upstream issue. You should file an issue with librespot.
+  comment-need-more-info-to-fix:
+    if: github.event.label.name == 'need-more-info-to-fix'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Comment need-more-info-to-fix
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            More info has been requested. The issue will be closed shortly if it's not provided.
   close-invalid:
     if: github.event.label.name == 'invalid'
     runs-on: ubuntu-latest
@@ -107,4 +133,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.issue.number }}
           comment: |
-            This issue has been marked wontfix and may not be a bug at all.
+            This issue has been marked wontfix and may not even be a bug at all.
