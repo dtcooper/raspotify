@@ -26,6 +26,14 @@ body:
         - label: I'm running Raspotify on a compatible OS
           required: true
   - type: checkboxes
+    id: config
+    attributes:
+      label: Compatible Configuration
+      description: Before submitting this issue you have made sure that you are running Raspotify on a headless system (not a desktop system)
+      options:
+        - label: I'm running Raspotify on a compatible Configuration
+          required: true
+  - type: checkboxes
     id: latest-version
     attributes:
       label: Latest Version
