@@ -72,6 +72,8 @@ sudo apt install ./raspotify_0.31.8.1.librespot.v0.3.1-54-gf4be9bb_armhf.deb
 
 ***Don't forget to checkout the [wiki](https://github.com/dtcooper/raspotify/wiki) for tips, tricks and configuration info!!!***
 
+The [Basic Setup Guide](https://github.com/dtcooper/raspotify/wiki/Basic-Setup-Guide) is particularly useful. 
+
 ## Bug Reports and Feature Requests
 
 **Please read the [Troubleshooting wiki page](https://github.com/dtcooper/raspotify/wiki/Troubleshooting) before opening an issue or asking a question.**
