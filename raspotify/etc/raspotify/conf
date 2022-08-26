@@ -118,7 +118,7 @@ LIBRESPOT_ENABLE_VOLUME_NORMALISATION=
 # 
 # By default librespot "download buffers" tracks, meaning that it downloads
 # the tracks to disk and plays them from the disk and then deletes them when
-# the track is over. This practice is very common, many other audio framworks
+# the track is over. This practice is very common, many other audio frameworks
 # and players do the exact same thing as a disk based tmp cache is easy to use
 # and very resilient. That being said there may be cases where a user may want
 # to minimize disk read/writes.
