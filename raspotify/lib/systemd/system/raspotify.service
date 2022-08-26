@@ -43,6 +43,7 @@ StateDirectoryMode=0700
 StateDirectory=%N
 ConfigurationDirectoryMode=0600
 ConfigurationDirectory=%N
+RuntimeDirectory=%N
 
 PrivateTmp=true
 PrivateUsers=true
@@ -65,6 +66,11 @@ Environment=LIBRESPOT_NAME="%N (%H)"
 Environment=LIBRESPOT_BACKEND="alsa"
 Environment=LIBRESPOT_CACHE=%C/%N
 Environment=LIBRESPOT_SYSTEM_CACHE=%S/%N
+
+# This Moves librespot's /tmp to RAM
+# It is overridden in the config.
+# See the config for details.
+Environment=TMPDIR=%t/%N
 
 EnvironmentFile=-%E/%N/conf
 

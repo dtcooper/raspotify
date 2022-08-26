@@ -111,3 +111,20 @@ LIBRESPOT_ENABLE_VOLUME_NORMALISATION=
 
 # HTTP proxy to use when connecting.
 #LIBRESPOT_PROXY=""
+
+# ### This is NOT a librespot option or flag. ###
+# This modifies the behavior of the Raspotify service.
+# If you have issues with this option DO NOT file a bug with librespot.
+# 
+# By default libresot "download buffers" tracks, meaning that it downloads
+# the tracks to disk and plays them from the disk and then deletes them when
+# the track is over. This practice is very common, many other audio framworks
+# and player do the exact same thing as a disk based tmp cache is easy to use
+# and very resilient. That being said there may be cases where a user may want
+# to minimize disk read/writes.
+#
+# Commenting this out will cause librespot to use a tmpfs so that provided there
+# is enough RAM to hold the track nothing is written to disk but instead to a tmpfs.
+# See https://github.com/dtcooper/raspotify/discussions/567
+# And https://www.kernel.org/doc/html/latest/filesystems/tmpfs.html
+TMPDIR=/tmp
