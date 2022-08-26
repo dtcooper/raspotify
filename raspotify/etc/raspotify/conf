@@ -116,7 +116,7 @@ LIBRESPOT_ENABLE_VOLUME_NORMALISATION=
 # This modifies the behavior of the Raspotify service.
 # If you have issues with this option DO NOT file a bug with librespot.
 # 
-# By default libresot "download buffers" tracks, meaning that it downloads
+# By default librespot "download buffers" tracks, meaning that it downloads
 # the tracks to disk and plays them from the disk and then deletes them when
 # the track is over. This practice is very common, many other audio framworks
 # and players do the exact same thing as a disk based tmp cache is easy to use
