@@ -20,11 +20,17 @@ fi
 
 cd librespot
 
-git checkout master
+git checkout -f master
 
 # Get the git rev of librespot for .deb versioning
 LIBRESPOT_VER="$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null || echo unknown)"
 LIBRESPOT_HASH="$(git rev-parse HEAD | cut -c 1-7 2>/dev/null || echo unknown)"
+
+# Don't hang on panic just abort.
+# The downside is that we won't get tracebacks.
+# The upside is that we don't hang on a panic and we can strip
+# the binary to make it much smaller.
+echo "\n[profile.release]\npanic = \"abort\"" >> Cargo.toml
 
 # Build librespot
 cargo build --release --target $BUILD_TARGET --no-default-features --features "alsa-backend pulseaudio-backend"
@@ -35,8 +41,8 @@ cd /mnt/raspotify
 mkdir -p raspotify/usr/bin
 cp -v /build/$BUILD_TARGET/release/librespot raspotify/usr/bin
 
-# Strip dramatically decreases the size -- Disabled so we get tracebacks
-#arm-linux-gnueabihf-strip raspotify/usr/bin/librespot
+# Strip dramatically decreases the size
+${STRIP_COMMAND} -s raspotify/usr/bin/librespot
 
 # Compute final package version + filename for Debian control file
 DEB_PKG_VER="${RASPOTIFY_GIT_VER}~librespot.${LIBRESPOT_VER}-${LIBRESPOT_HASH}"
