@@ -30,16 +30,18 @@ LIBRESPOT_HASH="$(git rev-parse HEAD | cut -c 1-7 2>/dev/null || echo unknown)"
 # The downside is that we won't get tracebacks.
 # The upside is that we don't hang on a panic and we can strip
 # the binary to make it much smaller.
-echo "\n[profile.release]\npanic = \"abort\"" >> Cargo.toml
+# The ncodegen-units = 1 and lto = true bits are meant to be optimizations,
+# but they probably do nothing or very little but what the heck it's worth a shot.  
+echo "\n[profile.raspotify]\ninherits = \"release\"\npanic = \"abort\"\ncodegen-units = 1\nlto = true" >> Cargo.toml
 
 # Build librespot
-cargo build --release --target $BUILD_TARGET --no-default-features --features "alsa-backend pulseaudio-backend"
+cargo build --profile raspotify --target $BUILD_TARGET --no-default-features --features "alsa-backend pulseaudio-backend"
 
 
 # Copy librespot to pkg root
 cd /mnt/raspotify
 mkdir -p raspotify/usr/bin
-cp -v /build/$BUILD_TARGET/release/librespot raspotify/usr/bin
+cp -v /build/$BUILD_TARGET/raspotify/librespot raspotify/usr/bin
 
 # Strip dramatically decreases the size
 ${STRIP_COMMAND} -s raspotify/usr/bin/librespot
