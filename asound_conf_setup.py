@@ -45,6 +45,10 @@ COMMON_FORMATS = [
 ]
 
 COMMON_RATES = [
+    8000,
+    11025,
+    16000,
+    22050,
     44100,
     48000,
     88200,
@@ -58,8 +62,7 @@ COMMON_RATES = [
 
 def privilege_check():
     try:
-        with open(DUMMY_PATH, "w") as _:
-            pass
+        open(DUMMY_PATH, "w").close()
         os.remove(DUMMY_PATH)
     except:
         print("Error: This script requires write privileges to /etc.")
@@ -99,9 +102,9 @@ def get_all_pcm_name():
     return all_pcm_names
 
 
-def get_hw_pcm_names(all_hw_pcm_names):
+def get_hw_pcm_names():
     hw_pcm_names = [
-        n for n in all_hw_pcm_names.split("\n") if n.startswith("hw:")
+        n for n in get_all_pcm_name().split("\n") if n.startswith("hw:")
     ]
 
     if not hw_pcm_names:
@@ -126,14 +129,14 @@ def choose_hw_pcm(hw_pcm_names):
                 pcm = hw_pcm_names[int(choice) - 1]
             except KeyboardInterrupt:
                 revert_backup()
-                print("\n")
+                print("")
                 exit(0)
             except:
                 print("Invalid hw PCM: {}".format(choice))
                 print("Enter a number from 1 - {}.".format(len(hw_pcm_names)))
                 continue
             else:
-                return pcm
+                break
     else:
         pcm = hw_pcm_names[0]
 
@@ -142,7 +145,7 @@ def choose_hw_pcm(hw_pcm_names):
             "so that's what we'll use…".format(pcm)
         )
 
-        return pcm
+    return pcm
 
 
 def get_formats_and_rates(pcm):
@@ -207,14 +210,14 @@ def choose_format(formats):
                 format_ = formats[int(choice) - 1]
             except KeyboardInterrupt:
                 revert_backup()
-                print("\n")
+                print("")
                 exit(0)
             except:
                 print("Invalid format choice: {}".format(choice))
                 print("Enter a number from 1 - {}.".format(len(formats)))
                 continue
             else:
-                return format_
+                break
 
     else:
         format_ = formats[0]
@@ -224,7 +227,7 @@ def choose_format(formats):
             "so that's what we'll use…".format(format_)
         )
 
-        return format_
+    return format_
 
 
 def choose_rate(rates):
@@ -244,26 +247,26 @@ def choose_rate(rates):
             "degraded audio quality, and audio dropouts and glitches on "
             "low spec devices.\nUnless the music you normally listen to is a "
             "higher sampling rate,\n"
-            "44100 (or as close and you can get to it) is the best choice."
+            "44100 (or as close as you can get to it) is the best choice."
         )
 
         while True:
             try:
                 choice = input(
                     "Please choose the desired supported sampling rate: "
-                    )
+                )
 
                 rate = rates[int(choice) - 1]
             except KeyboardInterrupt:
                 revert_backup()
-                print("\n")
+                print("")
                 exit(0)
             except:
                 print("Invalid sampling rate choice: {}".format(choice))
                 print("Enter a number from 1 - {}.".format(len(rates)))
                 continue
             else:
-                return rate
+                break
 
     else:
         rate = rates[0]
@@ -280,7 +283,7 @@ def choose_rate(rates):
                 "glitches on low spec devices."
             )
 
-        return rate
+    return rate
 
 
 def pcm_to_card_device(pcm):
@@ -293,7 +296,7 @@ def pcm_to_card_device(pcm):
 
 
 def get_choices():
-    hw_pcm_names = get_hw_pcm_names(get_all_pcm_name())
+    hw_pcm_names = get_hw_pcm_names()
 
     while True:
         try:
@@ -302,7 +305,8 @@ def get_choices():
 
             if not formats or not rates:
                 print(
-                    "No formats or Rates, the hw PCM you chose may be busy "
+                    "No supported formats or sampling rates were returned, "
+                    "the hw PCM you chose may be busy "
                     "or not support any common formats and rates? "
                     "Make sure it's not in use and try again."
                 )
@@ -315,7 +319,7 @@ def get_choices():
 
         except KeyboardInterrupt:
             revert_backup()
-            print("\n")
+            print("")
             exit(0)
 
 
@@ -336,7 +340,7 @@ def write_asound_conf():
             exit(0)
 
     except KeyboardInterrupt:
-        print("\n")
+        print("")
         exit(0)
 
     card, device, format_, rate = get_choices()
