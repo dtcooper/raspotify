@@ -30,7 +30,7 @@ import os
 import time
 
 ASOUND_FILE_PATH = "/etc/asound.conf"
-DUMMY_PATH = "/etc/foobarbaz"
+DUMMY_PATH = "/etc/foobarbaz{}".format(int(time.time()))
 BACKUP_FILE_PATH = "/etc/asound.conf.bak{}".format(int(time.time()))
 
 COMMON_FORMATS = [
