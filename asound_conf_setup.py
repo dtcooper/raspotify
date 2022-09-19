@@ -130,14 +130,14 @@ def choose_hw_pcm(hw_pcm_names):
                 pcm = hw_pcm_names[int(choice) - 1]
             except KeyboardInterrupt:
                 revert_backup()
-                print("\n")
+                print("")
                 exit(0)
             except:
                 print("Invalid hw PCM: {}".format(choice))
                 print("Enter a number from 1 - {}.".format(len(hw_pcm_names)))
                 continue
             else:
-                return pcm
+                break
     else:
         pcm = hw_pcm_names[0]
 
@@ -146,7 +146,7 @@ def choose_hw_pcm(hw_pcm_names):
             "so that's what we'll use…".format(pcm)
         )
 
-        return pcm
+    return pcm
 
 
 def get_formats_and_rates(pcm):
@@ -211,14 +211,14 @@ def choose_format(formats):
                 format_ = formats[int(choice) - 1]
             except KeyboardInterrupt:
                 revert_backup()
-                print("\n")
+                print("")
                 exit(0)
             except:
                 print("Invalid format choice: {}".format(choice))
                 print("Enter a number from 1 - {}.".format(len(formats)))
                 continue
             else:
-                return format_
+                break
 
     else:
         format_ = formats[0]
@@ -228,7 +228,7 @@ def choose_format(formats):
             "so that's what we'll use…".format(format_)
         )
 
-        return format_
+    return format_
 
 
 def choose_rate(rates):
@@ -260,14 +260,14 @@ def choose_rate(rates):
                 rate = rates[int(choice) - 1]
             except KeyboardInterrupt:
                 revert_backup()
-                print("\n")
+                print("")
                 exit(0)
             except:
                 print("Invalid sampling rate choice: {}".format(choice))
                 print("Enter a number from 1 - {}.".format(len(rates)))
                 continue
             else:
-                return rate
+                break
 
     else:
         rate = rates[0]
@@ -284,7 +284,7 @@ def choose_rate(rates):
                 "glitches on low spec devices."
             )
 
-        return rate
+    return rate
 
 
 def pcm_to_card_device(pcm):
@@ -320,7 +320,7 @@ def get_choices():
 
         except KeyboardInterrupt:
             revert_backup()
-            print("\n")
+            print("")
             exit(0)
 
 
@@ -341,7 +341,7 @@ def write_asound_conf():
             exit(0)
 
     except KeyboardInterrupt:
-        print("\n")
+        print("")
         exit(0)
 
     card, device, format_, rate = get_choices()
