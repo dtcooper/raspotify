@@ -103,9 +103,9 @@ def get_all_pcm_name():
     return all_pcm_names
 
 
-def get_hw_pcm_names(all_hw_pcm_names):
+def get_hw_pcm_names():    
     hw_pcm_names = [
-        n for n in all_hw_pcm_names.split("\n") if n.startswith("hw:")
+        n for n in get_all_pcm_name().split("\n") if n.startswith("hw:")
     ]
 
     if not hw_pcm_names:
@@ -297,7 +297,7 @@ def pcm_to_card_device(pcm):
 
 
 def get_choices():
-    hw_pcm_names = get_hw_pcm_names(get_all_pcm_name())
+    hw_pcm_names = get_hw_pcm_names()
 
     while True:
         try:
