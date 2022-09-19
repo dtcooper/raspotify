@@ -302,7 +302,8 @@ def get_choices():
 
             if not formats or not rates:
                 print(
-                    "No formats or Rates, the hw PCM you chose may be busy "
+                    "No supported formats or sampling rates were returned, "
+                    "the hw PCM you chose may be busy "
                     "or not support any common formats and rates? "
                     "Make sure it's not in use and try again."
                 )
