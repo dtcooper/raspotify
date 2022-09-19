@@ -244,7 +244,7 @@ def choose_rate(rates):
             "degraded audio quality, and audio dropouts and glitches on "
             "low spec devices.\nUnless the music you normally listen to is a "
             "higher sampling rate,\n"
-            "44100 (or as close and you can get to it) is the best choice."
+            "44100 (or as close as you can get to it) is the best choice."
         )
 
         while True:
