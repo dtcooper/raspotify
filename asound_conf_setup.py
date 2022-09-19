@@ -62,8 +62,7 @@ COMMON_RATES = [
 
 def privilege_check():
     try:
-        with open(DUMMY_PATH, "w") as _:
-            pass
+        open(DUMMY_PATH, "w").close()
         os.remove(DUMMY_PATH)
     except:
         print("Error: This script requires write privileges to /etc.")
