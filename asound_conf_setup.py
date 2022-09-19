@@ -70,7 +70,7 @@ def privilege_check():
 
 
 def backup_asound_conf():
-    if os.path.exists(file_path):
+    if os.path.exists(ASOUND_FILE_PATH):
         try:
             os.rename(ASOUND_FILE_PATH, BACKUP_FILE_PATH)
         except Exception as e:
