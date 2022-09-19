@@ -251,7 +251,7 @@ def choose_rate(rates):
             try:
                 choice = input(
                     "Please choose the desired supported sampling rate: "
-                    )
+                )
 
                 rate = rates[int(choice) - 1]
             except KeyboardInterrupt:
