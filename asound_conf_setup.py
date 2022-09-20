@@ -452,8 +452,6 @@ def write_asound_conf():
         print("")
         raise SystemExit(0)
 
-    backup_asound_conf()
-
     card, device, format_, rate = get_choices()
 
     file_data = """# /etc/asound.conf
