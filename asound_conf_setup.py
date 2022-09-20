@@ -31,6 +31,7 @@ import time
 
 GREEN = "\u001b[32m"
 YELLOW = "\u001b[33m"
+BOLD = "\033[1m"
 BOLD_RED = "\x1b[31;1m"
 RESET = "\u001b[0m"
 
@@ -107,8 +108,11 @@ def revert_asound_conf():
 
 def get_all_pcm_name():
     return (
-        subprocess.run(["aplay", "-L"], stdout=subprocess.PIPE)
-        .stdout.decode("utf-8")
+        subprocess.run(
+            ["aplay", "-L"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+        ).stdout.decode("utf-8")
         .split("\n")
     )
 
@@ -132,23 +136,51 @@ def get_hw_pcm_names():
 
 def choose_hw_pcm(hw_pcm_names):
     if len(hw_pcm_names) > 1:
-        print("Available hw PCMs:\n")
+        title = "Available hw PCMs"
+        max_len = max(
+            len(max([n for s in hw_pcm_names for n in s], key=len)), len(title)
+        )
+        line = "-" * (max_len + 8)
+        print(line)
+        print("{:<4}{:^_}{:>4}".replace("_", str(max_len)).format(
+                "|", title, "|"
+            )
+        )
 
+        print(line)
         for i, pcm in enumerate(hw_pcm_names):
-            print("{} - {}".format(i + 1, "\n    ".join(pcm)))
+            [name, desc] = pcm
+            print(
+                "{:<2}{:<4}{:<_}{:>2}".replace("_", str(max_len)).format(
+                    "|", i + 1, name, "|"
+                )
+            )
+
+            print("{:<6}{:<_}{:>2}".replace("_", str(max_len)).format(
+                    "|", desc, "|"
+                )
+            )
+
+            print(line)
 
         print("")
 
         while True:
             try:
-                choice = input("Please choose the hw PCM you wish to use: ")
+                choice = input(
+                    "{}Please choose the hw PCM you wish to use:{} ".format(
+                        BOLD,
+                        RESET,
+                    )
+                )
+
                 print("")
                 pcm = hw_pcm_names[int(choice) - 1][0]
             except KeyboardInterrupt:
                 print("")
                 raise SystemExit(0)
             except:
-                print("{}Invalid hw PCM: {}".format(YELLOW, choice))
+                print("{}Invalid hw PCM: {}".format(BOLD_RED, choice))
                 print(
                     "Enter a number from 1 - {}.{}\n".format(
                         len(hw_pcm_names),
@@ -170,26 +202,23 @@ def choose_hw_pcm(hw_pcm_names):
 
 
 def get_formats_and_rates(pcm):
-    r = subprocess.run(
+    hw_params = subprocess.run(
         [
             "aplay",
             "-D{}".format(pcm),
             "--dump-hw-params",
             "/usr/share/sounds/alsa/Front_Right.wav",
         ],
-        stderr=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
         stdout=subprocess.PIPE,
-    )
+    ).stdout.decode("utf-8")
 
     formats = []
     rates = []
 
-    hw_params = r.stdout.decode("utf-8") or r.stderr.decode("utf-8")
-
     for line in hw_params.split("\n"):
         if line.startswith("FORMAT:"):
-            line = line.replace("FORMAT:", "")
-            line.strip()
+            line = line.strip("FORMAT: ")
 
             for format_ in line.split(" "):
                 format_.strip()
@@ -197,16 +226,11 @@ def get_formats_and_rates(pcm):
                     formats.append(format_)
 
         elif line.startswith("RATE:"):
-            line = line.replace("RATE:", "")
-            line = line.replace("[", "")
-            line = line.replace("]", "")
-            line.strip()
+            line = line.strip("RATE:[ ]")
 
             for line in line.split(" "):
                 try:
-                    rate = int(line.strip())
-                    if rate in COMMON_RATES:
-                        rates.append(rate)
+                    rates.append(int(line.strip()))
                 except:
                     pass
 
@@ -215,10 +239,25 @@ def get_formats_and_rates(pcm):
 
 def choose_format(formats):
     if len(formats) > 1:
-        print("Supported Formats:\n")
+        title = "Supported Formats"
+        max_len = max(len(max(formats, key=len)), len(title))
+        line = "-" * (max_len + 8)
+
+        print(line)
+        print("{:<4}{:^_}{:>4}".replace("_", str(max_len)).format(
+                "|", title, "|"
+            )
+        )
+
+        print(line)
 
         for i, format_ in enumerate(formats):
-            print("{} - {}".format(i + 1, format_))
+            print(
+                "{:<2}{:<4}{:>_}{:>2}".replace("_", str(max_len)).format(
+                    "|", i + 1, format_, "|"
+                )
+            )
+            print(line)
 
         print(
             "\n{}It's generally advised to choose the highest bit "
@@ -227,15 +266,21 @@ def choose_format(formats):
 
         while True:
             try:
-                choice = input("Please choose the desired supported format: ")
+                choice = input(
+                    "{}Please choose the desired supported format:{} ".format(
+                        BOLD, RESET
+                    )
+                )
+
                 print("")
                 format_ = formats[int(choice) - 1]
             except KeyboardInterrupt:
                 print("")
                 raise SystemExit(0)
             except:
-                print("{}Invalid format choice: {}".format(YELLOW, choice))
-                print("Enter a number from 1 - {}.{}\n".format(
+                print("{}Invalid format choice: {}".format(BOLD_RED, choice))
+                print(
+                    "Enter a number from 1 - {}.{}\n".format(
                         len(formats),
                         RESET,
                     )
@@ -261,10 +306,24 @@ def choose_rate(rates):
 
         rates = [r for r in COMMON_RATES if r in r_range]
 
-        print("Supported Sampling Rates:\n")
+        title = "Supported Sampling Rates"
+        max_len = max(len(max([str(r) for r in rates], key=len)), len(title))
+        line = "-" * (max_len + 8)
 
+        print(line)
+        print("{:<4}{:^_}{:>4}".replace("_", str(max_len)).format(
+                "|", title, "|"
+            )
+        )
+
+        print(line)
         for i, rate in enumerate(rates):
-            print("{} - {}".format(i + 1, rate))
+            print(
+                "{:<2}{:<4}{:>_}{:>2}".replace("_", str(max_len)).format(
+                    "|", i + 1, rate, "|"
+                )
+            )
+            print(line)
 
         print(
             "\n{}Standard CD quality is 44100.\n\n"
@@ -272,28 +331,31 @@ def choose_rate(rates):
             "degraded audio quality, and audio dropouts and glitches on "
             "low spec devices.\nUnless the music you normally listen to is a "
             "higher sampling rate,\n44100 (or as close as you can get to it) "
-            "is the best choice.{}\n".format(
-                GREEN, RESET
-            )
+            "is the best choice.{}\n".format(GREEN, RESET)
         )
 
         while True:
             try:
                 choice = input(
-                    "Please choose the desired supported sampling rate: "
+                    "{}Please choose the desired supported sampling rate:{} ".format(
+                        BOLD, RESET
+                    )
                 )
+
                 print("")
                 rate = rates[int(choice) - 1]
             except KeyboardInterrupt:
                 print("")
                 raise SystemExit(0)
             except:
-                print("{}Invalid sampling rate choice: {}".format(
-                        YELLOW,
+                print(
+                    "{}Invalid sampling rate choice: {}".format(
+                        BOLD_RED,
                         choice,
                     )
                 )
-                print("Enter a number from 1 - {}.{}\n".format(
+                print(
+                    "Enter a number from 1 - {}.{}\n".format(
                         len(rates),
                         RESET,
                     )
@@ -314,17 +376,23 @@ def choose_rate(rates):
             print(
                 "{}High sampling rates can lead to high CPU usage, "
                 "degraded audio quality,\nand audio dropouts and "
-                "glitches on low spec devices.{}\n".format(YELLOW, RESET)
+                "glitches on low spec devices.{}\n".format(BOLD_RED, RESET)
             )
 
     return rate
 
 
 def pcm_to_card_device(pcm):
-    card = pcm.replace("hw:CARD=", "").strip()
-    [card, device] = card.split(",")
-    device = device.replace("DEV=", "").strip()
-    device = int(device)
+    try:
+        [card, device] = pcm.split(",")
+        card = card.replace("hw:CARD=", "").strip()
+        device = int(device.strip("DEV= "))
+    except Exception as e:
+        print(
+            "{}Error parsing card and device: {}{}".format(BOLD_RED, e, RESET)
+        )
+
+        raise SystemExit(1)
 
     return card, device
 
@@ -343,7 +411,8 @@ def get_choices():
                     "the hw PCM you chose may be busy "
                     "or not support any common formats and rates? "
                     "Make sure it's not in use and try again.{}\n".format(
-                        YELLOW, RESET,
+                        BOLD_RED,
+                        RESET,
                     )
                 )
                 continue
@@ -371,7 +440,7 @@ def write_asound_conf():
     )
 
     try:
-        choice = input("Enter OK to continue: ")
+        choice = input("{}Enter OK to continue:{} ".format(BOLD, RESET))
 
         if choice.lower() != "ok":
             print("")
