@@ -29,8 +29,13 @@ import subprocess
 import os
 import time
 
+GREEN = "\u001b[32m"
+YELLOW = "\u001b[33m"
+BOLD_RED = "\x1b[31;1m"
+RESET = "\u001b[0m"
+
 ASOUND_FILE_PATH = "/etc/asound.conf"
-DUMMY_PATH = "/etc/foobarbaz{}".format(int(time.time()))
+DUMMY_FILE_PATH = "/etc/foobarbaz{}".format(int(time.time()))
 BACKUP_FILE_PATH = "/etc/asound.conf.bak{}".format(int(time.time()))
 
 COMMON_FORMATS = [
@@ -62,29 +67,38 @@ COMMON_RATES = [
 
 def privilege_check():
     try:
-        open(DUMMY_PATH, "w").close()
-        os.remove(DUMMY_PATH)
+        open(DUMMY_FILE_PATH, "w").close()
+        os.remove(DUMMY_FILE_PATH)
     except:
-        print("Error: This script requires write privileges to /etc.")
-        exit(1)
+        print(
+            "{}Error: This script requires write privileges to /etc.{}".format(
+                BOLD_RED, RESET
+            )
+        )
+        raise SystemExit(1)
 
 
 def backup_asound_conf():
-    if os.path.exists(ASOUND_FILE_PATH):
-        try:
-            os.rename(ASOUND_FILE_PATH, BACKUP_FILE_PATH)
-        except Exception as e:
-            print("Error renaming existing {}: {}".format(ASOUND_FILE_PATH, e))
-            exit(1)
-        else:
-            print(
-                "{} already exists renaming it to {}.".format(
-                    ASOUND_FILE_PATH, BACKUP_FILE_PATH
-                )
+    try:
+        os.rename(ASOUND_FILE_PATH, BACKUP_FILE_PATH)
+    except FileNotFoundError:
+        pass
+    except Exception as e:
+        print(
+            "{}Error renaming existing {}: {}{}".format(
+                BOLD_RED, ASOUND_FILE_PATH, e, RESET
             )
+        )
+        raise SystemExit(1)
+    else:
+        print(
+            "{}{} already exists renaming it to: {}{}.\n".format(
+                GREEN, ASOUND_FILE_PATH, BACKUP_FILE_PATH, RESET
+            )
+        )
 
 
-def revert_backup():
+def revert_asound_conf():
     try:
         os.rename(BACKUP_FILE_PATH, ASOUND_FILE_PATH)
     except:
@@ -92,57 +106,64 @@ def revert_backup():
 
 
 def get_all_pcm_name():
-    all_pcm_names = subprocess.run(
-        ["aplay", "-L"], stdout=subprocess.PIPE
-    ).stdout.decode("utf-8")
-
-    print("Full list of ALSA PCM Names:")
-    print(all_pcm_names)
-
-    return all_pcm_names
+    return (
+        subprocess.run(["aplay", "-L"], stdout=subprocess.PIPE)
+        .stdout.decode("utf-8")
+        .split("\n")
+    )
 
 
 def get_hw_pcm_names():
+    all_pcm_name = get_all_pcm_name()
+
     hw_pcm_names = [
-        n for n in get_all_pcm_name().split("\n") if n.startswith("hw:")
+        [n.strip(), all_pcm_name[i + 1].strip()]
+        for i, n in enumerate(all_pcm_name)
+        if n.startswith("hw:")
     ]
 
     if not hw_pcm_names:
-        revert_backup()
-        print("No available hw PCM")
-        exit(1)
-
-    elif len(hw_pcm_names) > 1:
-        print("Available hw PCMs:")
-
-        for i, pcm in enumerate(hw_pcm_names):
-            print("{} - {}".format(i + 1, pcm))
+        print("\n".join(all_pcm_name))
+        print("{}No available hw PCM{}".format(BOLD_RED, RESET))
+        raise SystemExit(1)
 
     return hw_pcm_names
 
 
 def choose_hw_pcm(hw_pcm_names):
     if len(hw_pcm_names) > 1:
+        print("Available hw PCMs:\n")
+
+        for i, pcm in enumerate(hw_pcm_names):
+            print("{} - {}".format(i + 1, "\n    ".join(pcm)))
+
+        print("")
+
         while True:
             try:
                 choice = input("Please choose the hw PCM you wish to use: ")
-                pcm = hw_pcm_names[int(choice) - 1]
-            except KeyboardInterrupt:
-                revert_backup()
                 print("")
-                exit(0)
+                pcm = hw_pcm_names[int(choice) - 1][0]
+            except KeyboardInterrupt:
+                print("")
+                raise SystemExit(0)
             except:
-                print("Invalid hw PCM: {}".format(choice))
-                print("Enter a number from 1 - {}.".format(len(hw_pcm_names)))
+                print("{}Invalid hw PCM: {}".format(YELLOW, choice))
+                print(
+                    "Enter a number from 1 - {}.{}\n".format(
+                        len(hw_pcm_names),
+                        RESET,
+                    )
+                )
                 continue
             else:
                 break
     else:
-        pcm = hw_pcm_names[0]
+        pcm = hw_pcm_names[0][0]
 
         print(
-            "{} is the only available hw PCM "
-            "so that's what we'll use…".format(pcm)
+            "{}{} is the only available hw PCM "
+            "so that's what we'll use…{}\n".format(GREEN, pcm, RESET)
         )
 
     return pcm
@@ -194,27 +215,31 @@ def get_formats_and_rates(pcm):
 
 def choose_format(formats):
     if len(formats) > 1:
-        print("Supported Formats:")
+        print("Supported Formats:\n")
 
         for i, format_ in enumerate(formats):
             print("{} - {}".format(i + 1, format_))
 
         print(
-            "It's generally advised to choose the highest bit "
-            "depth format that your device supports."
+            "\n{}It's generally advised to choose the highest bit "
+            "depth format that your device supports.{}\n".format(GREEN, RESET)
         )
 
         while True:
             try:
                 choice = input("Please choose the desired supported format: ")
+                print("")
                 format_ = formats[int(choice) - 1]
             except KeyboardInterrupt:
-                revert_backup()
                 print("")
-                exit(0)
+                raise SystemExit(0)
             except:
-                print("Invalid format choice: {}".format(choice))
-                print("Enter a number from 1 - {}.".format(len(formats)))
+                print("{}Invalid format choice: {}".format(YELLOW, choice))
+                print("Enter a number from 1 - {}.{}\n".format(
+                        len(formats),
+                        RESET,
+                    )
+                )
                 continue
             else:
                 break
@@ -223,8 +248,8 @@ def choose_format(formats):
         format_ = formats[0]
 
         print(
-            "{} is the only supported format "
-            "so that's what we'll use…".format(format_)
+            "{}{} is the only supported format "
+            "so that's what we'll use…{}\n".format(GREEN, format_, RESET)
         )
 
     return format_
@@ -236,18 +261,20 @@ def choose_rate(rates):
 
         rates = [r for r in COMMON_RATES if r in r_range]
 
-        print("Supported Sampling Rates:")
+        print("Supported Sampling Rates:\n")
 
         for i, rate in enumerate(rates):
             print("{} - {}".format(i + 1, rate))
 
         print(
-            "Standard CD quality is 44100.\n"
+            "\n{}Standard CD quality is 44100.\n\n"
             "An unnecessarily high sampling rate can lead to high CPU usage,\n"
             "degraded audio quality, and audio dropouts and glitches on "
             "low spec devices.\nUnless the music you normally listen to is a "
-            "higher sampling rate,\n"
-            "44100 (or as close as you can get to it) is the best choice."
+            "higher sampling rate,\n44100 (or as close as you can get to it) "
+            "is the best choice.{}\n".format(
+                GREEN, RESET
+            )
         )
 
         while True:
@@ -255,15 +282,22 @@ def choose_rate(rates):
                 choice = input(
                     "Please choose the desired supported sampling rate: "
                 )
-
+                print("")
                 rate = rates[int(choice) - 1]
             except KeyboardInterrupt:
-                revert_backup()
                 print("")
-                exit(0)
+                raise SystemExit(0)
             except:
-                print("Invalid sampling rate choice: {}".format(choice))
-                print("Enter a number from 1 - {}.".format(len(rates)))
+                print("{}Invalid sampling rate choice: {}".format(
+                        YELLOW,
+                        choice,
+                    )
+                )
+                print("Enter a number from 1 - {}.{}\n".format(
+                        len(rates),
+                        RESET,
+                    )
+                )
                 continue
             else:
                 break
@@ -272,15 +306,15 @@ def choose_rate(rates):
         rate = rates[0]
 
         print(
-            "{} is the only supported sampling rate "
-            "so that's what we'll use…".format(rate)
+            "{}{} is the only supported sampling rate "
+            "so that's what we'll use…{}\n".format(GREEN, rate, RESET)
         )
 
         if rate > 48000:
             print(
-                "High sampling rates can lead to high CPU usage,\n"
-                "degraded audio quality, and audio dropouts and "
-                "glitches on low spec devices."
+                "{}High sampling rates can lead to high CPU usage, "
+                "degraded audio quality,\nand audio dropouts and "
+                "glitches on low spec devices.{}\n".format(YELLOW, RESET)
             )
 
     return rate
@@ -305,10 +339,12 @@ def get_choices():
 
             if not formats or not rates:
                 print(
-                    "No supported formats or sampling rates were returned, "
+                    "{}No supported formats or sampling rates were returned, "
                     "the hw PCM you chose may be busy "
                     "or not support any common formats and rates? "
-                    "Make sure it's not in use and try again."
+                    "Make sure it's not in use and try again.{}\n".format(
+                        YELLOW, RESET,
+                    )
                 )
                 continue
             else:
@@ -318,18 +354,19 @@ def get_choices():
                 return card, device, format_, rate
 
         except KeyboardInterrupt:
-            revert_backup()
             print("")
-            exit(0)
+            raise SystemExit(0)
 
 
 def write_asound_conf():
     privilege_check()
 
     print(
-        "This script will backup {0} (if it already exists) "
-        "and create a new {0} based on your choices.".format(
-            ASOUND_FILE_PATH
+        "{0}This script will backup {1} if it already exists, "
+        "and create a new {1} based on your choices.{2}\n".format(
+            BOLD_RED,
+            ASOUND_FILE_PATH,
+            RESET,
         )
     )
 
@@ -337,11 +374,14 @@ def write_asound_conf():
         choice = input("Enter OK to continue: ")
 
         if choice.lower() != "ok":
-            exit(0)
+            print("")
+            raise SystemExit(0)
+
+        print("")
 
     except KeyboardInterrupt:
         print("")
-        exit(0)
+        raise SystemExit(0)
 
     backup_asound_conf()
 
@@ -393,28 +433,37 @@ ctl.!default {{
         card, device, rate, format_
     )
 
+    backup_asound_conf()
+
     try:
         with open(ASOUND_FILE_PATH, "w") as f:
             f.write(file_data)
 
     except Exception as e:
-        revert_backup()
-        print("Error: {}".format(e))
-        exit(1)
+        print("{}Error: {}{}".format(BOLD_RED, e, RESET))
+        revert_asound_conf()
+        raise SystemExit(1)
 
     else:
         print(
-            "Using Card: {}, Device: {}, "
+            "{}Using Card: {}, Device: {}, "
             "Format: {}, and Sampling Rate: {},".format(
-                card, device, format_, rate
+                GREEN,
+                card,
+                device,
+                format_,
+                rate,
             )
         )
 
         print(
             "{} was written successfully. "
-            "Please verify that it is correct.".format(ASOUND_FILE_PATH)
+            "Please verify that it is correct.{}".format(
+                ASOUND_FILE_PATH, RESET
+            )
         )
 
 
 if __name__ == "__main__":
     write_asound_conf()
+
