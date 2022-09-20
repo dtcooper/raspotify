@@ -29,9 +29,8 @@ import subprocess
 import os
 import time
 
-GREEN = "\u001b[32m"
-YELLOW = "\u001b[33m"
 BOLD = "\033[1m"
+CYAN = "\u001b[36m"
 BOLD_RED = "\x1b[31;1m"
 RESET = "\u001b[0m"
 
@@ -66,42 +65,84 @@ COMMON_RATES = [
 ]
 
 
+def stylize_input(text):
+    return f"{BOLD}{text}{RESET}"
+
+
+def stylize_error(text):
+    return f"{BOLD_RED}{text}{RESET}"
+
+
+def stylize_comment(text):
+    return f"{CYAN}{text}{RESET}"
+
+
+def print_table_row(text, num, width, padding, justify, print_line):
+    if justify is None:
+        pad = int(padding / 2)
+        row = f"{{:<{pad}}}{{:^{width}}}{{:>{pad}}}".format("|", text, "|")
+
+    else:
+        if justify == "left":
+            j = "<"
+
+        else:
+            j = ">"
+
+        center_pad = int(padding / 2)
+        pad = int(center_pad / 2)
+        row = f"{{:<{pad}}}{{:<{center_pad}}}{{:{j}{width}}}{{:>{pad}}}".format(
+            "|", num, text, "|"
+        )
+
+    print(row)
+
+    if print_line:
+        line = "-" * (width + padding)
+        print(line)
+
+
+def print_table_header(title, width, padding):
+    line = "-" * (width + padding)
+    print(line)
+    print_table_row(title, "", width, padding, None, True)
+
+
 def privilege_check():
     try:
         open(DUMMY_FILE_PATH, "w").close()
         os.remove(DUMMY_FILE_PATH)
+
     except:
-        print(
-            "{}Error: This script requires write privileges to /etc.{}".format(
-                BOLD_RED, RESET
-            )
-        )
+        e = stylize_error("Error: This script requires write privileges to /etc.")
+        print(e)
         raise SystemExit(1)
 
 
 def backup_asound_conf():
     try:
         os.rename(ASOUND_FILE_PATH, BACKUP_FILE_PATH)
+
     except FileNotFoundError:
         pass
+
     except Exception as e:
-        print(
-            "{}Error renaming existing {}: {}{}".format(
-                BOLD_RED, ASOUND_FILE_PATH, e, RESET
-            )
-        )
+        e = stylize_error(f"Error renaming existing {ASOUND_FILE_PATH}: {e}")
+        print(e)
         raise SystemExit(1)
+
     else:
-        print(
-            "{}{} already exists renaming it to: {}{}.\n".format(
-                GREEN, ASOUND_FILE_PATH, BACKUP_FILE_PATH, RESET
-            )
+        comment = stylize_comment(
+            f"{ASOUND_FILE_PATH} already exists renaming it to: {BACKUP_FILE_PATH}\n"
         )
+
+        print(comment)
 
 
 def revert_asound_conf():
     try:
         os.rename(BACKUP_FILE_PATH, ASOUND_FILE_PATH)
+
     except:
         pass
 
@@ -112,7 +153,8 @@ def get_all_pcm_name():
             ["aplay", "-L"],
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
-        ).stdout.decode("utf-8")
+        )
+        .stdout.decode("utf-8")
         .split("\n")
     )
 
@@ -128,75 +170,58 @@ def get_hw_pcm_names():
 
     if not hw_pcm_names:
         print("\n".join(all_pcm_name))
-        print("{}No available hw PCM{}".format(BOLD_RED, RESET))
+        e = stylize_error("No available hw PCM")
+        print(e)
         raise SystemExit(1)
 
     return hw_pcm_names
 
 
+def invalid_choice(len_choices):
+    e = stylize_error(f"Enter a number from 1 - {len_choices}.\n")
+    print(e)
+
+
 def choose_hw_pcm(hw_pcm_names):
     if len(hw_pcm_names) > 1:
         title = "Available hw PCMs"
-        max_len = max(
-            len(max([n for s in hw_pcm_names for n in s], key=len)), len(title)
-        )
-        line = "-" * (max_len + 8)
-        print(line)
-        print("{:<4}{:^_}{:>4}".replace("_", str(max_len)).format(
-                "|", title, "|"
-            )
-        )
+        width = max(len(max([n for s in hw_pcm_names for n in s], key=len)), len(title))
+        print_table_header(title, width, 8)
 
-        print(line)
         for i, pcm in enumerate(hw_pcm_names):
             [name, desc] = pcm
-            print(
-                "{:<2}{:<4}{:<_}{:>2}".replace("_", str(max_len)).format(
-                    "|", i + 1, name, "|"
-                )
-            )
-
-            print("{:<6}{:<_}{:>2}".replace("_", str(max_len)).format(
-                    "|", desc, "|"
-                )
-            )
-
-            print(line)
+            print_table_row(name, i + 1, width, 8, "left", False)
+            print_table_row(desc, "", width, 8, "left", True)
 
         print("")
 
         while True:
             try:
                 choice = input(
-                    "{}Please choose the hw PCM you wish to use:{} ".format(
-                        BOLD,
-                        RESET,
-                    )
+                    stylize_input("Please choose the hw PCM you wish to use: ")
                 )
 
                 print("")
                 pcm = hw_pcm_names[int(choice) - 1][0]
+
             except KeyboardInterrupt:
                 print("")
                 raise SystemExit(0)
+
             except:
-                print("{}Invalid hw PCM: {}".format(BOLD_RED, choice))
-                print(
-                    "Enter a number from 1 - {}.{}\n".format(
-                        len(hw_pcm_names),
-                        RESET,
-                    )
-                )
+                invalid_choice(len(hw_pcm_names))
                 continue
+
             else:
                 break
+
     else:
         pcm = hw_pcm_names[0][0]
-
-        print(
-            "{}{} is the only available hw PCM "
-            "so that's what we'll use…{}\n".format(GREEN, pcm, RESET)
+        comment = stylize_comment(
+            f"{pcm} is the only available hw PCM so that's what we'll use…\n"
         )
+
+        print(comment)
 
     return pcm
 
@@ -205,7 +230,7 @@ def get_formats_and_rates(pcm):
     hw_params = subprocess.run(
         [
             "aplay",
-            "-D{}".format(pcm),
+            f"-D{pcm}",
             "--dump-hw-params",
             "/usr/share/sounds/alsa/Front_Right.wav",
         ],
@@ -222,6 +247,7 @@ def get_formats_and_rates(pcm):
 
             for format_ in line.split(" "):
                 format_.strip()
+
                 if format_ in COMMON_FORMATS:
                     formats.append(format_)
 
@@ -231,6 +257,7 @@ def get_formats_and_rates(pcm):
             for line in line.split(" "):
                 try:
                     rates.append(int(line.strip()))
+
                 except:
                     pass
 
@@ -240,62 +267,46 @@ def get_formats_and_rates(pcm):
 def choose_format(formats):
     if len(formats) > 1:
         title = "Supported Formats"
-        max_len = max(len(max(formats, key=len)), len(title))
-        line = "-" * (max_len + 8)
-
-        print(line)
-        print("{:<4}{:^_}{:>4}".replace("_", str(max_len)).format(
-                "|", title, "|"
-            )
-        )
-
-        print(line)
+        width = max(len(max(formats, key=len)), len(title))
+        print_table_header(title, width, 8)
 
         for i, format_ in enumerate(formats):
-            print(
-                "{:<2}{:<4}{:>_}{:>2}".replace("_", str(max_len)).format(
-                    "|", i + 1, format_, "|"
-                )
-            )
-            print(line)
+            print_table_row(format_, i + 1, width, 8, "right", True)
 
-        print(
-            "\n{}It's generally advised to choose the highest bit "
-            "depth format that your device supports.{}\n".format(GREEN, RESET)
+        comment = stylize_comment(
+            "\nIt's generally advised to choose the highest bit depth format that your device supports.\n"
         )
+
+        print(comment)
 
         while True:
             try:
                 choice = input(
-                    "{}Please choose the desired supported format:{} ".format(
-                        BOLD, RESET
-                    )
+                    stylize_input("Please choose the desired supported format: ")
                 )
 
                 print("")
                 format_ = formats[int(choice) - 1]
+
             except KeyboardInterrupt:
                 print("")
                 raise SystemExit(0)
+
             except:
-                print("{}Invalid format choice: {}".format(BOLD_RED, choice))
-                print(
-                    "Enter a number from 1 - {}.{}\n".format(
-                        len(formats),
-                        RESET,
-                    )
-                )
+                invalid_choice(len(formats))
                 continue
+
             else:
                 break
 
     else:
         format_ = formats[0]
 
-        print(
-            "{}{} is the only supported format "
-            "so that's what we'll use…{}\n".format(GREEN, format_, RESET)
+        comment = stylize_comment(
+            f"{format_} is the only supported format so that's what we'll use…\n"
         )
+
+        print(comment)
 
     return format_
 
@@ -303,81 +314,60 @@ def choose_format(formats):
 def choose_rate(rates):
     if len(rates) > 1:
         r_range = range(rates[0], rates[-1] + 1)
-
         rates = [r for r in COMMON_RATES if r in r_range]
-
         title = "Supported Sampling Rates"
-        max_len = max(len(max([str(r) for r in rates], key=len)), len(title))
-        line = "-" * (max_len + 8)
+        width = max(len(max([str(r) for r in rates], key=len)), len(title))
+        print_table_header(title, width, 8)
 
-        print(line)
-        print("{:<4}{:^_}{:>4}".replace("_", str(max_len)).format(
-                "|", title, "|"
-            )
-        )
-
-        print(line)
         for i, rate in enumerate(rates):
-            print(
-                "{:<2}{:<4}{:>_}{:>2}".replace("_", str(max_len)).format(
-                    "|", i + 1, rate, "|"
-                )
-            )
-            print(line)
+            print_table_row(rate, i + 1, width, 8, "right", True)
 
-        print(
-            "\n{}Standard CD quality is 44100.\n\n"
+        comment = stylize_comment(
+            "\nStandard CD quality is 44100.\n\n"
             "An unnecessarily high sampling rate can lead to high CPU usage,\n"
-            "degraded audio quality, and audio dropouts and glitches on "
-            "low spec devices.\nUnless the music you normally listen to is a "
-            "higher sampling rate,\n44100 (or as close as you can get to it) "
-            "is the best choice.{}\n".format(GREEN, RESET)
+            "degraded audio quality, and audio dropouts and glitches on low spec devices.\n"
+            "Unless the music you normally listen to is a higher sampling rate,\n"
+            "44100 (or as close as you can get to it) is the best choice.\n"
         )
+
+        print(comment)
 
         while True:
             try:
                 choice = input(
-                    "{}Please choose the desired supported sampling rate:{} ".format(
-                        BOLD, RESET
-                    )
+                    stylize_input("Please choose the desired supported sampling rate: ")
                 )
 
                 print("")
                 rate = rates[int(choice) - 1]
+
             except KeyboardInterrupt:
                 print("")
                 raise SystemExit(0)
+
             except:
-                print(
-                    "{}Invalid sampling rate choice: {}".format(
-                        BOLD_RED,
-                        choice,
-                    )
-                )
-                print(
-                    "Enter a number from 1 - {}.{}\n".format(
-                        len(rates),
-                        RESET,
-                    )
-                )
+                invalid_choice(len(rates))
                 continue
+
             else:
                 break
 
     else:
         rate = rates[0]
 
-        print(
-            "{}{} is the only supported sampling rate "
-            "so that's what we'll use…{}\n".format(GREEN, rate, RESET)
+        comment = stylize_comment(
+            f"{rate} is the only supported sampling rate so that's what we'll use…\n"
         )
 
+        print(comment)
+
         if rate > 48000:
-            print(
-                "{}High sampling rates can lead to high CPU usage, "
-                "degraded audio quality,\nand audio dropouts and "
-                "glitches on low spec devices.{}\n".format(BOLD_RED, RESET)
+            comment = stylize_comment(
+                "High sampling rates can lead to high CPU usage, degraded audio quality,\n"
+                "and audio dropouts and glitches on low spec devices.\n"
             )
+
+            print(comment)
 
     return rate
 
@@ -387,11 +377,10 @@ def pcm_to_card_device(pcm):
         [card, device] = pcm.split(",")
         card = card.replace("hw:CARD=", "").strip()
         device = int(device.strip("DEV= "))
-    except Exception as e:
-        print(
-            "{}Error parsing card and device: {}{}".format(BOLD_RED, e, RESET)
-        )
 
+    except Exception as e:
+        e = stylize_error(f"Error parsing card and device: {e}")
+        print(e)
         raise SystemExit(1)
 
     return card, device
@@ -406,16 +395,15 @@ def get_choices():
             formats, rates = get_formats_and_rates(pcm)
 
             if not formats or not rates:
-                print(
-                    "{}No supported formats or sampling rates were returned, "
-                    "the hw PCM you chose may be busy "
-                    "or not support any common formats and rates? "
-                    "Make sure it's not in use and try again.{}\n".format(
-                        BOLD_RED,
-                        RESET,
-                    )
+                e = stylize_error(
+                    "No supported formats or sampling rates were returned.\n"
+                    "The hw PCM you chose may be busy or not support any common formats and rates?\n"
+                    "Make sure it's not in use and try again.\n"
                 )
+
+                print(e)
                 continue
+
             else:
                 format_ = choose_format(formats)
                 rate = choose_rate(rates)
@@ -430,17 +418,15 @@ def get_choices():
 def write_asound_conf():
     privilege_check()
 
-    print(
-        "{0}This script will backup {1} if it already exists, "
-        "and create a new {1} based on your choices.{2}\n".format(
-            BOLD_RED,
-            ASOUND_FILE_PATH,
-            RESET,
-        )
+    comment = stylize_comment(
+        f"This script will backup {ASOUND_FILE_PATH} if it already exists,\n"
+        f"and create a new {ASOUND_FILE_PATH} based on your choices.\n"
     )
 
+    print(comment)
+
     try:
-        choice = input("{}Enter OK to continue:{} ".format(BOLD, RESET))
+        choice = input(stylize_input("Enter OK to continue: "))
 
         if choice.lower() != "ok":
             print("")
@@ -452,11 +438,9 @@ def write_asound_conf():
         print("")
         raise SystemExit(0)
 
-    backup_asound_conf()
-
     card, device, format_, rate = get_choices()
 
-    file_data = """# /etc/asound.conf
+    file_data = f"""# /etc/asound.conf
 
 pcm.!default {{
     type plug
@@ -477,16 +461,16 @@ pcm.!default {{
         slave {{
             pcm {{
                 type hw
-                card {0}
-                device {1}
+                card {card}
+                device {device}
                 nonblock {{
                     @func refer
                     name defaults.pcm.nonblock
                 }}
             }}
             channels 2
-            rate {2}
-            format {3}
+            rate {rate}
+            format {format_}
         }}
         bindings {{
             0 0
@@ -497,10 +481,8 @@ pcm.!default {{
 
 ctl.!default {{
     type hw
-    card {0}
-}}""".format(
-        card, device, rate, format_
-    )
+    card {card}
+}}"""
 
     backup_asound_conf()
 
@@ -509,28 +491,18 @@ ctl.!default {{
             f.write(file_data)
 
     except Exception as e:
-        print("{}Error: {}{}".format(BOLD_RED, e, RESET))
+        print(stylize_error(f"Error: {e}"))
         revert_asound_conf()
         raise SystemExit(1)
 
     else:
-        print(
-            "{}Using Card: {}, Device: {}, "
-            "Format: {}, and Sampling Rate: {},".format(
-                GREEN,
-                card,
-                device,
-                format_,
-                rate,
-            )
+        comment = stylize_comment(
+            f"Using Card: {card}, Device: {device}, Format: {format_}, and Sampling Rate: {rate},\n"
+            f"{ASOUND_FILE_PATH} was written successfully.\n\n"
+            "Please verify that it is correct."
         )
 
-        print(
-            "{} was written successfully. "
-            "Please verify that it is correct.{}".format(
-                ASOUND_FILE_PATH, RESET
-            )
-        )
+        print(comment)
 
 
 if __name__ == "__main__":
