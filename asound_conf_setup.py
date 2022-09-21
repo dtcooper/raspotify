@@ -214,12 +214,12 @@ def backup_asound_conf():
         pass
 
     except Exception as e:
-        Stylize.error(f"\tError renaming existing {ASOUND_FILE_PATH}: {e}")
+        Stylize.error(f"\n\tError renaming existing {ASOUND_FILE_PATH}: {e}")
         raise SystemExit(1)
 
     else:
         Stylize.comment(
-            f"\t{ASOUND_FILE_PATH} already exists renaming it to: {BACKUP_FILE_PATH}\n"
+            f"\n\t{ASOUND_FILE_PATH} already exists renaming it to: {BACKUP_FILE_PATH}\n"
         )
 
 
