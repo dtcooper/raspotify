@@ -669,7 +669,7 @@ ctl.!default {{
     else:
         Stylize.comment(
             f"\tUsing Card: {card}, Device: {device}, Format: {format_},\n"
-            f"\tSampling Rate: {rate}, and Sample Rate Converter {converter},\n"
+            f"\tSampling Rate: {rate}, and Sample Rate Converter: {converter},\n"
             f"\t{ASOUND_FILE_PATH} was written successfully.\n\n"
             "\tPlease verify that it is correct.\n"
         )
