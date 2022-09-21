@@ -28,6 +28,7 @@
 import subprocess
 import os
 import time
+import glob
 
 ASOUND_FILE_PATH = "/etc/asound.conf"
 DUMMY_FILE_PATH = "/etc/foobarbaz{}".format(int(time.time()))
@@ -260,6 +261,15 @@ def get_hw_pcm_names():
     return hw_pcm_names
 
 
+def get_sample_rate_converters():
+    base_path = glob.glob("/usr/lib/*/alsa-lib")[0]
+    search_term = f"{base_path}/libasound_module_rate_"
+    return [
+        f.replace(search_term, "").replace(".so", "")
+        for f in glob.glob(f"{search_term}*")
+    ]
+
+
 def invalid_choice(len_choices):
     Stylize.error(f"\tPlease enter a number from 1 - {len_choices}.\n")
 
@@ -438,6 +448,51 @@ def pcm_to_card_device(pcm):
     return card, device
 
 
+def choose_sample_rate_converter():
+    converters = get_sample_rate_converters()
+
+    if len(converters) > 1:
+        title = "Sample Rate Converters"
+        width = max(len(max(converters, key=len)), len(title))
+        table = Table(title, width)
+        table.add_rates_formats(converters)
+
+        Stylize.comment(
+            '\n\tsamplerate_medium is the best "Bang for your buck" Converter.\n\n'
+            "\tIf you don't see that in the choices you can install it on Debian based systems with:\n\n"
+            '\t"sudo apt install -y --no-install-recommends libasound2-plugins"\n\n'
+        )
+
+        while True:
+            try:
+                choice = input(
+                    Stylize.input("\tPlease choose a Sample Rate Converter: ")
+                )
+
+                print("")
+                converter = converters[int(choice) - 1]
+
+            except KeyboardInterrupt:
+                print("")
+                raise SystemExit(0)
+
+            except:
+                invalid_choice(len(converters))
+                continue
+
+            else:
+                break
+
+    else:
+        converter = converters[0]
+
+        Stylize.comment(
+            f"\t{converter} is the only Sample Rate Converter so that's what we'll use…\n"
+        )
+
+    return converter
+
+
 def get_choices():
     hw_pcm_names = get_hw_pcm_names()
 
@@ -458,18 +513,20 @@ def get_choices():
             else:
                 format_ = choose_format(formats)
                 rate = choose_rate(rates)
+                converter = choose_sample_rate_converter()
                 card, device = pcm_to_card_device(pcm)
 
                 if format_ not in ("S24_LE", "S24_BE"):
                     Stylize.comment(
                         "\tPlease make sure your device is connected,\n"
                         "\tand set the volume to a comfortable level.\n\n"
-                        "\tTest tones at 25% full scale will now be played to test your choices.\n\n"
+                        "\tTest tones at 25% full scale will now be played to test your choices.\n"
                     )
 
                     input(Stylize.input("\tPlease press Enter to continue"))
+                    print("")
 
-                return card, device, format_, rate
+                return card, device, format_, rate, converter
 
         except KeyboardInterrupt:
             print("")
@@ -478,7 +535,7 @@ def get_choices():
 
 def test_choices():
     while True:
-        card, device, format_, rate = get_choices()
+        card, device, format_, rate, converter = get_choices()
 
         # speaker-test does not support S24_LE / S24_BE.
         if format_ not in ("S24_LE", "S24_BE"):
@@ -489,7 +546,7 @@ def test_choices():
                         f"-Dhw:CARD={card},DEV={device}",
                         f"-F{format_}",
                         f"-r{rate}",
-                        "-l2",
+                        "-l1",
                         "-c2",
                         "-S25",
                     ],
@@ -512,11 +569,11 @@ def test_choices():
 
             else:
                 confirm = input(
-                    Stylize.input("\tPlease enter \"Y\" if you heard the test tones: ")
+                    Stylize.input('\tPlease enter "Y" if you heard the test tones: ')
                 )
 
                 if confirm.lower() == "y":
-                    return card, device, format_, rate
+                    return card, device, format_, rate, converter
 
                 else:
                     Stylize.comment(
@@ -526,7 +583,7 @@ def test_choices():
                     continue
 
         else:
-            return card, device, format_, rate
+            return card, device, format_, rate, converter
 
 
 def write_asound_conf():
@@ -538,7 +595,7 @@ def write_asound_conf():
     )
 
     try:
-        choice = input(Stylize.input("\tPlease enter \"OK\" to continue: "))
+        choice = input(Stylize.input('\tPlease enter "OK" to continue: '))
 
         if choice.lower() != "ok":
             print("")
@@ -550,9 +607,11 @@ def write_asound_conf():
         print("")
         raise SystemExit(0)
 
-    card, device, format_, rate = test_choices()
+    card, device, format_, rate, converter = test_choices()
 
     file_data = f"""# /etc/asound.conf
+
+defaults.pcm.rate_converter {converter}
 
 pcm.!default {{
     type plug
@@ -609,9 +668,10 @@ ctl.!default {{
 
     else:
         Stylize.comment(
-            f"\tUsing Card: {card}, Device: {device}, Format: {format_}, and Sampling Rate: {rate},\n"
+            f"\tUsing Card: {card}, Device: {device}, Format: {format_},\n"
+            f"\tSampling Rate: {rate}, and Sample Rate Converter {converter},\n"
             f"\t{ASOUND_FILE_PATH} was written successfully.\n\n"
-            "\tPlease verify that it is correct."
+            "\tPlease verify that it is correct.\n"
         )
 
 
