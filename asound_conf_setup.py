@@ -64,16 +64,22 @@ COMMON_RATES = [
 class Stylize:
     _BOLD = "\033[1m"
     _CYAN = "\u001b[36m"
+    _YELLOW = "\u001b[33m"
     _BOLD_RED = "\x1b[31;1m"
     _RESET = "\u001b[0m"
 
     @staticmethod
     def input(text):
-        return f"{Stylize._BOLD}{text}{Stylize._RESET}"
+        return input(f"{Stylize._BOLD}{text}{Stylize._RESET}")
+
+    @staticmethod
+    def warn(text):
+        print(f"{Stylize._YELLOW}{text}{Stylize._RESET}")
 
     @staticmethod
     def error(text):
         print(f"{Stylize._BOLD_RED}{text}{Stylize._RESET}")
+        raise SystemExit(1)
 
     @staticmethod
     def comment(text):
@@ -109,21 +115,21 @@ class Table:
 
         self._print()
 
-    def add_rates_formats(self, rates_formats):
-        rf_len = len(rates_formats)
+    def add(self, items):
+        i_len = len(items)
 
-        for i, item in enumerate(rates_formats):
+        for i, item in enumerate(items):
             num = i + 1
-            self._add_rate_format_row(item, num)
+            self._add_row(item, num)
 
-            if num == rf_len:
+            if num == i_len:
                 self._table.append(self._bottom_line)
             else:
                 self._table.append(self._center_line)
 
         self._print()
 
-    def _add_rate_format_row(self, text, num):
+    def _add_row(self, text, num):
         self._add_table_row(text, num, False)
 
     def _add_pcm_name_row(self, text, num):
@@ -166,35 +172,9 @@ class Table:
         self._table.append(row)
 
 
-def print_table_row(text, num, width, padding, justify, print_line):
-    if justify is None:
-        pad = int(padding / 2)
-        row = f"{{:<{pad}}}{{:^{width}}}{{:>{pad}}}".format("|", text, "|")
-
-    else:
-        if justify == "left":
-            j = "<"
-
-        else:
-            j = ">"
-
-        center_pad = int(padding / 2)
-        pad = int(center_pad / 2)
-        row = f"{{:<{pad}}}{{:<{center_pad}}}{{:{j}{width}}}{{:>{pad}}}".format(
-            "|", num, text, "|"
-        )
-
-    print(row)
-
-    if print_line:
-        line = "-" * (width + padding)
-        print(line)
-
-
-def print_table_header(title, width, padding):
-    line = "-" * (width + padding)
-    print(line)
-    print_table_row(title, "", width, padding, None, True)
+def bailout():
+    print("")
+    raise SystemExit(0)
 
 
 def privilege_check():
@@ -204,7 +184,6 @@ def privilege_check():
 
     except:
         Stylize.error("\tError: This script requires write privileges to /etc.")
-        raise SystemExit(1)
 
 
 def backup_asound_conf():
@@ -216,20 +195,11 @@ def backup_asound_conf():
 
     except Exception as e:
         Stylize.error(f"\n\tError renaming existing {ASOUND_FILE_PATH}: {e}")
-        raise SystemExit(1)
 
     else:
         Stylize.comment(
             f"\n\t{ASOUND_FILE_PATH} already exists renaming it to: {BACKUP_FILE_PATH}\n"
         )
-
-
-def revert_asound_conf():
-    try:
-        os.rename(BACKUP_FILE_PATH, ASOUND_FILE_PATH)
-
-    except:
-        pass
 
 
 def get_all_pcm_name():
@@ -256,7 +226,6 @@ def get_hw_pcm_names():
     if not hw_pcm_names:
         print("\n".join(all_pcm_name))
         Stylize.error("\tNo available hw PCM")
-        raise SystemExit(1)
 
     return hw_pcm_names
 
@@ -271,7 +240,7 @@ def get_sample_rate_converters():
 
 
 def invalid_choice(len_choices):
-    Stylize.error(f"\tPlease enter a number from 1 - {len_choices}.\n")
+    Stylize.warn(f"\tPlease enter a number from 1 - {len_choices}.\n")
 
 
 def choose_hw_pcm(hw_pcm_names):
@@ -284,14 +253,13 @@ def choose_hw_pcm(hw_pcm_names):
 
         while True:
             try:
-                choice = input(Stylize.input("\tPlease choose an Output: "))
+                choice = Stylize.input("\tPlease choose an Output: ")
 
                 print("")
                 pcm = hw_pcm_names[int(choice) - 1][0]
 
             except KeyboardInterrupt:
-                print("")
-                raise SystemExit(0)
+                bailout()
 
             except:
                 invalid_choice(len(hw_pcm_names))
@@ -326,20 +294,14 @@ def get_formats_and_rates(pcm):
 
     for line in hw_params.split("\n"):
         if line.startswith("FORMAT:"):
-            line = line.strip("FORMAT: ")
-
-            for format_ in line.split(" "):
-                format_.strip()
-
-                if format_ in COMMON_FORMATS:
-                    formats.append(format_)
+            for f in line.strip("FORMAT: ").split(" "):
+                if f in COMMON_FORMATS:
+                    formats.append(f)
 
         elif line.startswith("RATE:"):
-            line = line.strip("RATE:[ ]")
-
-            for line in line.split(" "):
+            for r in line.strip("RATE:[ ]").split(" "):
                 try:
-                    rates.append(int(line.strip()))
+                    rates.append(int(r))
 
                 except:
                     pass
@@ -352,7 +314,7 @@ def choose_format(formats):
         title = "Formats"
         width = max(len(max(formats, key=len)), len(title))
         table = Table(title, width)
-        table.add_rates_formats(formats)
+        table.add(formats)
 
         Stylize.comment(
             "\n\tIt's generally advised to choose the highest bit depth format that your device supports.\n"
@@ -360,14 +322,13 @@ def choose_format(formats):
 
         while True:
             try:
-                choice = input(Stylize.input("\tPlease choose a Format: "))
+                choice = Stylize.input("\tPlease choose a Format: ")
 
                 print("")
-                format_ = formats[int(choice) - 1]
+                format = formats[int(choice) - 1]
 
             except KeyboardInterrupt:
-                print("")
-                raise SystemExit(0)
+                bailout()
 
             except:
                 invalid_choice(len(formats))
@@ -377,11 +338,11 @@ def choose_format(formats):
                 break
 
     else:
-        format_ = formats[0]
+        format = formats[0]
 
-        Stylize.comment(f"\t{format_} is the only Format so that's what we'll use…\n")
+        Stylize.comment(f"\t{format} is the only Format so that's what we'll use…\n")
 
-    return format_
+    return format
 
 
 def choose_rate(rates):
@@ -391,7 +352,7 @@ def choose_rate(rates):
         title = "Sampling Rates"
         width = max(len(max([str(r) for r in rates], key=len)), len(title))
         table = Table(title, width)
-        table.add_rates_formats(rates)
+        table.add(rates)
 
         Stylize.comment(
             "\n\tStandard CD quality is 44100.\n\n"
@@ -403,14 +364,13 @@ def choose_rate(rates):
 
         while True:
             try:
-                choice = input(Stylize.input("\tPlease choose a Sampling Rate: "))
+                choice = Stylize.input("\tPlease choose a Sampling Rate: ")
 
                 print("")
                 rate = rates[int(choice) - 1]
 
             except KeyboardInterrupt:
-                print("")
-                raise SystemExit(0)
+                bailout()
 
             except:
                 invalid_choice(len(rates))
@@ -443,7 +403,6 @@ def pcm_to_card_device(pcm):
 
     except Exception as e:
         Stylize.error(f"\tError parsing card and device: {e}")
-        raise SystemExit(1)
 
     return card, device
 
@@ -455,26 +414,23 @@ def choose_sample_rate_converter():
         title = "Sample Rate Converters"
         width = max(len(max(converters, key=len)), len(title))
         table = Table(title, width)
-        table.add_rates_formats(converters)
+        table.add(converters)
 
         Stylize.comment(
             '\n\tsamplerate_medium is the best "Bang for your buck" Converter.\n\n'
             "\tIf you don't see that in the choices you can install it on Debian based systems with:\n\n"
-            '\t"sudo apt install -y --no-install-recommends libasound2-plugins"\n\n'
+            "\tsudo apt install -y --no-install-recommends libasound2-plugins\n\n"
         )
 
         while True:
             try:
-                choice = input(
-                    Stylize.input("\tPlease choose a Sample Rate Converter: ")
-                )
+                choice = Stylize.input("\tPlease choose a Sample Rate Converter: ")
 
                 print("")
                 converter = converters[int(choice) - 1]
 
             except KeyboardInterrupt:
-                print("")
-                raise SystemExit(0)
+                bailout()
 
             except:
                 invalid_choice(len(converters))
@@ -484,11 +440,15 @@ def choose_sample_rate_converter():
                 break
 
     else:
-        converter = converters[0]
+        if converters:
+            converter = converters[0]
 
-        Stylize.comment(
-            f"\t{converter} is the only Sample Rate Converter so that's what we'll use…\n"
-        )
+            Stylize.comment(
+                f"\t{converter} is the only Sample Rate Converter so that's what we'll use…\n"
+            )
+
+        else:
+            converter = None
 
     return converter
 
@@ -502,7 +462,7 @@ def get_choices():
             formats, rates = get_formats_and_rates(pcm)
 
             if not formats or not rates:
-                Stylize.error(
+                Stylize.warn(
                     "\tNo supported formats or sampling rates were returned.\n"
                     "\tThe Output you chose may be busy or not support any common formats and rates?\n"
                     "\tPlease make sure it's not in use and try again.\n"
@@ -511,40 +471,39 @@ def get_choices():
                 continue
 
             else:
-                format_ = choose_format(formats)
+                format = choose_format(formats)
                 rate = choose_rate(rates)
                 converter = choose_sample_rate_converter()
                 card, device = pcm_to_card_device(pcm)
 
-                if format_ not in ("S24_LE", "S24_BE"):
+                if format not in ("S24_LE", "S24_BE"):
                     Stylize.comment(
                         "\tPlease make sure your device is connected,\n"
                         "\tand set the volume to a comfortable level.\n\n"
                         "\tTest tones at 25% full scale will now be played to test your choices.\n"
                     )
 
-                    input(Stylize.input("\tPlease press Enter to continue"))
+                    Stylize.input("\tPlease press Enter to continue")
                     print("")
 
-                return card, device, format_, rate, converter
+                return card, device, format, rate, converter
 
         except KeyboardInterrupt:
-            print("")
-            raise SystemExit(0)
+            bailout()
 
 
 def test_choices():
     while True:
-        card, device, format_, rate, converter = get_choices()
+        card, device, format, rate, converter = get_choices()
 
         # speaker-test does not support S24_LE / S24_BE.
-        if format_ not in ("S24_LE", "S24_BE"):
+        if format not in ("S24_LE", "S24_BE"):
             try:
                 subprocess.run(
                     [
                         "speaker-test",
                         f"-Dhw:CARD={card},DEV={device}",
-                        f"-F{format_}",
+                        f"-F{format}",
                         f"-r{rate}",
                         "-l1",
                         "-c2",
@@ -556,11 +515,10 @@ def test_choices():
                 )
 
             except KeyboardInterrupt:
-                print("")
-                raise SystemExit(0)
+                bailout()
 
             except:
-                Stylize.error(
+                Stylize.warn(
                     "\tThe speaker test Failed.\n\n"
                     "\tPlease try again with a different Format and Sampling Rate combination.\n"
                 )
@@ -568,12 +526,12 @@ def test_choices():
                 continue
 
             else:
-                confirm = input(
-                    Stylize.input('\tPlease enter "Y" if you heard the test tones: ')
+                confirm = Stylize.input(
+                    '\tPlease enter "Y" if you heard the test tones: '
                 )
 
                 if confirm.lower() == "y":
-                    return card, device, format_, rate, converter
+                    return card, device, format, rate, converter
 
                 else:
                     Stylize.comment(
@@ -583,7 +541,7 @@ def test_choices():
                     continue
 
         else:
-            return card, device, format_, rate, converter
+            return card, device, format, rate, converter
 
 
 def write_asound_conf():
@@ -591,27 +549,37 @@ def write_asound_conf():
 
     Stylize.comment(
         f"\tThis script will backup {ASOUND_FILE_PATH} if it already exists,\n"
-        f"\tand create a new {ASOUND_FILE_PATH} based on your choices.\n"
+        f"\tand create a new {ASOUND_FILE_PATH} based on your choices.\n\n"
+        f"\tThis will create a system wide static audio configuration\n"
+        f"\tassuming a 2 channel stereo Output Device.\n"
+        f"\tIt does not take into account audio inputs at all.\n\n"
+        f"\tThis script is intended to be used on headless systems where the hardware\n"
+        f"\tdoes not change often or at all.\n\n"
+        f"\tIt is not advisable to run this script on desktop systems.\n\n"
+        f"\tIf running this script breaks your system you get to keep all the pieces.\n\n"
     )
 
     try:
-        choice = input(Stylize.input('\tPlease enter "OK" to continue: '))
+        choice = Stylize.input('\tPlease enter "OK" to continue: ')
 
         if choice.lower() != "ok":
-            print("")
-            raise SystemExit(0)
+            bailout()
 
         print("")
 
     except KeyboardInterrupt:
-        print("")
-        raise SystemExit(0)
+        bailout()
 
-    card, device, format_, rate, converter = test_choices()
+    card, device, format, rate, converter = test_choices()
+
+    rate_converter = ""
+
+    if converter:
+        rate_converter = f"defaults.pcm.rate_converter {converter}"
 
     file_data = f"""# /etc/asound.conf
 
-defaults.pcm.rate_converter {converter}
+{rate_converter}
 
 pcm.!default {{
     type plug
@@ -641,7 +609,7 @@ pcm.!default {{
             }}
             channels 2
             rate {rate}
-            format {format_}
+            format {format}
         }}
         bindings {{
             0 0
@@ -663,15 +631,22 @@ ctl.!default {{
 
     except Exception as e:
         Stylize.error(f"\tError: {e}")
-        revert_asound_conf()
-        raise SystemExit(1)
 
     else:
         Stylize.comment(
-            f"\tUsing Card: {card}, Device: {device}, Format: {format_},\n"
-            f"\tSampling Rate: {rate}, and Sample Rate Converter: {converter},\n"
-            f"\t{ASOUND_FILE_PATH} was written successfully.\n\n"
-            "\tPlease verify that it is correct.\n"
+            f"\t{ASOUND_FILE_PATH} was written successfully with the following values:\n"
+            f"\n\tCard: {card}\n\tDevice: {device}\n\tFormat: {format}\n\tSampling Rate: {rate}"
+        )
+
+        if converter:
+            Stylize.comment(f"\tSample Rate Converter: {converter}")
+
+        Stylize.comment(
+            "\n\n\tPlease verify that this is correct.\n\n"
+            f"\tYou can revert your system to it's default state by deleting {ASOUND_FILE_PATH} with:\n\n"
+            f"\tsudo rm {ASOUND_FILE_PATH}\n\n"
+            "\tor optionally revert it from the back up if one was created\n"
+            "\tif you have any issue with the generated config.\n"
         )
 
 
