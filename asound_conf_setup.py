@@ -30,10 +30,14 @@ import subprocess
 import os
 import time
 import glob
+from shutil import which
 
 ASOUND_FILE_PATH = "/etc/asound.conf"
 DUMMY_FILE_PATH = "/etc/foobarbaz{}".format(int(time.time()))
 BACKUP_FILE_PATH = "/etc/asound.conf.bak{}".format(int(time.time()))
+
+HAS_APT = which("apt")
+HAS_SUDO = which("sudo")
 
 COMMON_FORMATS = [
     "S16_LE",
@@ -59,6 +63,22 @@ COMMON_RATES = [
     192000,
     352800,
     384000,
+]
+
+COMMON_RATE_CONVERTERS = [
+    "speexrate",
+    "speexrate_medium",
+    "speexrate_best",
+    "lavrate_faster",
+    "lavrate_fast",
+    "lavrate",
+    "lavrate_high",
+    "lavrate_higher",
+    "samplerate_linear",
+    "samplerate_order",
+    "samplerate",
+    "samplerate_medium",
+    "samplerate_best",
 ]
 
 
@@ -206,7 +226,6 @@ def backup_asound_conf():
 
     else:
         Stylize.comment(f"{ASOUND_FILE_PATH} already exists renaming it to:")
-
         Stylize.comment(f"{BACKUP_FILE_PATH}")
 
 
@@ -239,12 +258,86 @@ def get_hw_pcm_names():
 
 
 def get_sample_rate_converters():
-    base_path = glob.glob("/usr/lib/*/alsa-lib")[0]
-    search_term = f"{base_path}/libasound_module_rate_"
-    return [
-        f.replace(search_term, "").replace(".so", "")
-        for f in glob.glob(f"{search_term}*")
-    ]
+    while True:
+        converters = []
+        base_path = glob.glob("/usr/lib/*/alsa-lib")
+        if base_path:
+            base_path = base_path[0]
+            search_term = f"{base_path}/libasound_module_rate_"
+
+            converters = [
+                f.replace(search_term, "").replace(".so", "")
+                for f in glob.glob(f"{search_term}*")
+            ]
+
+            ordered_converters = [i for i in COMMON_RATE_CONVERTERS if i in converters]
+            leftovers = [i for i in converters if i not in ordered_converters]
+
+            converters = ordered_converters + leftovers
+
+        if converters or not HAS_APT:
+            return converters
+
+        else:
+            confirm = Stylize.input(
+                'Please enter "Y" if you would like to install '
+                "high quality Sample Rate Converters: "
+            )
+
+            if confirm.lower() != "y":
+                return converters
+            else:
+                Stylize.comment(f"This may take a moment…")
+
+                if HAS_SUDO:
+                    update_args = ["sudo", "apt", "update"]
+
+                    install_args = [
+                        "sudo",
+                        "apt",
+                        "install",
+                        "-y",
+                        "--no-install-recommends",
+                        "libasound2-plugins",
+                    ]
+
+                else:
+                    update_args = ["apt", "update"]
+
+                    install_args = [
+                        "apt",
+                        "install",
+                        "-y",
+                        "--no-install-recommends",
+                        "libasound2-plugins",
+                    ]
+
+                try:
+                    subprocess.run(
+                        update_args,
+                        check=True,
+                        stderr=subprocess.DEVNULL,
+                        stdout=subprocess.DEVNULL,
+                    )
+
+                    subprocess.run(
+                        install_args,
+                        check=True,
+                        stderr=subprocess.DEVNULL,
+                        stdout=subprocess.DEVNULL,
+                    )
+
+                except KeyboardInterrupt:
+                    bailout()
+
+                except Exception as e:
+                    Stylize.error(
+                        "Error installing high quality " f"Sample Rate Converters: {e}"
+                    )
+
+                    return converters
+                else:
+                    continue
 
 
 def invalid_choice(len_choices):
@@ -380,8 +473,6 @@ def choose_rate(rates):
             "and glitches on low spec devices."
         )
 
-        best_choice = None
-
         for rate in rates:
             if rate >= 44100:
                 best_choice = rate
@@ -444,7 +535,7 @@ def choose_sample_rate_converter():
         table.add(converters)
 
         Stylize.comment(
-            "Sample Rate Converters are very subjective, as far as if you can "
+            "Sample Rate Converters are very subjective as far as if you can "
             "actually tell the difference audibly."
         )
 
@@ -459,20 +550,16 @@ def choose_sample_rate_converter():
             "or sound quality impact."
         )
 
-        Stylize.comment(
-            "All of that being said samplerate_medium is probably the best "
-            '"Bang for your buck" Converter in most cases if '
-            "a Converter MUST be used."
-        )
+        if "speexrate_medium" in converters:
+            best_choice = "speexrate_medium"
+        elif "lavrate" in converters:
+            best_choice = "lavrate"
+        elif "samplerate" in converters:
+            best_choice = "samplerate"
+        else:
+            best_choice = converters[0]
 
-        Stylize.comment(
-            "If you don't see that in the choices you can install it on "
-            "Debian based systems with:"
-        )
-
-        Stylize.comment(
-            "sudo apt install -y --no-install-recommends libasound2-plugins"
-        )
+        Stylize.suggestion(f"{best_choice} is the best choice.")
 
         while True:
             try:
