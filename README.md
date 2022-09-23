@@ -25,30 +25,8 @@ If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify C
 
 ## Installation
 
-***The easy way***
-
 ```sh
 sudo apt-get -y install curl && curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
-```
-
-***The hard way***
-
-Essentially, here's what the easy installer does minus the compatibility checks:
-
-```sh
-# Install curl
-sudo apt-get -y install curl
-
-# Add the raspotify key to the keyring
-curl -sSL https://dtcooper.github.io/raspotify/key.asc | sudo tee /usr/share/keyrings/raspotify_key.asc  > /dev/null
-sudo chmod 644 /usr/share/keyrings/raspotify_key.asc
-
-# Create the apt repo
-echo 'deb [signed-by=/usr/share/keyrings/raspotify_key.asc] https://dtcooper.github.io/raspotify raspotify main' | sudo tee /etc/apt/sources.list.d/raspotify.list
-
-# Install package
-sudo apt-get update
-sudo apt-get -y install raspotify
 ```
 
 Or you can just download the latest .deb package and install it manually from here:
@@ -70,9 +48,9 @@ sudo apt-get -y install curl && curl -sL https://github.com/dtcooper/raspotify/r
 sudo apt install ./raspotify_0.31.8.1.librespot.v0.3.1-54-gf4be9bb_armhf.deb
 ```
 
-***Don't forget to checkout the [wiki](https://github.com/dtcooper/raspotify/wiki) for tips, tricks and configuration info!!!***
+## Configuration
 
-The [Basic Setup Guide](https://github.com/dtcooper/raspotify/wiki/Basic-Setup-Guide) is particularly useful. 
+The [Basic Setup Guide](https://github.com/dtcooper/raspotify/wiki/Basic-Setup-Guide) is particularly useful, especially the [System Audio Config Wizard](https://github.com/dtcooper/raspotify/wiki/Basic-Setup-Guide#the-easy-way).
 
 ## Bug Reports and Feature Requests
 
