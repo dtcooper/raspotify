@@ -35,9 +35,42 @@ from shutil import which
 ASOUND_FILE_PATH = "/etc/asound.conf"
 DUMMY_FILE_PATH = "/etc/foobarbaz{}".format(int(time.time()))
 BACKUP_FILE_PATH = "/etc/asound.conf.bak{}".format(int(time.time()))
+CONVERTERS_FILE_PATH = "/usr/lib/*/alsa-lib"
+CONVERTERS_SEARCH_SUFFIX = "/libasound_module_rate_"
 
-HAS_APT = which("apt")
-HAS_SUDO = which("sudo")
+if which("apt"):
+    if which("sudo"):
+        UPDATE_CMD = ["sudo", "apt", "update"]
+
+        CONVERTER_INSTALL_CMD = [
+            "sudo",
+            "apt",
+            "install",
+            "-y",
+            "--no-install-recommends",
+            "libasound2-plugins",
+        ]
+    else:
+        UPDATE_CMD = ["apt", "update"]
+
+        CONVERTER_INSTALL_CMD = [
+            "apt",
+            "install",
+            "-y",
+            "--no-install-recommends",
+            "libasound2-plugins",
+        ]
+else:
+    UPDATE_CMD = None
+    CONVERTER_INSTALL_CMD = None
+
+APLAY_L_CMD = ["aplay", "-L"]
+
+APLAY_HW_PARAMS_TEMPLATE = (
+    "aplay -D{} --dump-hw-params /usr/share/sounds/alsa/Front_Right.wav"
+)
+
+SPEAKER_TEST_TEMPLATE = "speaker-test -Dhw:CARD={},DEV={} -F{} -r{} -l1 -c2 -S25"
 
 COMMON_FORMATS = [
     "S16_LE",
@@ -49,6 +82,8 @@ COMMON_FORMATS = [
     "S32_LE",
     "S32_BE",
 ]
+
+NOT_SUPPORTED_BY_SPEAKER_TEST = ("S24_LE", "S24_BE")
 
 COMMON_RATES = [
     8000,
@@ -80,6 +115,59 @@ COMMON_RATE_CONVERTERS = [
     "samplerate_medium",
     "samplerate_best",
 ]
+
+BEST_CONVERTERS = (
+    "speexrate_medium",
+    "lavrate",
+    "samplerate",
+)
+
+ASOUND_TEMPLATE = """
+# /etc/asound.conf
+
+{4}
+
+pcm.!default {{
+    type plug
+    slave.pcm {{
+        type dmix
+        ipc_key {{
+            @func refer
+            name defaults.pcm.ipc_key
+        }}
+        ipc_gid {{
+            @func refer
+            name defaults.pcm.ipc_gid
+        }}
+        ipc_perm {{
+            @func refer
+            name defaults.pcm.ipc_perm
+        }}
+        slave {{
+            pcm {{
+                type hw
+                card {0}
+                device {1}
+                nonblock {{
+                    @func refer
+                    name defaults.pcm.nonblock
+                }}
+            }}
+            channels 2
+            rate {3}
+            format {2}
+        }}
+        bindings {{
+            0 0
+            1 1
+        }}
+    }}
+}}
+
+ctl.!default {{
+    type hw
+    card {0}
+}}"""
 
 
 class Stylize:
@@ -114,6 +202,11 @@ class Stylize:
     @staticmethod
     def suggestion(text):
         print(f"\n\t{Stylize._BOLD_GREEN}{text}{Stylize._RESET}")
+
+    @staticmethod
+    def goodbye():
+        print(f"\n\t{Stylize._BOLD_GREEN}Goodbye{Stylize._RESET}\n")
+        raise SystemExit(0)
 
 
 class Table:
@@ -200,11 +293,6 @@ class Table:
         self._table.append(row)
 
 
-def bailout():
-    print("")
-    raise SystemExit(0)
-
-
 def privilege_check():
     try:
         open(DUMMY_FILE_PATH, "w").close()
@@ -232,7 +320,7 @@ def backup_asound_conf():
 def get_all_pcm_name():
     return (
         subprocess.run(
-            ["aplay", "-L"],
+            APLAY_L_CMD,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
         )
@@ -260,10 +348,10 @@ def get_hw_pcm_names():
 def get_sample_rate_converters():
     while True:
         converters = []
-        base_path = glob.glob("/usr/lib/*/alsa-lib")
+        base_path = glob.glob(CONVERTERS_FILE_PATH)
         if base_path:
             base_path = base_path[0]
-            search_term = f"{base_path}/libasound_module_rate_"
+            search_term = f"{base_path}{CONVERTERS_SEARCH_SUFFIX}"
 
             converters = [
                 f.replace(search_term, "").replace(".so", "")
@@ -275,7 +363,7 @@ def get_sample_rate_converters():
 
             converters = ordered_converters + leftovers
 
-        if converters or not HAS_APT:
+        if converters or not UPDATE_CMD:
             return converters
 
         else:
@@ -287,61 +375,43 @@ def get_sample_rate_converters():
             if confirm.lower() != "y":
                 return converters
             else:
-                Stylize.comment(f"This may take a moment…")
-
-                if HAS_SUDO:
-                    update_args = ["sudo", "apt", "update"]
-
-                    install_args = [
-                        "sudo",
-                        "apt",
-                        "install",
-                        "-y",
-                        "--no-install-recommends",
-                        "libasound2-plugins",
-                    ]
-
-                else:
-                    update_args = ["apt", "update"]
-
-                    install_args = [
-                        "apt",
-                        "install",
-                        "-y",
-                        "--no-install-recommends",
-                        "libasound2-plugins",
-                    ]
+                Stylize.comment("This may take a moment…")
 
                 try:
                     subprocess.run(
-                        update_args,
+                        UPDATE_CMD,
                         check=True,
                         stderr=subprocess.DEVNULL,
                         stdout=subprocess.DEVNULL,
                     )
 
                     subprocess.run(
-                        install_args,
+                        CONVERTER_INSTALL_CMD,
                         check=True,
                         stderr=subprocess.DEVNULL,
                         stdout=subprocess.DEVNULL,
                     )
 
                 except KeyboardInterrupt:
-                    bailout()
+                    Stylize.goodbye()
 
                 except Exception as e:
-                    Stylize.error(
-                        "Error installing high quality " f"Sample Rate Converters: {e}"
+                    Stylize.warn(
+                        f"Error installing high quality Sample Rate Converters: {e}"
                     )
 
                     return converters
                 else:
+                    Stylize.comment("Sample Rate Converters Install Successful")
                     continue
 
 
 def invalid_choice(len_choices):
     Stylize.warn(f"Please enter a number from 1 - {len_choices}.")
+
+
+def best_choice(best_choice):
+    Stylize.suggestion(f"{best_choice} is the best choice.")
 
 
 def choose_hw_pcm(hw_pcm_names):
@@ -362,7 +432,7 @@ def choose_hw_pcm(hw_pcm_names):
                 pcm = hw_pcm_names[int(choice) - 1][0]
 
             except KeyboardInterrupt:
-                bailout()
+                Stylize.goodbye()
 
             except:
                 invalid_choice(len(hw_pcm_names))
@@ -380,13 +450,10 @@ def choose_hw_pcm(hw_pcm_names):
 
 
 def get_formats_and_rates(pcm):
+    cmd = APLAY_HW_PARAMS_TEMPLATE.format(pcm).split(" ")
+
     hw_params = subprocess.run(
-        [
-            "aplay",
-            f"-D{pcm}",
-            "--dump-hw-params",
-            "/usr/share/sounds/alsa/Front_Right.wav",
-        ],
+        cmd,
         stderr=subprocess.STDOUT,
         stdout=subprocess.PIPE,
     ).stdout.decode("utf-8")
@@ -423,14 +490,10 @@ def choose_format(formats):
             "depth format that your device supports."
         )
 
-        best_choice = None
-
         for format in reversed(COMMON_FORMATS):
             if format in formats:
-                best_choice = format
+                best_choice(format)
                 break
-
-        Stylize.suggestion(f"{best_choice} is the best choice.")
 
         while True:
             try:
@@ -439,7 +502,7 @@ def choose_format(formats):
                 format = formats[int(choice) - 1]
 
             except KeyboardInterrupt:
-                bailout()
+                Stylize.goodbye()
 
             except:
                 invalid_choice(len(formats))
@@ -474,13 +537,12 @@ def choose_rate(rates):
         )
 
         for rate in rates:
+            choice = None
             if rate >= 44100:
-                best_choice = rate
+                choice = rate
                 break
-            else:
-                best_choice = rates[-1]
 
-        Stylize.suggestion(f"{best_choice} is the best choice.")
+        best_choice(choice or rates[-1])
 
         while True:
             try:
@@ -489,7 +551,7 @@ def choose_rate(rates):
                 rate = rates[int(choice) - 1]
 
             except KeyboardInterrupt:
-                bailout()
+                Stylize.goodbye()
 
             except:
                 invalid_choice(len(rates))
@@ -504,7 +566,7 @@ def choose_rate(rates):
         Stylize.comment(f"{rate} is the only Sampling Rate so that's what we'll use…")
 
         if rate > 88200:
-            Stylize.comment(
+            Stylize.warn(
                 "High sampling rates can lead to high CPU usage, degraded "
                 "audio quality, and audio dropouts and "
                 "glitches on low spec devices."
@@ -550,16 +612,10 @@ def choose_sample_rate_converter():
             "or sound quality impact."
         )
 
-        if "speexrate_medium" in converters:
-            best_choice = "speexrate_medium"
-        elif "lavrate" in converters:
-            best_choice = "lavrate"
-        elif "samplerate" in converters:
-            best_choice = "samplerate"
-        else:
-            best_choice = converters[0]
-
-        Stylize.suggestion(f"{best_choice} is the best choice.")
+        for converter in BEST_CONVERTERS:
+            if converter in converters:
+                best_choice(converter)
+                break
 
         while True:
             try:
@@ -568,7 +624,7 @@ def choose_sample_rate_converter():
                 converter = converters[int(choice) - 1]
 
             except KeyboardInterrupt:
-                bailout()
+                Stylize.goodbye()
 
             except:
                 invalid_choice(len(converters))
@@ -621,7 +677,7 @@ def get_choices():
                 return card, device, format, rate, converter
 
         except KeyboardInterrupt:
-            bailout()
+            Stylize.goodbye()
 
 
 def test_choices():
@@ -629,7 +685,7 @@ def test_choices():
         card, device, format, rate, converter = get_choices()
 
         # speaker-test does not support S24_LE / S24_BE.
-        if format in ("S24_LE", "S24_BE"):
+        if format in NOT_SUPPORTED_BY_SPEAKER_TEST:
             return card, device, format, rate, converter
 
         else:
@@ -653,27 +709,26 @@ def test_choices():
 
                 Stylize.input("Please press Enter to continue")
 
+                cmd = SPEAKER_TEST_TEMPLATE.format(
+                    card,
+                    device,
+                    format,
+                    rate,
+                ).split(" ")
+
                 try:
                     subprocess.run(
-                        [
-                            "speaker-test",
-                            f"-Dhw:CARD={card},DEV={device}",
-                            f"-F{format}",
-                            f"-r{rate}",
-                            "-l1",
-                            "-c2",
-                            "-S25",
-                        ],
+                        cmd,
                         check=True,
                         stderr=subprocess.DEVNULL,
                         stdout=subprocess.DEVNULL,
                     )
 
                 except KeyboardInterrupt:
-                    bailout()
+                    Stylize.goodbye()
 
-                except:
-                    Stylize.warn("The speaker test Failed.")
+                except Exception as e:
+                    Stylize.warn(f"The speaker test Failed: {e}")
 
                     Stylize.warn(
                         "Please try again with a different Format and "
@@ -732,65 +787,27 @@ def write_asound_conf():
         choice = Stylize.input('Please enter "OK" to continue: ')
 
         if choice.lower() != "ok":
-            bailout()
+            Stylize.goodbye()
 
     except KeyboardInterrupt:
-        bailout()
+        Stylize.goodbye()
 
     card, device, format, rate, converter = test_choices()
+
+    backup_asound_conf()
 
     rate_converter = ""
 
     if converter:
         rate_converter = f"defaults.pcm.rate_converter {converter}"
 
-    file_data = f"""# /etc/asound.conf
-
-{rate_converter}
-
-pcm.!default {{
-    type plug
-    slave.pcm {{
-        type dmix
-        ipc_key {{
-            @func refer
-            name defaults.pcm.ipc_key
-        }}
-        ipc_gid {{
-            @func refer
-            name defaults.pcm.ipc_gid
-        }}
-        ipc_perm {{
-            @func refer
-            name defaults.pcm.ipc_perm
-        }}
-        slave {{
-            pcm {{
-                type hw
-                card {card}
-                device {device}
-                nonblock {{
-                    @func refer
-                    name defaults.pcm.nonblock
-                }}
-            }}
-            channels 2
-            rate {rate}
-            format {format}
-        }}
-        bindings {{
-            0 0
-            1 1
-        }}
-    }}
-}}
-
-ctl.!default {{
-    type hw
-    card {card}
-}}"""
-
-    backup_asound_conf()
+    file_data = ASOUND_TEMPLATE.format(
+        card,
+        device,
+        format,
+        rate,
+        rate_converter,
+    )
 
     try:
         with open(ASOUND_FILE_PATH, "w") as f:
@@ -825,6 +842,8 @@ ctl.!default {{
             "or optionally revert it from the back up if one was created "
             "if you have any issue with the generated config."
         )
+
+        Stylize.goodbye()
 
 
 if __name__ == "__main__":
