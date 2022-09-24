@@ -41,23 +41,42 @@ BACKUP_FILE_PATH = "/etc/asound.conf.bak{}".format(int(time_time()))
 CONVERTERS_FILE_PATH = "/usr/lib/*/alsa-lib"
 CONVERTERS_SEARCH_SUFFIX = "/libasound_module_rate_"
 
-if which("apt"):
-    if which("sudo"):
-        UPDATE_CMD = ["sudo", "apt", "update"]
+APT = which("apt")
+SUDO = which("sudo")
+APLAY_AND_SPEAKER_TEST = which("speaker-test") and which("aplay")
+
+if APT:
+    if SUDO:
+        UPDATE_CMD = [SUDO, APT, "update"]
+
+        ALSA_UTILS_INSTALL_CMD = [
+            SUDO,
+            APT,
+            "install",
+            "-y",
+            "alsa-utils",
+        ]
 
         CONVERTER_INSTALL_CMD = [
-            "sudo",
-            "apt",
+            SUDO,
+            APT,
             "install",
             "-y",
             "--no-install-recommends",
             "libasound2-plugins",
         ]
     else:
-        UPDATE_CMD = ["apt", "update"]
+        UPDATE_CMD = [APT, "update"]
+
+        ALSA_UTILS_INSTALL_CMD = [
+            APT,
+            "install",
+            "-y",
+            "alsa-utils",
+        ]
 
         CONVERTER_INSTALL_CMD = [
-            "apt",
+            APT,
             "install",
             "-y",
             "--no-install-recommends",
@@ -66,6 +85,7 @@ if which("apt"):
 else:
     UPDATE_CMD = None
     CONVERTER_INSTALL_CMD = None
+    ALSA_UTILS_INSTALL_CMD = None
 
 APLAY_L_CMD = ["aplay", "-L"]
 
@@ -303,6 +323,58 @@ def privilege_check():
         Stylize.error("Error: This script requires write privileges to /etc.")
 
 
+def alsa_utils_check():
+    if APLAY_AND_SPEAKER_TEST:
+        return
+    else:
+        if ALSA_UTILS_INSTALL_CMD:
+            Stylize.comment(
+                "This script requires aplay and speaker-test "
+                "which are contained in the alsa-utils package"
+            )
+
+            try:
+                choice = Stylize.input('Please enter "Y" to install alsa-utils: ')
+
+            except KeyboardInterrupt:
+                Stylize.goodbye()
+
+            if choice.lower() != "y":
+                Stylize.goodbye()
+
+            try:
+                Stylize.comment("This may take a moment…")
+
+                subprocess_run(
+                    UPDATE_CMD,
+                    check=True,
+                    stderr=DEVNULL,
+                    stdout=DEVNULL,
+                )
+
+                subprocess_run(
+                    ALSA_UTILS_INSTALL_CMD,
+                    check=True,
+                    stderr=DEVNULL,
+                    stdout=DEVNULL,
+                )
+
+            except KeyboardInterrupt:
+                Stylize.goodbye()
+
+            except Exception as e:
+                Stylize.error(f"Error Installing alsa-utils: {e}")
+
+            else:
+                Stylize.comment("alsa-utils Installed Successfully")
+                return
+
+    Stylize.error(
+        "Error: This script requires that aplay and speaker-test be installed "
+        "or at least that they be install-able on a Debian based system."
+    )
+
+
 def backup_asound_conf():
     try:
         os_rename(ASOUND_FILE_PATH, BACKUP_FILE_PATH)
@@ -402,12 +474,14 @@ def get_sample_rate_converters():
 
                 except Exception as e:
                     Stylize.warn(
-                        f"Error installing high quality Sample Rate Converters: {e}"
+                        f"Error Installing High Quality Sample Rate Converters: {e}"
                     )
 
                     return converters
                 else:
-                    Stylize.comment("Sample Rate Converters Install Successful")
+                    Stylize.comment(
+                        "High Quality Sample Rate Converters Installed Successful"
+                    )
                     continue
 
 
@@ -808,6 +882,8 @@ def write_asound_conf():
 
     except KeyboardInterrupt:
         Stylize.goodbye()
+
+    alsa_utils_check()
 
     card, device, format, rate, converter = test_choices()
 

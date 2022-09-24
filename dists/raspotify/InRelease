@@ -2,7 +2,7 @@
 Hash: SHA512
 
 Codename: raspotify
-Date: Sat, 24 Sep 2022 02:10:27 UTC
+Date: Sat, 24 Sep 2022 03:57:47 UTC
 Architectures: armhf arm64 amd64
 Components: main
 MD5Sum:
@@ -37,17 +37,17 @@ SHA256:
  f4aafa353a338baedf9e98523c13d7ffeda979ec3cf745f9fad977dd770595c8 36 main/binary-amd64/Release
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEELMm4D1rit6zv8royCRRvL3lTpFUFAmMuZxMACgkQCRRvL3lT
-pFXjyg//Vaht5MtHujZVlVq147Bn3XhiiH3CgEauQVmfJpY5KcRsAT/6hULXSBMr
-c4JxZbn2F7zYOhYx+Cflyws/rQYdu2njaZHiGskV51JTHdPlmFEkczuQS2g9fajG
-tjdsXxuVHtwNqJU25WgWj4v8udXJYaz214oAgsOUplN4X8JO1ZYtdFTpky4tn/Ja
-enyaOgwbbNZu/39wyc5pavKlo3IQilhX3IRLwN0T7wLUtbOxZZCAv5yjFVizY/pj
-dKtq+X16YGIpG6hcCjDZCYLrC7dyIv7mDE7ACEzrmib0au4yld+L3AZNfCtutPdU
-/+/nm/Kduphhkq8XqKwpOmHOu6qXijBMkmO/vhLhBQFKar43jVe2Nmjx/awk/4vg
-g/TSKPB1JlZa0eC5n5ZTnJt2Zg7ctz2GUYq9Rqhgk+LnefyDctZHtgwJSMVUD3Yy
-Ac18hcIRgDHsoYMZP8yRk0ODK90Yd2neAwV53MtgVkQM33KeX7DzOeJBQrOoaTSq
-/n/zjB9203pBxODpUngmvCevHt6/6Ql7UffoBDSaDgzyvw6WeqAs0E+Dyz+U0jVM
-0RJNvcQzatjeoh/fq3dtmM+CfuFP+nusworn3xUm+08LrtwlSVQUqhvmgyaRbkVZ
-lySfuHpFyxMyxMDI1DD5OwZnwqLmmwokAG+u7ZdeVNAtWZFkgKs=
-=oQyf
+iQIzBAEBCgAdFiEELMm4D1rit6zv8royCRRvL3lTpFUFAmMugDsACgkQCRRvL3lT
+pFUTkg//axgdauKgV4o6hNv8oxeAKlcFIQZUqPfjRHieuYtSHTPdWc032xmFQAAQ
+lxltU59UAzVLq1h+TGLFREOu5+KDZQhZhL69jN2HkR3ZQ3fWf0h03JLUrdt2oEXw
+d56vesHqq3C9J8BY2dONvbFcKlUBb2ydrz483Zcsy7VZyWKbc8smjEPPU8utEh7z
+2HedZlnv/2OdbPaMOukhRcDBtaGdwZf8b29MPw/XMwcpLynJBepwi1LZvd4azELN
+z/i4pNRPgjxYzNeWGqasKtFUDdfLJwvPVlX1VJteEiJWjsmw/1B/vk3joAXsfxfd
+pUZIvlLLzbqDnzafId82kZaumGQbt0JT+Np1MnW7hZ/3jtZ8xpj8Nh7snyRvANcC
+fgYqTV6cgrbQ3OQjrrHRoy/V4kXKaI8IlHOP68XjUVCIrZ6kwuC9maAzs+Ei7Za2
+lGEisGBqYZfPd/ekVoYfgWThL4HFj+S7Wp3oCLfNBFoGfIEkfUar0oU+nofnw1nZ
+JlC2+9+REeSNin7+ASm9GPpujIZRZqIwhhirwJoDs/ekWqHgb9kXDtAtmKqOzZjV
+B/EggeTI389HRqfVbLIAyF/7yob53PJq6XRF6yIVV+B70ulNfKfqZE8EsXo5qsyf
+JNwvvjfizjd0YYG4rRWiXMQJFQgv7/ruem/u4bzGTYNcmbYpRug=
+=jEHx
 -----END PGP SIGNATURE-----
