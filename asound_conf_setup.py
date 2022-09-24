@@ -25,16 +25,19 @@
 #
 # For more information, please refer to <http://unlicense.org/>
 
-import textwrap
-import subprocess
-import os
-import time
-import glob
+from textwrap import TextWrapper
+from glob import glob
 from shutil import which
+from sys import exit as sys_exit
+from subprocess import PIPE, STDOUT, DEVNULL
+from subprocess import run as subprocess_run
+from os import rename as os_rename
+from os import remove as os_remove
+from time import time as time_time
 
 ASOUND_FILE_PATH = "/etc/asound.conf"
-DUMMY_FILE_PATH = "/etc/foobarbaz{}".format(int(time.time()))
-BACKUP_FILE_PATH = "/etc/asound.conf.bak{}".format(int(time.time()))
+DUMMY_FILE_PATH = "/etc/foobarbaz{}".format(int(time_time()))
+BACKUP_FILE_PATH = "/etc/asound.conf.bak{}".format(int(time_time()))
 CONVERTERS_FILE_PATH = "/usr/lib/*/alsa-lib"
 CONVERTERS_SEARCH_SUFFIX = "/libasound_module_rate_"
 
@@ -178,9 +181,7 @@ class Stylize:
     _BOLD_GREEN = "\033[1;32m"
     _RESET = "\033[00m"
 
-    _WRAPPER = textwrap.TextWrapper(
-        width=50, initial_indent="\n\t", subsequent_indent="\t"
-    )
+    _WRAPPER = TextWrapper(width=50, initial_indent="\n\t", subsequent_indent="\t")
 
     @staticmethod
     def input(text):
@@ -193,7 +194,7 @@ class Stylize:
     @staticmethod
     def error(text):
         print(f"\n\t{Stylize._BOLD_RED}{text}{Stylize._RESET}")
-        raise SystemExit(1)
+        sys_exit(1)
 
     @staticmethod
     def comment(text):
@@ -205,8 +206,8 @@ class Stylize:
 
     @staticmethod
     def goodbye():
-        print(f"\n\t{Stylize._BOLD_GREEN}Goodbye{Stylize._RESET}\n")
-        raise SystemExit(0)
+        print(f"\n\n\t{Stylize._BOLD_GREEN}Goodbye{Stylize._RESET}\n")
+        sys_exit(0)
 
 
 class Table:
@@ -296,7 +297,7 @@ class Table:
 def privilege_check():
     try:
         open(DUMMY_FILE_PATH, "w").close()
-        os.remove(DUMMY_FILE_PATH)
+        os_remove(DUMMY_FILE_PATH)
 
     except:
         Stylize.error("Error: This script requires write privileges to /etc.")
@@ -304,7 +305,7 @@ def privilege_check():
 
 def backup_asound_conf():
     try:
-        os.rename(ASOUND_FILE_PATH, BACKUP_FILE_PATH)
+        os_rename(ASOUND_FILE_PATH, BACKUP_FILE_PATH)
 
     except FileNotFoundError:
         pass
@@ -319,10 +320,10 @@ def backup_asound_conf():
 
 def get_all_pcm_name():
     return (
-        subprocess.run(
+        subprocess_run(
             APLAY_L_CMD,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
+            stdout=PIPE,
+            stderr=STDOUT,
         )
         .stdout.decode("utf-8")
         .split("\n")
@@ -348,14 +349,14 @@ def get_hw_pcm_names():
 def get_sample_rate_converters():
     while True:
         converters = []
-        base_path = glob.glob(CONVERTERS_FILE_PATH)
+        base_path = glob(CONVERTERS_FILE_PATH)
         if base_path:
             base_path = base_path[0]
             search_term = f"{base_path}{CONVERTERS_SEARCH_SUFFIX}"
 
             converters = [
                 f.replace(search_term, "").replace(".so", "")
-                for f in glob.glob(f"{search_term}*")
+                for f in glob(f"{search_term}*")
             ]
 
             ordered_converters = [i for i in COMMON_RATE_CONVERTERS if i in converters]
@@ -367,10 +368,14 @@ def get_sample_rate_converters():
             return converters
 
         else:
-            confirm = Stylize.input(
-                'Please enter "Y" if you would like to install '
-                "high quality Sample Rate Converters: "
-            )
+            try:
+                confirm = Stylize.input(
+                    'Please enter "Y" if you would like to install '
+                    "high quality Sample Rate Converters: "
+                )
+
+            except KeyboardInterrupt:
+                Stylize.goodbye()
 
             if confirm.lower() != "y":
                 return converters
@@ -378,18 +383,18 @@ def get_sample_rate_converters():
                 Stylize.comment("This may take a moment…")
 
                 try:
-                    subprocess.run(
+                    subprocess_run(
                         UPDATE_CMD,
                         check=True,
-                        stderr=subprocess.DEVNULL,
-                        stdout=subprocess.DEVNULL,
+                        stderr=DEVNULL,
+                        stdout=DEVNULL,
                     )
 
-                    subprocess.run(
+                    subprocess_run(
                         CONVERTER_INSTALL_CMD,
                         check=True,
-                        stderr=subprocess.DEVNULL,
-                        stdout=subprocess.DEVNULL,
+                        stderr=DEVNULL,
+                        stdout=DEVNULL,
                     )
 
                 except KeyboardInterrupt:
@@ -452,10 +457,10 @@ def choose_hw_pcm(hw_pcm_names):
 def get_formats_and_rates(pcm):
     cmd = APLAY_HW_PARAMS_TEMPLATE.format(pcm).split(" ")
 
-    hw_params = subprocess.run(
+    hw_params = subprocess_run(
         cmd,
-        stderr=subprocess.STDOUT,
-        stdout=subprocess.PIPE,
+        stderr=STDOUT,
+        stdout=PIPE,
     ).stdout.decode("utf-8")
 
     formats = []
@@ -689,9 +694,13 @@ def test_choices():
             return card, device, format, rate, converter
 
         else:
-            confirm = Stylize.input(
-                'Please enter "Y" if you would like to test your choices: '
-            )
+            try:
+                confirm = Stylize.input(
+                    'Please enter "Y" if you would like to test your choices: '
+                )
+
+            except KeyboardInterrupt:
+                Stylize.goodbye()
 
             if confirm.lower() != "y":
                 return card, device, format, rate, converter
@@ -707,7 +716,11 @@ def test_choices():
                     "to test your choices."
                 )
 
-                Stylize.input("Please press Enter to continue")
+                try:
+                    Stylize.input("Please press Enter to continue")
+
+                except KeyboardInterrupt:
+                    Stylize.goodbye()
 
                 cmd = SPEAKER_TEST_TEMPLATE.format(
                     card,
@@ -717,11 +730,11 @@ def test_choices():
                 ).split(" ")
 
                 try:
-                    subprocess.run(
+                    subprocess_run(
                         cmd,
                         check=True,
-                        stderr=subprocess.DEVNULL,
-                        stdout=subprocess.DEVNULL,
+                        stderr=DEVNULL,
+                        stdout=DEVNULL,
                     )
 
                 except KeyboardInterrupt:
@@ -738,9 +751,13 @@ def test_choices():
                     continue
 
                 else:
-                    confirm = Stylize.input(
-                        'Please enter "Y" if you heard the test tones: '
-                    )
+                    try:
+                        confirm = Stylize.input(
+                            'Please enter "Y" if you heard the test tones: '
+                        )
+
+                    except KeyboardInterrupt:
+                        Stylize.goodbye()
 
                     if confirm.lower() == "y":
                         return card, device, format, rate, converter
