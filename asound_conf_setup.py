@@ -717,19 +717,9 @@ class AsoundConfWizard:
                             "*Up/down mixing is on the to do list…"
                         )
                         continue
-                else:
+                if not formats or not rates or not channels:
                     Stylize.warn(
-                        "No supported channel counts were returned."
-                    )
-                    Stylize.warn(
-                        "The Output you chose may be busy or not support "
-                        "any common formats and rates?"
-                    )
-                    Stylize.warn("Please make sure it's not in use and try again.")
-                    continue
-                if not formats or not rates:
-                    Stylize.warn(
-                        "No supported formats or sampling rates were returned."
+                        "No supported formats, sampling rates or channel counts were returned."
                     )
                     Stylize.warn(
                         "The Output you chose may be busy or not support "
