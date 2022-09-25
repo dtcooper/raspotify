@@ -510,7 +510,7 @@ class AsoundConfWizard:
             )
         return pcm
 
-    def _get_formats_and_rates(self, pcm):
+    def _get_formats_rates_channels(self, pcm):
         cmd = self._hw_params_cmd_template.format(pcm).split(" ")
         hw_params = subprocess_run(
             cmd,
@@ -520,6 +520,7 @@ class AsoundConfWizard:
         ).stdout.decode("utf-8")
         formats = []
         rates = []
+        channels = []
         for line in hw_params.split("\n"):
             if line.startswith("FORMAT:"):
                 for fmt in line.strip("FORMAT: ").split(" "):
@@ -531,7 +532,13 @@ class AsoundConfWizard:
                         rates.append(int(rate))
                     except ValueError:
                         pass
-        return formats, rates
+            elif line.startswith("CHANNELS:"):
+                for channel in line.strip("CHANNELS:[ ]").split(" "):
+                    try:
+                        channels.append(int(channel))
+                    except ValueError:
+                        pass
+        return formats, rates, channels
 
     def _choose_format(self, formats):
         if len(formats) > 1:
@@ -663,7 +670,63 @@ class AsoundConfWizard:
         while True:
             try:
                 pcm = self._choose_hw_pcm()
-                formats, rates = self._get_formats_and_rates(pcm)
+                formats, rates, channels = self._get_formats_rates_channels(pcm)
+                channels.sort()
+                ch_len = len(channels)
+                if ch_len > 1:
+                    highest_ch_count = channels[-1]
+                    if 2 not in channels:
+                        Stylize.warn(
+                            "This Output does not support 2 Channel audio."
+                        )
+                        Stylize.warn("Please choose a different Output.")
+                        Stylize.comment(
+                            "*Up/down mixing is on the to do list…"
+                        )
+                        continue
+                    if highest_ch_count > 2:
+                        Stylize.warn(
+                            f"This Output supports up to {highest_ch_count} Channels of audio."
+                        )
+                        Stylize.warn(
+                            "This Script does not support up mixing."
+                        )
+                        Stylize.warn(
+                            f"The remaining {highest_ch_count - 2} Channels will go unused."
+                        )
+                        Stylize.comment(
+                            "*Up/down mixing is on the to do list…"
+                        )
+                elif ch_len == 1:
+                    highest_ch_count = channels[0]
+                    if highest_ch_count == 1:
+                        Stylize.warn(
+                            "This Script does not support Mono Outputs."
+                        )
+                        Stylize.warn("Please choose a different Output.")
+                        Stylize.comment(
+                            "*Up/down mixing is on the to do list…"
+                        )
+                        continue
+                    if highest_ch_count != 2:
+                        Stylize.warn(
+                            f"This Output only supports {highest_ch_count} Channel audio."
+                        )
+                        Stylize.warn("Please choose a different Output.")
+                        Stylize.comment(
+                            "*Up/down mixing is on the to do list…"
+                        )
+                        continue
+                else:
+                    Stylize.warn(
+                        "No supported channel counts were returned."
+                    )
+                    Stylize.warn(
+                        "The Output you chose may be busy or not support "
+                        "any common formats and rates?"
+                    )
+                    Stylize.warn("Please make sure it's not in use and try again.")
+                    continue
                 if not formats or not rates:
                     Stylize.warn(
                         "No supported formats or sampling rates were returned."
