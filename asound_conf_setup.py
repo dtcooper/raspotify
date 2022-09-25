@@ -446,7 +446,6 @@ class AsoundConfWizard:
                 if aplay and speaker_test:
                     Stylize.comment(f"{ALSA_UTILS} Installed Successfully")
                     self._get_pcm_names_cmd = [aplay, "-L"]
-
                     self._hw_params_cmd_template = (
                         f"{aplay} "
                         "-D{} --dump-hw-params /usr/share/sounds/alsa/Front_Right.wav"
