@@ -34,19 +34,7 @@ Or you can just download the latest .deb package and install it manually from he
 * [`raspotify-latest_arm64.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_arm64.deb)
 * [`raspotify-latest_amd64.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_amd64.deb)
 
-### [Support for ARMv6 (Pi v1 and Pi Zero v1.x) has been dropped.](https://github.com/dtcooper/raspotify/commit/345f15c5d695736db8f90d1acc7e542803db5ca0)
-
-[0.31.8.1](https://github.com/dtcooper/raspotify/releases/tag/0.31.8.1) was the last version to be built with ARMv6 support.
-
-*You can install and run that version on an ARMv6 device, but you will never get updates and doing so is completely unsupported.*
-
-```sh
-# Install curl and download raspotify_0.31.8.1
-sudo apt-get -y install curl && curl -sL https://github.com/dtcooper/raspotify/releases/download/0.31.8.1/raspotify_0.31.8.1.librespot.v0.3.1-54-gf4be9bb_armhf.deb
-
-# Install raspotify_0.31.8.1
-sudo apt install ./raspotify_0.31.8.1.librespot.v0.3.1-54-gf4be9bb_armhf.deb
-```
+### [Support for ARMv6 (Pi v1 and Pi Zero v1.x) has been dropped.](https://github.com/dtcooper/raspotify/wiki/Raspotify-on-Pi-v1's-and-Pi-Zero-v1.x)
 
 ## Configuration
 
