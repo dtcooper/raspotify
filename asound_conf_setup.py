@@ -810,7 +810,7 @@ class AsoundConfWizard:
             if confirm.lower() == "y":
                 return card, device, fmt, rate, converter
             Stylize.warn(
-                "Please make sure you're connected to the " "correct Output and try again."
+                "Please make sure you're connected to the correct Output and try again."
             )
 
     def _write_asound_conf(self):
