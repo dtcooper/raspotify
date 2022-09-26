@@ -179,6 +179,7 @@ class AsoundConfWizardError(Exception):
         self.message = message
         super().__init__(self.message)
 
+
 class InsufficientPrivilegesError(AsoundConfWizardError):
     """Insufficient Privileges Error"""
     def __init__(self, message="Error: This script requires write privileges to /etc"):
