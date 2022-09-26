@@ -174,14 +174,12 @@ ctl.!default {{
     card {0}
 }}"""
 
-
 class AsoundConfWizardError(Exception):
     """Asound Conf Wizard Error"""
 
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
-
 
 class InsufficientPrivilegesError(AsoundConfWizardError):
     """Insufficient Privileges Error"""
@@ -190,18 +188,14 @@ class InsufficientPrivilegesError(AsoundConfWizardError):
         self.message = message
         super().__init__(self.message)
 
-
 class InstallError(AsoundConfWizardError):
     """Install Error"""
-
     def __init__(self, package, error, message="Error Installing Package"):
         self.message = f"{message} {package}: {error}"
         super().__init__(self.message)
 
-
 class MissingDependenciesError(AsoundConfWizardError):
     """Missing Dependencies Error"""
-
     def __init__(
         self,
         message="Error: This script requires that aplay and speaker-test be installed",
@@ -209,59 +203,45 @@ class MissingDependenciesError(AsoundConfWizardError):
         self.message = message
         super().__init__(self.message)
 
-
 class RenamingError(AsoundConfWizardError):
     """Renaming Error"""
-
     def __init__(self, error, message=f"Error renaming existing {ASOUND_FILE_PATH}"):
         self.message = f"{message}: {error}"
         super().__init__(self.message)
 
-
 class NoHwPcmError(AsoundConfWizardError):
     """No Hw Pcm Error"""
-
     def __init__(self, message="Error: No available hw PCM"):
         self.message = message
         super().__init__(self.message)
 
-
 class PcmParsingError(AsoundConfWizardError):
     """Pcm Parsing Error"""
-
     def __init__(self, error, message="Error parsing card and device"):
         self.error = error
         self.message = f"{message}: {error}"
         super().__init__(self.message)
 
-
 class PcmOpenError(AsoundConfWizardError):
     """Pcm Open Error"""
-
     def __init__(self, error, message="PCM Open Error"):
         self.message = f"{message}: {error}"
         super().__init__(self.message)
 
-
 class AsoundConfWriteError(AsoundConfWizardError):
     """Asound Conf Write Error"""
-
     def __init__(self, error, message=f"Error writing {ASOUND_FILE_PATH}"):
         self.message = f"{message}: {error}"
         super().__init__(self.message)
 
-
 class UnhandledExceptionError(AsoundConfWizardError):
     """Unhandled Exception Error"""
-
     def __init__(self, error, message="Error: An unhandled Exception has occurred"):
         self.message = f"{message}: {error}"
         super().__init__(self.message)
 
-
 class Stylize:
     """Stylize Text"""
-
     _BOLD = "\033[1m"
     _CYAN = "\033[36m"
     _BOLD_YELLOW = "\033[1;33m"
@@ -297,10 +277,8 @@ class Stylize:
         """Makes the suggestion text bold green"""
         print(f"\n\t{Stylize._BOLD_GREEN}{text}{Stylize._RESET}")
 
-
 class Table:
     """Basic Unicode Table"""
-
     def __init__(self, title, width, padding=8):
         self._width = width
         self._padding = padding
@@ -375,10 +353,8 @@ class Table:
             )
         self._table.append(row)
 
-
 class AsoundConfWizard:
     """Generate /etc/asound.conf based on user choices"""
-
     def __init__(self):
         self._get_pcm_names_cmd = []
         self._hw_params_cmd_template = ""
@@ -947,7 +923,6 @@ class AsoundConfWizard:
                 return converters
             Stylize.comment("High Quality Sample Rate Converters Installed Successful")
 
-
 if __name__ == "__main__":
     for sig in (SIGINT, SIGTERM, SIGHUP):
         signal(sig, AsoundConfWizard.quit)
@@ -955,4 +930,3 @@ if __name__ == "__main__":
         AsoundConfWizard().run()
     except AsoundConfWizardError as e:
         Stylize.error(e)
-
