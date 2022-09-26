@@ -829,6 +829,17 @@ class AsoundConfWizard:
                 raise KeyboardInterrupt
             self._build_cmds()
             card, device, fmt, rate, converter = self._test_choices()
+            Stylize.comment("Your choices were as follows:")
+            Stylize.comment(f"Card: {card}")
+            Stylize.comment(f"Device: {device}")
+            Stylize.comment(f"Format: {fmt}")
+            Stylize.comment(f"Sampling Rate: {rate}")
+            if converter:
+                Stylize.comment(f"Sample Rate Converter: {converter}")
+            Stylize.comment("Please verify that this is correct.")
+            choice = Stylize.input(f'Please enter "OK" to commit your choices to {ASOUND_FILE_PATH}: ')
+            if choice.lower() != "ok":
+                raise KeyboardInterrupt
             self._backup_asound_conf()
         except Exception as err:
             raise err
@@ -850,15 +861,8 @@ class AsoundConfWizard:
                 raise err
             raise AsoundConfWriteError(err) from err
         Stylize.comment(
-            f"{ASOUND_FILE_PATH} was written successfully with the following values:"
+            f"{ASOUND_FILE_PATH} was written successfully."
         )
-        Stylize.comment(f"Card: {card}")
-        Stylize.comment(f"Device: {device}")
-        Stylize.comment(f"Format: {fmt}")
-        Stylize.comment(f"Sampling Rate: {rate}")
-        if converter:
-            Stylize.comment(f"Sample Rate Converter: {converter}")
-        Stylize.comment("Please verify that this is correct.")
         Stylize.comment(
             "You can revert your system to it's default state by deleting "
             f"{ASOUND_FILE_PATH} with:"
