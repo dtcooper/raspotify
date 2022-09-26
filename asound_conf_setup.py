@@ -29,6 +29,7 @@ from textwrap import TextWrapper
 from glob import glob
 from shutil import which
 from sys import exit as sys_exit
+from signal import signal, SIGINT, SIGTERM, SIGHUP
 from subprocess import CalledProcessError, PIPE, STDOUT, DEVNULL
 from subprocess import run as subprocess_run
 from os import rename as os_rename
@@ -176,6 +177,7 @@ ctl.!default {{
 
 class AsoundConfWizardError(Exception):
     """Asound Conf Wizard Error"""
+
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
@@ -183,6 +185,7 @@ class AsoundConfWizardError(Exception):
 
 class InsufficientPrivilegesError(AsoundConfWizardError):
     """Insufficient Privileges Error"""
+
     def __init__(self, message="Error: This script requires write privileges to /etc"):
         self.message = message
         super().__init__(self.message)
@@ -190,6 +193,7 @@ class InsufficientPrivilegesError(AsoundConfWizardError):
 
 class InstallError(AsoundConfWizardError):
     """Install Error"""
+
     def __init__(self, package, error, message="Error Installing Package"):
         self.message = f"{message} {package}: {error}"
         super().__init__(self.message)
@@ -197,6 +201,7 @@ class InstallError(AsoundConfWizardError):
 
 class MissingDependenciesError(AsoundConfWizardError):
     """Missing Dependencies Error"""
+
     def __init__(
         self,
         message="Error: This script requires that aplay and speaker-test be installed",
@@ -207,6 +212,7 @@ class MissingDependenciesError(AsoundConfWizardError):
 
 class RenamingError(AsoundConfWizardError):
     """Renaming Error"""
+
     def __init__(self, error, message=f"Error renaming existing {ASOUND_FILE_PATH}"):
         self.message = f"{message}: {error}"
         super().__init__(self.message)
@@ -214,6 +220,7 @@ class RenamingError(AsoundConfWizardError):
 
 class NoHwPcmError(AsoundConfWizardError):
     """No Hw Pcm Error"""
+
     def __init__(self, message="Error: No available hw PCM"):
         self.message = message
         super().__init__(self.message)
@@ -221,14 +228,24 @@ class NoHwPcmError(AsoundConfWizardError):
 
 class PcmParsingError(AsoundConfWizardError):
     """Pcm Parsing Error"""
+
     def __init__(self, error, message="Error parsing card and device"):
         self.error = error
         self.message = f"{message}: {error}"
         super().__init__(self.message)
 
 
+class PcmOpenError(AsoundConfWizardError):
+    """Pcm Open Error"""
+
+    def __init__(self, error, message="PCM Open Error"):
+        self.message = f"{message}: {error}"
+        super().__init__(self.message)
+
+
 class AsoundConfWriteError(AsoundConfWizardError):
     """Asound Conf Write Error"""
+
     def __init__(self, error, message=f"Error writing {ASOUND_FILE_PATH}"):
         self.message = f"{message}: {error}"
         super().__init__(self.message)
@@ -236,6 +253,7 @@ class AsoundConfWriteError(AsoundConfWizardError):
 
 class UnhandledExceptionError(AsoundConfWizardError):
     """Unhandled Exception Error"""
+
     def __init__(self, error, message="Error: An unhandled Exception has occurred"):
         self.message = f"{message}: {error}"
         super().__init__(self.message)
@@ -243,6 +261,7 @@ class UnhandledExceptionError(AsoundConfWizardError):
 
 class Stylize:
     """Stylize Text"""
+
     _BOLD = "\033[1m"
     _CYAN = "\033[36m"
     _BOLD_YELLOW = "\033[1;33m"
@@ -281,6 +300,7 @@ class Stylize:
 
 class Table:
     """Basic Unicode Table"""
+
     def __init__(self, title, width, padding=8):
         self._width = width
         self._padding = padding
@@ -358,6 +378,7 @@ class Table:
 
 class AsoundConfWizard:
     """Generate /etc/asound.conf based on user choices"""
+
     def __init__(self):
         self._get_pcm_names_cmd = []
         self._hw_params_cmd_template = ""
@@ -368,8 +389,14 @@ class AsoundConfWizard:
         try:
             self._privilege_check()
             self._write_asound_conf()
-        except (KeyboardInterrupt, AsoundConfWizardError) as err:
+        except AsoundConfWizardError as err:
             raise err
+
+    @staticmethod
+    def quit(*_args, **_kwargs):
+        """Quit the Wizard"""
+        print("")
+        sys_exit(0)
 
     def _build_cmds(self):
         aplay = which("aplay")
@@ -394,8 +421,6 @@ class AsoundConfWizard:
             try:
                 choice = Stylize.input(f'Please enter "Y" to install {ALSA_UTILS}: ')
             except Exception as err:
-                if err is KeyboardInterrupt:
-                    raise err
                 raise UnhandledExceptionError(err) from err
             if choice.lower() != "y":
                 raise MissingDependenciesError()
@@ -414,8 +439,6 @@ class AsoundConfWizard:
                     stdout=DEVNULL,
                 )
             except Exception as err:
-                if err is KeyboardInterrupt:
-                    raise err
                 raise InstallError(ALSA_UTILS, err) from err
             else:
                 aplay = which("aplay")
@@ -475,8 +498,6 @@ class AsoundConfWizard:
                     self._invalid_choice(len(hw_pcm_names))
                     continue
                 except Exception as err:
-                    if err is KeyboardInterrupt:
-                        raise err
                     raise UnhandledExceptionError(err) from err
                 else:
                     break
@@ -488,6 +509,16 @@ class AsoundConfWizard:
         return pcm
 
     def _get_formats_rates_channels(self, pcm):
+        Stylize.comment(
+            "Outputs must not in use while querying their Hardware Parameters."
+        )
+        Stylize.comment(
+            "Please make sure the Output you chose is not in use before continuing."
+        )
+        try:
+            Stylize.input("Please press Enter to continue")
+        except Exception as err:
+            raise UnhandledExceptionError(err) from err
         cmd = self._hw_params_cmd_template.format(pcm).split(" ")
         hw_params = subprocess_run(
             cmd,
@@ -495,6 +526,9 @@ class AsoundConfWizard:
             stderr=STDOUT,
             stdout=PIPE,
         ).stdout.decode("utf-8")
+        if "audio open error:" in hw_params:
+            err = hw_params.split(":")[-1].strip().title()
+            raise PcmOpenError(err)
         formats = []
         rates = []
         channels = []
@@ -539,8 +573,6 @@ class AsoundConfWizard:
                     self._invalid_choice(len(formats))
                     continue
                 except Exception as err:
-                    if err is KeyboardInterrupt:
-                        raise err
                     raise UnhandledExceptionError(err) from err
                 else:
                     break
@@ -577,8 +609,6 @@ class AsoundConfWizard:
                     self._invalid_choice(len(rates))
                     continue
                 except Exception as err:
-                    if err is KeyboardInterrupt:
-                        raise err
                     raise UnhandledExceptionError(err) from err
                 else:
                     break
@@ -627,8 +657,6 @@ class AsoundConfWizard:
                     self._invalid_choice(len(converters))
                     continue
                 except Exception as err:
-                    if err is KeyboardInterrupt:
-                        raise err
                     raise UnhandledExceptionError(err) from err
                 else:
                     break
@@ -647,62 +675,54 @@ class AsoundConfWizard:
         while True:
             try:
                 pcm = self._choose_hw_pcm()
-                formats, rates, channels = self._get_formats_rates_channels(pcm)
+                try:
+                    formats, rates, channels = self._get_formats_rates_channels(pcm)
+                except PcmOpenError as err:
+                    Stylize.warn(err)
+                    Stylize.warn(
+                        "Please make sure the Output you chose not in use and try again."
+                    )
+                    continue
                 channels.sort()
                 ch_len = len(channels)
                 if ch_len > 1:
                     highest_ch_count = channels[-1]
                     if 2 not in channels:
-                        Stylize.warn(
-                            "This Output does not support 2 Channel audio."
-                        )
+                        Stylize.warn("This Output does not support 2 Channel audio.")
                         Stylize.warn("Please choose a different Output.")
-                        Stylize.comment(
-                            "*Up/down mixing is on the to do list…"
-                        )
+                        Stylize.comment("*Up/down mixing is on the to do list…")
                         continue
                     if highest_ch_count > 2:
                         Stylize.warn(
                             f"This Output supports up to {highest_ch_count} Channels of audio."
                         )
-                        Stylize.warn(
-                            "This Script does not support up mixing."
-                        )
+                        Stylize.warn("This Script does not support up mixing.")
                         Stylize.warn(
                             f"The remaining {highest_ch_count - 2} Channels will go unused."
                         )
-                        Stylize.comment(
-                            "*Up/down mixing is on the to do list…"
-                        )
+                        Stylize.comment("*Up/down mixing is on the to do list…")
                 elif ch_len == 1:
                     highest_ch_count = channels[0]
                     if highest_ch_count == 1:
-                        Stylize.warn(
-                            "This Script does not support Mono Outputs."
-                        )
+                        Stylize.warn("This Script does not support Mono Outputs.")
                         Stylize.warn("Please choose a different Output.")
-                        Stylize.comment(
-                            "*Up/down mixing is on the to do list…"
-                        )
+                        Stylize.comment("*Up/down mixing is on the to do list…")
                         continue
                     if highest_ch_count != 2:
                         Stylize.warn(
                             f"This Output only supports {highest_ch_count} Channel audio."
                         )
                         Stylize.warn("Please choose a different Output.")
-                        Stylize.comment(
-                            "*Up/down mixing is on the to do list…"
-                        )
+                        Stylize.comment("*Up/down mixing is on the to do list…")
                         continue
                 if not formats or not rates or not channels:
                     Stylize.warn(
                         "No supported formats, sampling rates or channel counts were returned."
                     )
                     Stylize.warn(
-                        "The Output you chose may be busy or not support "
-                        "any common formats and rates?"
+                        "The Output you chose may not support any common formats and rates?"
                     )
-                    Stylize.warn("Please make sure it's not in use and try again.")
+                    Stylize.warn("Please choose a different Output.")
                     continue
                 fmt = self._choose_format(formats)
                 rate = self._choose_rate(rates)
@@ -710,8 +730,6 @@ class AsoundConfWizard:
                 card, device = self._pcm_to_card_device(pcm)
                 return card, device, fmt, rate, converter
             except Exception as err:
-                if err is KeyboardInterrupt:
-                    raise err
                 raise UnhandledExceptionError(err) from err
 
     def _test_choices(self):
@@ -726,8 +744,6 @@ class AsoundConfWizard:
                     'Please enter "Y" if you would like to test your choices: '
                 )
             except Exception as err:
-                if err is KeyboardInterrupt:
-                    raise err
                 raise UnhandledExceptionError(err) from err
             if confirm.lower() != "y":
                 return card, device, fmt, rate, converter
@@ -742,8 +758,6 @@ class AsoundConfWizard:
             try:
                 Stylize.input("Please press Enter to continue")
             except Exception as err:
-                if err is KeyboardInterrupt:
-                    raise err
                 raise UnhandledExceptionError(err) from err
             cmd = self._speaker_test_cmd_template.format(
                 card,
@@ -758,8 +772,6 @@ class AsoundConfWizard:
                     stderr=DEVNULL,
                     stdout=DEVNULL,
                 )
-            except KeyboardInterrupt as err:
-                raise err
             except CalledProcessError as err:
                 Stylize.warn(f"The speaker test Failed: {err}")
 
@@ -769,10 +781,10 @@ class AsoundConfWizard:
                 )
                 continue
             try:
-                confirm = Stylize.input('Please enter "Y" if you heard the test tones: ')
+                confirm = Stylize.input(
+                    'Please enter "Y" if you heard the test tones: '
+                )
             except Exception as err:
-                if err is KeyboardInterrupt:
-                    raise err
                 raise UnhandledExceptionError(err) from err
             if confirm.lower() == "y":
                 return card, device, fmt, rate, converter
@@ -803,7 +815,7 @@ class AsoundConfWizard:
         try:
             choice = Stylize.input('Please enter "OK" to continue: ')
             if choice.lower() != "ok":
-                raise KeyboardInterrupt
+                self.quit()
             self._build_cmds()
             card, device, fmt, rate, converter = self._test_choices()
             Stylize.comment("Your choices were as follows:")
@@ -818,9 +830,9 @@ class AsoundConfWizard:
                 f'Please enter "OK" to commit your choices to {ASOUND_FILE_PATH}: '
             )
             if choice.lower() != "ok":
-                raise KeyboardInterrupt
+                self.quit()
             self._backup_asound_conf()
-        except Exception as err:
+        except AsoundConfWizardError as err:
             raise err
         rate_converter = ""
         if converter:
@@ -836,12 +848,8 @@ class AsoundConfWizard:
             with open(ASOUND_FILE_PATH, "w", encoding="utf-8") as asf:
                 asf.write(file_data)
         except Exception as err:
-            if err is KeyboardInterrupt:
-                raise err
             raise AsoundConfWriteError(err) from err
-        Stylize.comment(
-            f"{ASOUND_FILE_PATH} was written successfully."
-        )
+        Stylize.comment(f"{ASOUND_FILE_PATH} was written successfully.")
         Stylize.comment(
             "You can revert your system to it's default state by deleting "
             f"{ASOUND_FILE_PATH} with:"
@@ -916,8 +924,6 @@ class AsoundConfWizard:
                     "high quality Sample Rate Converters: "
                 )
             except Exception as err:
-                if err is KeyboardInterrupt:
-                    raise err
                 raise UnhandledExceptionError(err) from err
             if confirm.lower() != "y":
                 return converters
@@ -935,8 +941,6 @@ class AsoundConfWizard:
                     stderr=DEVNULL,
                     stdout=DEVNULL,
                 )
-            except KeyboardInterrupt as err:
-                raise err
             except CalledProcessError as err:
                 i_err = InstallError(ALSA_PLUGINS, err)
                 Stylize.warn(i_err)
@@ -945,11 +949,10 @@ class AsoundConfWizard:
 
 
 if __name__ == "__main__":
+    for sig in (SIGINT, SIGTERM, SIGHUP):
+        signal(sig, AsoundConfWizard.quit)
     try:
         AsoundConfWizard().run()
-    except KeyboardInterrupt:
-        pass
     except AsoundConfWizardError as e:
         Stylize.error(e)
-    finally:
-        print("")
+
