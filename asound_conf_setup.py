@@ -173,27 +173,27 @@ ctl.!default {{
     card {0}
 }}"""
 
+class AsoundConfWizardError(Exception):
+    """Asound Conf Wizard Error"""
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
 
-class InsufficientPrivilegesError(Exception):
+class InsufficientPrivilegesError(AsoundConfWizardError):
     """Insufficient Privileges Error"""
     def __init__(self, message="Error: This script requires write privileges to /etc"):
         self.message = message
         super().__init__(self.message)
 
 
-class InstallError(Exception):
+class InstallError(AsoundConfWizardError):
     """Install Error"""
     def __init__(self, package, error, message="Error Installing Package"):
-        self.package = package
-        self.error = error
-        self.message = message
+        self.message = f"{message} {package}: {error}"
         super().__init__(self.message)
 
-    def __str__(self):
-        return f"{self.message} {self.package}: {self.error}"
 
-
-class MissingDependenciesError(Exception):
+class MissingDependenciesError(AsoundConfWizardError):
     """Missing Dependencies Error"""
     def __init__(
         self,
@@ -203,55 +203,40 @@ class MissingDependenciesError(Exception):
         super().__init__(self.message)
 
 
-class RenamingError(Exception):
+class RenamingError(AsoundConfWizardError):
     """Renaming Error"""
     def __init__(self, error, message=f"Error renaming existing {ASOUND_FILE_PATH}"):
-        self.error = error
-        self.message = message
+        self.message = f"{message}: {error}"
         super().__init__(self.message)
 
-    def __str__(self):
-        return f"{self.message}: {self.error}"
 
-
-class NoHwPcmError(Exception):
+class NoHwPcmError(AsoundConfWizardError):
     """No Hw Pcm Error"""
     def __init__(self, message="Error: No available hw PCM"):
         self.message = message
         super().__init__(self.message)
 
 
-class PcmParsingError(Exception):
+class PcmParsingError(AsoundConfWizardError):
     """Pcm Parsing Error"""
     def __init__(self, error, message="Error parsing card and device"):
         self.error = error
-        self.message = message
+        self.message = f"{message}: {error}"
         super().__init__(self.message)
 
-    def __str__(self):
-        return f"{self.message}: {self.error}"
 
-
-class AsoundConfWriteError(Exception):
+class AsoundConfWriteError(AsoundConfWizardError):
     """Asound Conf Write Error"""
     def __init__(self, error, message=f"Error writing {ASOUND_FILE_PATH}"):
-        self.error = error
-        self.message = message
+        self.message = f"{message}: {error}"
         super().__init__(self.message)
 
-    def __str__(self):
-        return f"{self.message}: {self.error}"
 
-
-class UnhandledExceptionError(Exception):
+class UnhandledExceptionError(AsoundConfWizardError):
     """Unhandled Exception Error"""
     def __init__(self, error, message="Error: An unhandled Exception has occurred"):
-        self.error = error
-        self.message = message
+        self.message = f"{message}: {error}"
         super().__init__(self.message)
-
-    def __str__(self):
-        return f"{self.message}: {self.error}"
 
 
 class Stylize:
@@ -381,17 +366,7 @@ class AsoundConfWizard:
         try:
             self._privilege_check()
             self._write_asound_conf()
-        except (
-            KeyboardInterrupt,
-            InsufficientPrivilegesError,
-            InstallError,
-            MissingDependenciesError,
-            RenamingError,
-            NoHwPcmError,
-            PcmParsingError,
-            AsoundConfWriteError,
-            UnhandledExceptionError,
-        ) as err:
+        except (KeyboardInterrupt, AsoundConfWizardError) as err:
             raise err
 
     def _build_cmds(self):
@@ -474,7 +449,7 @@ class AsoundConfWizard:
             if n.startswith("hw:")
         ]
         if not hw_pcm_names:
-            raise NoHwPcmError
+            raise NoHwPcmError()
         return hw_pcm_names
 
     def _choose_hw_pcm(self):
@@ -837,7 +812,9 @@ class AsoundConfWizard:
             if converter:
                 Stylize.comment(f"Sample Rate Converter: {converter}")
             Stylize.comment("Please verify that this is correct.")
-            choice = Stylize.input(f'Please enter "OK" to commit your choices to {ASOUND_FILE_PATH}: ')
+            choice = Stylize.input(
+                f'Please enter "OK" to commit your choices to {ASOUND_FILE_PATH}: '
+            )
             if choice.lower() != "ok":
                 raise KeyboardInterrupt
             self._backup_asound_conf()
@@ -970,16 +947,7 @@ if __name__ == "__main__":
         AsoundConfWizard().run()
     except KeyboardInterrupt:
         pass
-    except (
-        InsufficientPrivilegesError,
-        InstallError,
-        MissingDependenciesError,
-        RenamingError,
-        NoHwPcmError,
-        PcmParsingError,
-        AsoundConfWriteError,
-        UnhandledExceptionError,
-    ) as e:
+    except AsoundConfWizardError as e:
         Stylize.error(e)
     finally:
         print("")
