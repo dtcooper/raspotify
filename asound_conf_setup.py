@@ -173,6 +173,7 @@ ctl.!default {{
     card {0}
 }}"""
 
+
 class AsoundConfWizardError(Exception):
     """Asound Conf Wizard Error"""
     def __init__(self, message):
