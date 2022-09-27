@@ -456,7 +456,7 @@ class AsoundConfWizard:
     def _choose_hw_pcm(self):
         try:
             hw_pcm_names = self._get_hw_pcm_names()
-        except Exception as err:
+        except NoHwPcmError as err:
             raise err
         if len(hw_pcm_names) > 1:
             title = "Outputs"
@@ -705,8 +705,8 @@ class AsoundConfWizard:
                 converter = self._choose_sample_rate_converter()
                 card, device = self._pcm_to_card_device(pcm)
                 return card, device, fmt, rate, converter
-            except Exception as err:
-                raise UnhandledExceptionError(err) from err
+            except AsoundConfWizardError as err:
+                raise err
 
     def _test_choices(self):
         while True:
