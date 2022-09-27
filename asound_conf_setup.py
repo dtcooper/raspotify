@@ -176,14 +176,12 @@ ctl.!default {{
 
 class AsoundConfWizardError(Exception):
     """Asound Conf Wizard Error"""
-
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
 
 class InsufficientPrivilegesError(AsoundConfWizardError):
     """Insufficient Privileges Error"""
-
     def __init__(self, message="Error: This script requires write privileges to /etc"):
         self.message = message
         super().__init__(self.message)
@@ -242,7 +240,6 @@ class Stylize:
     _BOLD_RED = "\033[1;31m"
     _BOLD_GREEN = "\033[1;32m"
     _RESET = "\033[00m"
-
     _WRAPPER = TextWrapper(width=50, initial_indent="\n\t", subsequent_indent="\t")
 
     @staticmethod
@@ -896,7 +893,7 @@ class AsoundConfWizard:
                 i_err = InstallError(ALSA_PLUGINS, err)
                 Stylize.warn(i_err)
                 return converters
-            Stylize.comment("High Quality Sample Rate Converters Installed Successful")
+            Stylize.comment("High Quality Sample Rate Converters Installed Successfully")
 
 if __name__ == "__main__":
     for sig in (SIGINT, SIGTERM, SIGHUP):
