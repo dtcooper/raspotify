@@ -234,12 +234,6 @@ class AsoundConfWriteError(AsoundConfWizardError):
         self.message = f"{message}: {error}"
         super().__init__(self.message)
 
-class UnhandledExceptionError(AsoundConfWizardError):
-    """Unhandled Exception Error"""
-    def __init__(self, error, message="Error: An unhandled Exception has occurred"):
-        self.message = f"{message}: {error}"
-        super().__init__(self.message)
-
 class Stylize:
     """Stylize Text"""
     _BOLD = "\033[1m"
@@ -254,7 +248,11 @@ class Stylize:
     @staticmethod
     def input(text):
         """Makes the input text bold"""
-        return input(f"\n\t{Stylize._BOLD}{text}{Stylize._RESET}")
+        try:
+            return input(f"\n\t{Stylize._BOLD}{text}{Stylize._RESET}")
+        except EOFError:
+            print("")
+            sys_exit(0)
 
     @staticmethod
     def warn(text):
@@ -394,14 +392,11 @@ class AsoundConfWizard:
                 "This script requires aplay and speaker-test "
                 f"which are contained in the {ALSA_UTILS} package"
             )
-            try:
-                choice = Stylize.input(f'Please enter "Y" to install {ALSA_UTILS}: ')
-            except Exception as err:
-                raise UnhandledExceptionError(err) from err
+            choice = Stylize.input(f'Please enter "Y" to install {ALSA_UTILS}: ')
             if choice.lower() != "y":
                 raise MissingDependenciesError()
+            Stylize.comment("This may take a moment…")
             try:
-                Stylize.comment("This may take a moment…")
                 subprocess_run(
                     UPDATE_CMD,
                     check=True,
@@ -414,7 +409,7 @@ class AsoundConfWizard:
                     stderr=DEVNULL,
                     stdout=DEVNULL,
                 )
-            except Exception as err:
+            except CalledProcessError as err:
                 raise InstallError(ALSA_UTILS, err) from err
             else:
                 aplay = which("aplay")
@@ -467,14 +462,12 @@ class AsoundConfWizard:
             table = Table(title, width)
             table.add_pcms(hw_pcm_names)
             while True:
+                choice = Stylize.input("Please choose an Output: ")
                 try:
-                    choice = Stylize.input("Please choose an Output: ")
                     pcm = hw_pcm_names[int(choice) - 1][0]
                 except (ValueError, IndexError):
                     self._invalid_choice(len(hw_pcm_names))
                     continue
-                except Exception as err:
-                    raise UnhandledExceptionError(err) from err
                 else:
                     break
         else:
@@ -491,10 +484,7 @@ class AsoundConfWizard:
         Stylize.comment(
             "Please make sure the Output you chose is not in use before continuing."
         )
-        try:
-            Stylize.input("Please press Enter to continue")
-        except Exception as err:
-            raise UnhandledExceptionError(err) from err
+        Stylize.input("Please press Enter to continue")
         cmd = self._hw_params_cmd_template.format(pcm).split(" ")
         hw_params = subprocess_run(
             cmd,
@@ -542,14 +532,12 @@ class AsoundConfWizard:
                     self._best_choice(fmt)
                     break
             while True:
+                choice = Stylize.input("Please choose a Format: ")
                 try:
-                    choice = Stylize.input("Please choose a Format: ")
                     fmt = formats[int(choice) - 1]
                 except (ValueError, IndexError):
                     self._invalid_choice(len(formats))
                     continue
-                except Exception as err:
-                    raise UnhandledExceptionError(err) from err
                 else:
                     break
         else:
@@ -578,14 +566,12 @@ class AsoundConfWizard:
                     break
             self._best_choice(choice or rates[-1])
             while True:
+                choice = Stylize.input("Please choose a Sampling Rate: ")
                 try:
-                    choice = Stylize.input("Please choose a Sampling Rate: ")
                     rate = rates[int(choice) - 1]
                 except (ValueError, IndexError):
                     self._invalid_choice(len(rates))
                     continue
-                except Exception as err:
-                    raise UnhandledExceptionError(err) from err
                 else:
                     break
         else:
@@ -626,14 +612,12 @@ class AsoundConfWizard:
                     self._best_choice(converter)
                     break
             while True:
+                choice = Stylize.input("Please choose a Sample Rate Converter: ")
                 try:
-                    choice = Stylize.input("Please choose a Sample Rate Converter: ")
                     converter = converters[int(choice) - 1]
                 except (ValueError, IndexError):
                     self._invalid_choice(len(converters))
                     continue
-                except Exception as err:
-                    raise UnhandledExceptionError(err) from err
                 else:
                     break
         else:
@@ -651,62 +635,62 @@ class AsoundConfWizard:
         while True:
             try:
                 pcm = self._choose_hw_pcm()
-                try:
-                    formats, rates, channels = self._get_formats_rates_channels(pcm)
-                except PcmOpenError as err:
-                    Stylize.warn(err)
-                    Stylize.warn(
-                        "Please make sure the Output you chose not in use and try again."
-                    )
+            except NoHwPcmError as err:
+                raise err
+            try:
+                formats, rates, channels = self._get_formats_rates_channels(pcm)
+            except PcmOpenError as err:
+                Stylize.warn(err)
+                Stylize.warn(
+                    "Please make sure the Output you chose not in use and try again."
+                )
+                continue
+            channels.sort()
+            ch_len = len(channels)
+            if ch_len > 1:
+                highest_ch_count = channels[-1]
+                if 2 not in channels:
+                    Stylize.warn("This Output does not support 2 Channel audio.")
+                    Stylize.warn("Please choose a different Output.")
+                    Stylize.comment("*Up/down mixing is on the to do list…")
                     continue
-                channels.sort()
-                ch_len = len(channels)
-                if ch_len > 1:
-                    highest_ch_count = channels[-1]
-                    if 2 not in channels:
-                        Stylize.warn("This Output does not support 2 Channel audio.")
-                        Stylize.warn("Please choose a different Output.")
-                        Stylize.comment("*Up/down mixing is on the to do list…")
-                        continue
-                    if highest_ch_count > 2:
-                        Stylize.warn(
-                            f"This Output supports up to {highest_ch_count} Channels of audio."
-                        )
-                        Stylize.warn("This Script does not support up mixing.")
-                        Stylize.warn(
-                            f"The remaining {highest_ch_count - 2} Channels will go unused."
-                        )
-                        Stylize.comment("*Up/down mixing is on the to do list…")
-                elif ch_len == 1:
-                    highest_ch_count = channels[0]
-                    if highest_ch_count == 1:
-                        Stylize.warn("This Script does not support Mono Outputs.")
-                        Stylize.warn("Please choose a different Output.")
-                        Stylize.comment("*Up/down mixing is on the to do list…")
-                        continue
-                    if highest_ch_count != 2:
-                        Stylize.warn(
-                            f"This Output only supports {highest_ch_count} Channel audio."
-                        )
-                        Stylize.warn("Please choose a different Output.")
-                        Stylize.comment("*Up/down mixing is on the to do list…")
-                        continue
-                if not formats or not rates or not channels:
+                if highest_ch_count > 2:
                     Stylize.warn(
-                        "No supported formats, sampling rates or channel counts were returned."
+                        f"This Output supports up to {highest_ch_count} Channels of audio."
                     )
+                    Stylize.warn("This Script does not support up mixing.")
                     Stylize.warn(
-                        "The Output you chose may not support any common formats and rates?"
+                        f"The remaining {highest_ch_count - 2} Channels will go unused."
+                    )
+                    Stylize.comment("*Up/down mixing is on the to do list…")
+            elif ch_len == 1:
+                highest_ch_count = channels[0]
+                if highest_ch_count == 1:
+                    Stylize.warn("This Script does not support Mono Outputs.")
+                    Stylize.warn("Please choose a different Output.")
+                    Stylize.comment("*Up/down mixing is on the to do list…")
+                    continue
+                if highest_ch_count != 2:
+                    Stylize.warn(
+                        f"This Output only supports {highest_ch_count} Channel audio."
                     )
                     Stylize.warn("Please choose a different Output.")
+                    Stylize.comment("*Up/down mixing is on the to do list…")
                     continue
-                fmt = self._choose_format(formats)
-                rate = self._choose_rate(rates)
-                converter = self._choose_sample_rate_converter()
-                card, device = self._pcm_to_card_device(pcm)
-                return card, device, fmt, rate, converter
-            except AsoundConfWizardError as err:
-                raise err
+            if not formats or not rates or not channels:
+                Stylize.warn(
+                    "No supported formats, sampling rates or channel counts were returned."
+                )
+                Stylize.warn(
+                    "The Output you chose may not support any common formats and rates?"
+                )
+                Stylize.warn("Please choose a different Output.")
+                continue
+            fmt = self._choose_format(formats)
+            rate = self._choose_rate(rates)
+            converter = self._choose_sample_rate_converter()
+            card, device = self._pcm_to_card_device(pcm)
+            return card, device, fmt, rate, converter
 
     def _test_choices(self):
         while True:
@@ -715,12 +699,9 @@ class AsoundConfWizard:
             # speaker-test does not support S24_LE / S24_BE.
             if fmt in NOT_SUPPORTED_BY_SPEAKER_TEST:
                 return card, device, fmt, rate, converter
-            try:
-                confirm = Stylize.input(
-                    'Please enter "Y" if you would like to test your choices: '
-                )
-            except Exception as err:
-                raise UnhandledExceptionError(err) from err
+            confirm = Stylize.input(
+                'Please enter "Y" if you would like to test your choices: '
+            )
             if confirm.lower() != "y":
                 return card, device, fmt, rate, converter
             Stylize.comment(
@@ -731,10 +712,7 @@ class AsoundConfWizard:
                 "Pink noise at 25% full scale will now be played "
                 "to test your choices."
             )
-            try:
-                Stylize.input("Please press Enter to continue")
-            except Exception as err:
-                raise UnhandledExceptionError(err) from err
+            Stylize.input("Please press Enter to continue")
             cmd = self._speaker_test_cmd_template.format(
                 card,
                 device,
@@ -756,12 +734,9 @@ class AsoundConfWizard:
                     "Sampling Rate combination."
                 )
                 continue
-            try:
-                confirm = Stylize.input(
-                    'Please enter "Y" if you heard the test tones: '
-                )
-            except Exception as err:
-                raise UnhandledExceptionError(err) from err
+            confirm = Stylize.input(
+                'Please enter "Y" if you heard the test tones: '
+            )
             if confirm.lower() == "y":
                 return card, device, fmt, rate, converter
             Stylize.warn(
@@ -788,25 +763,28 @@ class AsoundConfWizard:
             "If running this script breaks your system you get to keep all the "
             "pieces, and it's your responsibility to put them back together."
         )
+        choice = Stylize.input('Please enter "OK" to continue: ')
+        if choice.lower() != "ok":
+            self.quit()
         try:
-            choice = Stylize.input('Please enter "OK" to continue: ')
-            if choice.lower() != "ok":
-                self.quit()
             self._build_cmds()
             card, device, fmt, rate, converter = self._test_choices()
-            Stylize.comment("Your choices were as follows:")
-            Stylize.comment(f"Card: {card}")
-            Stylize.comment(f"Device: {device}")
-            Stylize.comment(f"Format: {fmt}")
-            Stylize.comment(f"Sampling Rate: {rate}")
-            if converter:
-                Stylize.comment(f"Sample Rate Converter: {converter}")
-            Stylize.comment("Please verify that this is correct.")
-            choice = Stylize.input(
-                f'Please enter "OK" to commit your choices to {ASOUND_FILE_PATH}: '
-            )
-            if choice.lower() != "ok":
-                self.quit()
+        except AsoundConfWizardError as err:
+            raise err
+        Stylize.comment("Your choices were as follows:")
+        Stylize.comment(f"Card: {card}")
+        Stylize.comment(f"Device: {device}")
+        Stylize.comment(f"Format: {fmt}")
+        Stylize.comment(f"Sampling Rate: {rate}")
+        if converter:
+            Stylize.comment(f"Sample Rate Converter: {converter}")
+        Stylize.comment("Please verify that this is correct.")
+        choice = Stylize.input(
+            f'Please enter "OK" to commit your choices to {ASOUND_FILE_PATH}: '
+        )
+        if choice.lower() != "ok":
+            self.quit()
+        try:
             self._backup_asound_conf()
         except AsoundConfWizardError as err:
             raise err
@@ -894,13 +872,10 @@ class AsoundConfWizard:
                 converters = ordered_converters + leftovers
             if converters or not UPDATE_CMD:
                 return converters
-            try:
-                confirm = Stylize.input(
-                    'Please enter "Y" if you would like to install '
-                    "high quality Sample Rate Converters: "
-                )
-            except Exception as err:
-                raise UnhandledExceptionError(err) from err
+            confirm = Stylize.input(
+                'Please enter "Y" if you would like to install '
+                "high quality Sample Rate Converters: "
+            )
             if confirm.lower() != "y":
                 return converters
             Stylize.comment("This may take a moment…")
