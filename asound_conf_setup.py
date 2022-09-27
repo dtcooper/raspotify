@@ -893,7 +893,7 @@ class AsoundConfWizard:
                 i_err = InstallError(ALSA_PLUGINS, err)
                 Stylize.warn(i_err)
                 return converters
-            Stylize.comment("High Quality Sample Rate Converters Installed Successful")
+            Stylize.comment("High Quality Sample Rate Converters Installed Successfully")
 
 if __name__ == "__main__":
     for sig in (SIGINT, SIGTERM, SIGHUP):
