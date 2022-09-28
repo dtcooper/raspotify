@@ -43,6 +43,9 @@ CONVERTERS_FILE_PATH = "/usr/lib/*/alsa-lib"
 CONVERTERS_SEARCH_SUFFIX = "/libasound_module_rate_"
 ALSA_PLUGINS = "libasound2-plugins"
 ALSA_UTILS = "alsa-utils"
+PULSEAUDIO = which("pulseaudio")
+PIPEWIRE = which("pipewire")
+JACKD = which("jackd")
 APT = which("apt")
 SUDO = which("sudo")
 NOT_SUPPORTED_BY_SPEAKER_TEST = ("S24_LE", "S24_BE")
@@ -180,15 +183,21 @@ class AsoundConfWizardError(Exception):
         self.message = message
         super().__init__(self.message)
 
+class AudioSoftwareConflictError(AsoundConfWizardError):
+    """Audio Software Conflict Error"""
+    def __init__(self, software, message="This script is not compatible with"):
+        self.message = f"{message} {software}"
+        super().__init__(self.message)
+
 class InsufficientPrivilegesError(AsoundConfWizardError):
     """Insufficient Privileges Error"""
-    def __init__(self, message="Error: This script requires write privileges to /etc"):
+    def __init__(self, message="This script requires write privileges to /etc"):
         self.message = message
         super().__init__(self.message)
 
 class InstallError(AsoundConfWizardError):
-    """Install Error"""
-    def __init__(self, package, error, message="Error Installing Package"):
+    """Package Install Error"""
+    def __init__(self, package, error, message="Unable to Installing Package"):
         self.message = f"{message} {package}: {error}"
         super().__init__(self.message)
 
@@ -196,34 +205,34 @@ class MissingDependenciesError(AsoundConfWizardError):
     """Missing Dependencies Error"""
     def __init__(
         self,
-        message="Error: This script requires that aplay and speaker-test be installed",
+        message="This script requires that aplay and speaker-test be installed",
     ):
         self.message = message
         super().__init__(self.message)
 
 class RenamingError(AsoundConfWizardError):
     """Renaming Error"""
-    def __init__(self, error, message=f"Error renaming existing {ASOUND_FILE_PATH}"):
+    def __init__(self, error, message=f"Could not rename existing {ASOUND_FILE_PATH}"):
         self.message = f"{message}: {error}"
         super().__init__(self.message)
 
 class NoHwPcmError(AsoundConfWizardError):
     """No Hw Pcm Error"""
-    def __init__(self, message="Error: No available hw PCM"):
+    def __init__(self, message="No available hw PCM"):
         self.message = message
         super().__init__(self.message)
 
 class PcmParsingError(AsoundConfWizardError):
     """Pcm Parsing Error"""
-    def __init__(self, error, message="Error parsing card and device"):
+    def __init__(self, error, message="Could not parsing card and device"):
         self.error = error
         self.message = f"{message}: {error}"
         super().__init__(self.message)
 
 class PcmOpenError(AsoundConfWizardError):
     """Pcm Open Error"""
-    def __init__(self, error, message="PCM Open Error"):
-        self.message = f"{message}: {error}"
+    def __init__(self, error):
+        self.message = error
         super().__init__(self.message)
 
 class AsoundConfWriteError(AsoundConfWizardError):
@@ -240,7 +249,7 @@ class Stylize:
     _BOLD_RED = "\033[1;31m"
     _BOLD_GREEN = "\033[1;32m"
     _RESET = "\033[00m"
-    _WRAPPER = TextWrapper(width=50, initial_indent="\n\t", subsequent_indent="\t")
+    _WRAPPER = TextWrapper(initial_indent="\n\t", subsequent_indent="\t")
 
     @staticmethod
     def input(text):
@@ -252,14 +261,28 @@ class Stylize:
             sys_exit(0)
 
     @staticmethod
-    def warn(text):
+    def warn(warning):
         """Makes the warn text bold yellow"""
-        print(f"\n\t{Stylize._BOLD_YELLOW}{text}{Stylize._RESET}")
+        if isinstance(warning, AsoundConfWizardError):
+            print(f"\n\t{Stylize._BOLD_YELLOW}{type(warning).__doc__}{Stylize._RESET}")
+        print(f"\n\t{Stylize._BOLD_YELLOW}{warning}{Stylize._RESET}")
 
     @staticmethod
-    def error(text):
+    def error(error):
         """Makes the error text bold red and exits with a status 1"""
-        print(f"\n\t{Stylize._BOLD_RED}{text}{Stylize._RESET}")
+        if isinstance(error, AsoundConfWizardError):
+            print(f"\n\t{Stylize._BOLD_RED}{type(error).__doc__}{Stylize._RESET}")
+        print(f"\n\t{Stylize._BOLD_RED}{error}{Stylize._RESET}")
+        if isinstance(error, InsufficientPrivilegesError):
+            print(
+                f"\n\t{Stylize._BOLD_RED}HINT: Try running this "
+                f"script with sudo or as root{Stylize._RESET}"
+            )
+        elif isinstance(error, AudioSoftwareConflictError):
+            print(
+                f"\n\t{Stylize._BOLD_RED}It is intended to be used on systems "
+                f"that run bare ALSA{Stylize._RESET}"
+            )
         sys_exit(1)
 
     @staticmethod
@@ -295,6 +318,24 @@ class Table:
             self._add_pcm_name_row(name, num)
             self._add_pcm_desc_row(desc)
             if num == pcm_len:
+                self._table.append(self._bottom_line)
+            else:
+                self._table.append(self._center_line)
+        self._print()
+
+    def add_choices(self, choices):
+        """Add choices to the Table"""
+        pad = int(self._padding / 4)
+        choices_len = len(choices)
+        for i, choice in enumerate(choices):
+            num = i + 1
+            [key, value] = choice
+            center_pad = (self._width - len(key)) + int(self._padding / 2)
+            row = (
+                f"{{:<{pad}}}{{:>{pad}}}{{:>{center_pad}}}{{:>{pad}}}".format("┃", key, value, "┃")
+            )
+            self._table.append(row)
+            if num == choices_len:
                 self._table.append(self._bottom_line)
             else:
                 self._table.append(self._center_line)
@@ -358,6 +399,7 @@ class AsoundConfWizard:
     def run(self):
         """Run the Wizard"""
         try:
+            self._conflict_check()
             self._privilege_check()
             self._write_asound_conf()
         except AsoundConfWizardError as err:
@@ -481,7 +523,9 @@ class AsoundConfWizard:
         Stylize.comment(
             "Please make sure the Output you chose is not in use before continuing."
         )
-        Stylize.input("Please press Enter to continue")
+        enter = Stylize.input("Please press Enter to continue")
+        if enter != "":
+            self.quit()
         cmd = self._hw_params_cmd_template.format(pcm).split(" ")
         hw_params = subprocess_run(
             cmd,
@@ -692,8 +736,19 @@ class AsoundConfWizard:
     def _test_choices(self):
         while True:
             card, device, fmt, rate, converter = self._get_choices()
+            title = "Your Choices"
+            choices = [
+                ["Card", card],
+                ["Device", str(device)],
+                ["Format", fmt],
+                ["Sampling Rate", str(rate)],
+            ]
+            if converter:
+                choices.append(["Sample Rate Converter", converter])
 
-            # speaker-test does not support S24_LE / S24_BE.
+            width = max(len(max(["".join(c) for c in choices], key=len)), len(title))
+            table = Table(title, width)
+            table.add_choices(choices)
             if fmt in NOT_SUPPORTED_BY_SPEAKER_TEST:
                 return card, device, fmt, rate, converter
             confirm = Stylize.input(
@@ -709,7 +764,9 @@ class AsoundConfWizard:
                 "Pink noise at 25% full scale will now be played "
                 "to test your choices."
             )
-            Stylize.input("Please press Enter to continue")
+            enter = Stylize.input("Please press Enter to continue")
+            if enter != "":
+                self.quit()
             cmd = self._speaker_test_cmd_template.format(
                 card,
                 device,
@@ -768,14 +825,6 @@ class AsoundConfWizard:
             card, device, fmt, rate, converter = self._test_choices()
         except AsoundConfWizardError as err:
             raise err
-        Stylize.comment("Your choices were as follows:")
-        Stylize.comment(f"Card: {card}")
-        Stylize.comment(f"Device: {device}")
-        Stylize.comment(f"Format: {fmt}")
-        Stylize.comment(f"Sampling Rate: {rate}")
-        if converter:
-            Stylize.comment(f"Sample Rate Converter: {converter}")
-        Stylize.comment("Please verify that this is correct.")
         choice = Stylize.input(
             f'Please enter "OK" to commit your choices to {ASOUND_FILE_PATH}: '
         )
@@ -810,6 +859,15 @@ class AsoundConfWizard:
             "or optionally revert it from the back up if one was created "
             "if you have any issue with the generated config."
         )
+
+    @staticmethod
+    def _conflict_check():
+        if PULSEAUDIO:
+            raise AudioSoftwareConflictError("PulseAudio")
+        if PIPEWIRE:
+            raise AudioSoftwareConflictError("PipeWire")
+        if JACKD:
+            raise AudioSoftwareConflictError("JACK Audio")
 
     @staticmethod
     def _privilege_check():
@@ -893,7 +951,7 @@ class AsoundConfWizard:
                 i_err = InstallError(ALSA_PLUGINS, err)
                 Stylize.warn(i_err)
                 return converters
-            Stylize.comment("High Quality Sample Rate Converters Installed Successfully")
+            Stylize.comment(f"{ALSA_PLUGINS} Installed Successfully")
 
 if __name__ == "__main__":
     for sig in (SIGINT, SIGTERM, SIGHUP):
