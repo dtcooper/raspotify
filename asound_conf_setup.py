@@ -683,7 +683,7 @@ class AsoundConfWizard:
             except PcmOpenError as err:
                 Stylize.warn(err)
                 Stylize.warn(
-                    "Please make sure the Output you chose not in use and try again."
+                    "Please make sure the Output you chose not not in use and try again."
                 )
                 continue
             channels.sort()
