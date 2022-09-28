@@ -197,7 +197,7 @@ class InsufficientPrivilegesError(AsoundConfWizardError):
 
 class InstallError(AsoundConfWizardError):
     """Package Install Error"""
-    def __init__(self, package, error, message="Unable to Installing Package"):
+    def __init__(self, package, error, message="Unable to Install Package"):
         self.message = f"{message} {package}: {error}"
         super().__init__(self.message)
 
