@@ -197,7 +197,7 @@ class InsufficientPrivilegesError(AsoundConfWizardError):
 
 class InstallError(AsoundConfWizardError):
     """Package Install Error"""
-    def __init__(self, package, error, message="Unable to Installing Package"):
+    def __init__(self, package, error, message="Unable to Install Package"):
         self.message = f"{message} {package}: {error}"
         super().__init__(self.message)
 
@@ -683,7 +683,7 @@ class AsoundConfWizard:
             except PcmOpenError as err:
                 Stylize.warn(err)
                 Stylize.warn(
-                    "Please make sure the Output you chose not in use and try again."
+                    "Please make sure the Output you chose is not in use and try again."
                 )
                 continue
             channels.sort()
