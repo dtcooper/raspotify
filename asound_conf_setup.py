@@ -484,7 +484,9 @@ class AsoundConfWizard:
         hw_pcm_names = [
             [n.strip(), all_pcm_name[i + 1].strip()]
             for i, n in enumerate(all_pcm_name)
-            if n.startswith("hw:")
+            # vc4hdmi shows up as a hw pcm output
+            # on Raspberry Pi's but is broken.
+            if n.startswith("hw:") and "vc4hdmi" not in n
         ]
         if not hw_pcm_names:
             raise NoHwPcmError()
