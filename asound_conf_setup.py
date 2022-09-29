@@ -403,7 +403,6 @@ class AsoundConfWizard:
     def run(self):
         """Run the Wizard"""
         try:
-            self._conflict_check()
             self._privilege_check()
             self._write_asound_conf()
         except AsoundConfWizardError as err:
@@ -813,10 +812,15 @@ class AsoundConfWizard:
         Stylize.comment("It does not take into account audio inputs at all.")
         Stylize.comment(
             "This script is intended to be used on headless Debian based systems "
-            "where the hardware does not change often or at all."
+            "that run bare ALSA where the hardware does not change often or at all."
         )
         Stylize.comment("Your mileage may vary on non-Debian based distros.")
         Stylize.comment("It is not advisable to run this script on desktop systems.")
+        Stylize.comment(
+            "This script will NOT run on systems that have PulseAudio, Jack Audio "
+            "or PipeWire installed. That is by design. You should use those to configure "
+            "audio if they are installed."
+        )
         Stylize.comment(
             "If running this script breaks your system you get to keep all the "
             "pieces, and it's your responsibility to put them back together."
@@ -825,6 +829,7 @@ class AsoundConfWizard:
         if choice.lower() != "ok":
             self.quit()
         try:
+            self._conflict_check()
             self._build_cmds()
             card, device, fmt, rate, converter = self._test_choices()
         except AsoundConfWizardError as err:
