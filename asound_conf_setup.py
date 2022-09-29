@@ -158,11 +158,6 @@ ONE_CH_BINDINGS = """
         0 0
 """
 
-TWO_CH_ROUTE = """
-    ttable.0.0 1
-    ttable.1.1 1
-"""
-
 TWO_CH_BINDINGS = """
         0 0
         1 1
@@ -311,14 +306,15 @@ class RenamingError(AsoundConfWizardError):
 
 class NoHwPcmError(AsoundConfWizardError):
     """No Hw Pcm Error"""
-    def __init__(self, message="No available hw PCM"):
+    def __init__(self, error, message="No available hw PCM"):
+        if error:
+            message = f"{message}: {error}"
         self.message = message
         super().__init__(self.message)
 
 class PcmParsingError(AsoundConfWizardError):
     """Pcm Parsing Error"""
     def __init__(self, error, message="Could not parsing card and device"):
-        self.error = error
         self.message = f"{message}: {error}"
         super().__init__(self.message)
 
@@ -561,19 +557,19 @@ class AsoundConfWizard:
                 subprocess_run(
                     UPDATE_CMD,
                     check=True,
-                    stderr=DEVNULL,
+                    stderr=PIPE,
                     stdout=DEVNULL,
                 )
 
                 subprocess_run(
                     ALSA_UTILS_INSTALL_CMD,
                     check=True,
-                    stderr=DEVNULL,
+                    stderr=PIPE,
                     stdout=DEVNULL,
                 )
 
             except CalledProcessError as err:
-                raise InstallError(ALSA_UTILS, err) from err
+                raise InstallError(ALSA_UTILS, err.stderr.decode("utf-8")) from err
             else:
                 aplay = which("aplay")
                 speaker_test = which("speaker-test")
@@ -600,26 +596,26 @@ class AsoundConfWizard:
             all_pcm_name = (
                 subprocess_run(
                     self._get_pcm_names_cmd,
-                    check=False,
+                    check=True,
                     stdout=PIPE,
-                    stderr=STDOUT,
+                    stderr=PIPE,
                 )
                 .stdout.decode("utf-8")
                 .split("\n")
             )
-        except Exception as err:
-            raise NoHwPcmError() from err
+        except CalledProcessError as err:
+            raise NoHwPcmError(err.stderr.decode("utf-8")) from err
 
         hw_pcm_names = [
             [n.strip(), all_pcm_name[i + 1].strip()]
             for i, n in enumerate(all_pcm_name)
-            # vc4hdmi shows up as a hw pcm output
-            # on Raspberry Pi's but is broken.
-            if n.startswith("hw:") and "vc4hdmi" not in n
+            # HDMI's show up as hw Outputs on Raspberry Pi's,
+            # but I can't get either to work properly with this script.
+            if n.startswith("hw:") and "vc4hdmi," not in n and "CARD=b1," not in n
         ]
 
         if not hw_pcm_names:
-            raise NoHwPcmError()
+            raise NoHwPcmError(None)
 
         return hw_pcm_names
 
@@ -700,9 +696,7 @@ class AsoundConfWizard:
             elif line.startswith("CHANNELS:"):
                 for channel in line.strip("CHANNELS:[ ]").split(" "):
                     try:
-                        channel = int(channel)
-                        if channel in CHANNEL_COUNTS:
-                            channels.append(channel)
+                        channels.append(int(channel))
                     except ValueError:
                         pass
 
@@ -710,7 +704,8 @@ class AsoundConfWizard:
 
     def _choose_channel_count(self, channels):
         if len(channels) > 1:
-            channels.sort()
+            c_range = range(channels[0], channels[-1] + 1)
+            channels = [c for c in CHANNEL_COUNTS if c in c_range]
             title = "Channel Counts"
             width = max(len(max([str(c) for c in channels], key=len)), len(title))
             table = Table(title, width)
@@ -939,6 +934,10 @@ class AsoundConfWizard:
             if fmt in NOT_SUPPORTED_BY_SPEAKER_TEST:
                 return card, device, fmt, rate, converter, channel_count
 
+            Stylize.comment(
+                "Unless you are ABSOLUTELY certain your choices are correct you should test them."
+            )
+
             confirm = Stylize.input(
                 'Please enter "Y" if you would like to test your choices: '
             )
@@ -973,15 +972,16 @@ class AsoundConfWizard:
                 subprocess_run(
                     cmd,
                     check=True,
-                    stderr=DEVNULL,
+                    stderr=PIPE,
                     stdout=DEVNULL,
                 )
 
             except CalledProcessError as err:
-                Stylize.warn(f"The speaker test Failed: {err}")
+                Stylize.warn(f"The speaker test Failed: {err.stderr.decode('utf-8')}")
 
                 Stylize.warn(
-                    "Please try again with a different Format and Sampling Rate combination."
+                    "Please try again with a different Format, "
+                    "Sampling Rate and Channel Count combination."
                 )
 
                 continue
@@ -1019,7 +1019,7 @@ class AsoundConfWizard:
             route = EIGHT_CH_ROUTE.strip("\n")
             bindings = EIGHT_CH_BINDINGS.strip("\n")
         else:
-            route = TWO_CH_ROUTE.strip("\n")
+            route = ""
             bindings = TWO_CH_BINDINGS.strip("\n")
 
         file_data = ASOUND_TEMPLATE.format(
@@ -1201,19 +1201,19 @@ class AsoundConfWizard:
                 subprocess_run(
                     UPDATE_CMD,
                     check=True,
-                    stderr=DEVNULL,
+                    stderr=PIPE,
                     stdout=DEVNULL,
                 )
 
                 subprocess_run(
                     CONVERTER_INSTALL_CMD,
                     check=True,
-                    stderr=DEVNULL,
+                    stderr=PIPE,
                     stdout=DEVNULL,
                 )
 
             except CalledProcessError as err:
-                i_err = InstallError(ALSA_PLUGINS, err)
+                i_err = InstallError(ALSA_PLUGINS, err.stderr.decode("utf-8"))
                 Stylize.warn(i_err)
 
                 return converters
