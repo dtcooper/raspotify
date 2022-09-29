@@ -862,8 +862,7 @@ class AsoundConfWizard:
                 return card, device, fmt, rate, converter, channel_count
             Stylize.warn("Please make sure you're connected to the correct Output and try again.")
 
-    def _build_conf(
-            self):
+    def _build_conf(self):
         try:
             card, device, fmt, rate, converter, channel_count = self._test_choices()
         except AsoundConfWizardError as err:
