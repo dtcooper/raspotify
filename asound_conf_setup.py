@@ -130,52 +130,118 @@ BEST_CONVERTERS = (
     "lavrate",
     "samplerate",
 )
+CHANNEL_COUNTS = [
+    1,
+    2,
+    4,
+    6,
+    8,
+]
+ONE_CH_ROUTE = """
+    ttable.0.0 0.5
+    ttable.1.0 0.5
+"""
+ONE_CH_BINDINGS = """
+        0 0
+"""
+TWO_CH_ROUTE = """
+    ttable.0.0 1
+    ttable.1.1 1
+"""
+TWO_CH_BINDINGS = """
+        0 0
+        1 1
+"""
+FOUR_CH_ROUTE = """
+    ttable.0.0 1
+    ttable.1.1 1
+    ttable.0.2 1
+    ttable.1.3 1
+"""
+FOUR_CH_BINDINGS = """
+        0 0
+        1 1
+        2 2
+        3 3
+"""
+SIX_CH_ROUTE = """
+    ttable.0.0 1
+    ttable.1.1 1
+    ttable.0.2 1
+    ttable.1.3 1
+    ttable.0.4 0.5
+    ttable.1.4 0.5
+    ttable.1.5 0.5
+    ttable.0.5 0.5
+"""
+SIX_CH_BINDINGS = """
+        0 0
+        1 1
+        2 2
+        3 3
+        4 4
+        5 5
+"""
+EIGHT_CH_ROUTE = """
+    ttable.0.0 1
+    ttable.1.1 1
+    ttable.0.2 1
+    ttable.1.3 1
+    ttable.0.4 0.5
+    ttable.1.4 0.5
+    ttable.0.5 0.5
+    ttable.1.5 0.5
+    ttable.0.6 1
+    ttable.1.7 1
+"""
+EIGHT_CH_BINDINGS = """
+        0 0
+        1 1
+        2 2
+        3 3
+        4 4
+        5 5
+        6 6
+        7 7
+"""
 ASOUND_TEMPLATE = """
-# /etc/asound.conf
+{rate_converter}
 
-{4}
+pcm.default_hw {{
+    type hw
+    card {card}
+    device {device}
+    channels {channels}
+    rate {rate}
+    format {fmt}
+}}
 
-pcm.!default {{
-    type plug
-    slave.pcm {{
-        type dmix
-        ipc_key {{
-            @func refer
-            name defaults.pcm.ipc_key
-        }}
-        ipc_gid {{
-            @func refer
-            name defaults.pcm.ipc_gid
-        }}
-        ipc_perm {{
-            @func refer
-            name defaults.pcm.ipc_perm
-        }}
-        slave {{
-            pcm {{
-                type hw
-                card {0}
-                device {1}
-                nonblock {{
-                    @func refer
-                    name defaults.pcm.nonblock
-                }}
-            }}
-            channels 2
-            rate {3}
-            format {2}
-        }}
-        bindings {{
-            0 0
-            1 1
-        }}
+pcm.dmixer {{
+    type dmix
+    slave.pcm default_hw
+    ipc_key {{
+        @func refer
+        name defaults.pcm.ipc_key
+    }}
+    ipc_gid {{
+        @func refer
+        name defaults.pcm.ipc_gid
+    }}
+    ipc_perm {{
+        @func refer
+        name defaults.pcm.ipc_perm
+    }}
+    bindings {{
+{bindings}
     }}
 }}
 
-ctl.!default {{
-    type hw
-    card {0}
-}}"""
+pcm.!default {{
+    type plug
+{route}
+    slave.pcm dmixer
+}}
+"""
 
 class AsoundConfWizardError(Exception):
     """Asound Conf Wizard Error"""
@@ -425,7 +491,7 @@ class AsoundConfWizard:
             )
             self._speaker_test_cmd_template = (
                 f"{speaker_test} "
-                "-Dhw:CARD={},DEV={} -F{} -r{} -l1 -c2 -S25"
+                "-Dhw:CARD={},DEV={} -F{} -r{} -l1 -c{} -S25"
             )
         elif not ALSA_UTILS_INSTALL_CMD:
             raise MissingDependenciesError()
@@ -465,7 +531,7 @@ class AsoundConfWizard:
                     )
                     self._speaker_test_cmd_template = (
                         f"{speaker_test} "
-                        "-Dhw:CARD={},DEV={} -F{} -r{} -l1 -c2 -S25"
+                        "-Dhw:CARD={},DEV={} -F{} -r{} -l1 -c{} -S25"
                     )
                 else:
                     raise MissingDependenciesError()
@@ -516,18 +582,12 @@ class AsoundConfWizard:
                     break
         else:
             pcm = hw_pcm_names[0][0]
-            Stylize.comment(
-                f"{pcm} is the only available Output so that's what we'll use…"
-            )
+            Stylize.comment(f"{pcm} is the only available Output so that's what we'll use…")
         return pcm
 
     def _get_formats_rates_channels(self, pcm):
-        Stylize.comment(
-            "Outputs must not in use while querying their Hardware Parameters."
-        )
-        Stylize.comment(
-            "Please make sure the Output you chose is not in use before continuing."
-        )
+        Stylize.comment("Outputs must not in use while querying their Hardware Parameters.")
+        Stylize.comment("Please make sure the Output you chose is not in use before continuing.")
         enter = Stylize.input("Please press Enter to continue")
         if enter != "":
             self.quit()
@@ -558,10 +618,46 @@ class AsoundConfWizard:
             elif line.startswith("CHANNELS:"):
                 for channel in line.strip("CHANNELS:[ ]").split(" "):
                     try:
-                        channels.append(int(channel))
+                        channel = int(channel)
+                        if channel in CHANNEL_COUNTS:
+                            channels.append(channel)
                     except ValueError:
                         pass
         return formats, rates, channels
+
+    def _choose_channel_count(self, channels):
+        if len(channels) > 1:
+            channels.sort()
+            title = "Channel Counts"
+            width = max(len(max([str(c) for c in channels], key=len)), len(title))
+            table = Table(title, width)
+            table.add(channels)
+            Stylize.comment(
+                "Channel Up Mixing is done with channel duplication for the "
+                "Right and Left Surround Channels and channel combination for "
+                "the Center and LFE (Sub) Channels without any effects or high/low pass filtering."
+            )
+            Stylize.comment("It is not true surround sound.")
+            Stylize.comment("Channel Down Mixing is done with channel combination for Mono.")
+            Stylize.comment(
+                "Some Devices do not map their channels correctly. "
+                f"If so you may need to edit {ASOUND_FILE_PATH} and correct "
+                "the mapping manually."
+            )
+            Stylize.comment("When in doubt choose 2 (Stereo) if available.")
+            while True:
+                choice = Stylize.input("Please choose a Channel Count: ")
+                try:
+                    channel_count = channels[int(choice) - 1]
+                except (ValueError, IndexError):
+                    self._invalid_choice(len(channels))
+                    continue
+                else:
+                    break
+        else:
+            channel_count = channels[0]
+            Stylize.comment(f"{channel_count} is the only Channel Count so that's what we'll use…")
+        return channel_count
 
     def _choose_format(self, formats):
         if len(formats) > 1:
@@ -622,9 +718,7 @@ class AsoundConfWizard:
                     break
         else:
             rate = rates[0]
-            Stylize.comment(
-                f"{rate} is the only Sampling Rate so that's what we'll use…"
-            )
+            Stylize.comment(f"{rate} is the only Sampling Rate so that's what we'll use…")
             if rate > 88200:
                 Stylize.warn(
                     "High sampling rates can lead to high CPU usage, degraded "
@@ -670,8 +764,7 @@ class AsoundConfWizard:
             if converters:
                 converter = converters[0]
                 Stylize.comment(
-                    f"{converter} is the only Sample Rate Converter "
-                    "so that's what we'll use…"
+                    f"{converter} is the only Sample Rate Converter so that's what we'll use…"
                 )
             else:
                 converter = None
@@ -688,46 +781,9 @@ class AsoundConfWizard:
             except PcmOpenError as err:
                 Stylize.warn(err)
                 Stylize.warn(
-                    "If the Ouput is digital (HDMI for example) "
-                    "you may need to connect it to something?"
-                )
-                Stylize.warn(
-                    "Otherwise please make sure the Output you "
-                    "chose is not in use and try again."
+                    "Please make sure the Output you chose is not in use and try again."
                 )
                 continue
-            channels.sort()
-            ch_len = len(channels)
-            if ch_len > 1:
-                highest_ch_count = channels[-1]
-                if 2 not in channels:
-                    Stylize.warn("This Output does not support 2 Channel audio.")
-                    Stylize.warn("Please choose a different Output.")
-                    Stylize.comment("*Up/down mixing is on the to do list…")
-                    continue
-                if highest_ch_count > 2:
-                    Stylize.warn(
-                        f"This Output supports up to {highest_ch_count} Channels of audio."
-                    )
-                    Stylize.warn("This Script does not support up mixing.")
-                    Stylize.warn(
-                        f"The remaining {highest_ch_count - 2} Channels will go unused."
-                    )
-                    Stylize.comment("*Up/down mixing is on the to do list…")
-            elif ch_len == 1:
-                highest_ch_count = channels[0]
-                if highest_ch_count == 1:
-                    Stylize.warn("This Script does not support Mono Outputs.")
-                    Stylize.warn("Please choose a different Output.")
-                    Stylize.comment("*Up/down mixing is on the to do list…")
-                    continue
-                if highest_ch_count != 2:
-                    Stylize.warn(
-                        f"This Output only supports {highest_ch_count} Channel audio."
-                    )
-                    Stylize.warn("Please choose a different Output.")
-                    Stylize.comment("*Up/down mixing is on the to do list…")
-                    continue
             if not formats or not rates or not channels:
                 Stylize.warn(
                     "No supported formats, sampling rates or channel counts were returned."
@@ -739,33 +795,34 @@ class AsoundConfWizard:
                 continue
             fmt = self._choose_format(formats)
             rate = self._choose_rate(rates)
+            channel_count = self._choose_channel_count(channels)
             converter = self._choose_sample_rate_converter()
             card, device = self._pcm_to_card_device(pcm)
-            return card, device, fmt, rate, converter
+            return card, device, fmt, rate, converter, channel_count
 
     def _test_choices(self):
         while True:
-            card, device, fmt, rate, converter = self._get_choices()
+            card, device, fmt, rate, converter, channel_count = self._get_choices()
             title = "Your Choices"
             choices = [
                 ["Card", card],
                 ["Device", str(device)],
                 ["Format", fmt],
                 ["Sampling Rate", str(rate)],
+                ["Channel Count", str(channel_count)],
             ]
             if converter:
                 choices.append(["Sample Rate Converter", converter])
-
             width = max(len(max(["".join(c) for c in choices], key=len)), len(title))
             table = Table(title, width)
             table.add_choices(choices)
             if fmt in NOT_SUPPORTED_BY_SPEAKER_TEST:
-                return card, device, fmt, rate, converter
+                return card, device, fmt, rate, converter, channel_count
             confirm = Stylize.input(
                 'Please enter "Y" if you would like to test your choices: '
             )
             if confirm.lower() != "y":
-                return card, device, fmt, rate, converter
+                return card, device, fmt, rate, converter, channel_count
             Stylize.comment(
                 "Please make sure your device is connected, "
                 "and set the volume to a comfortable level."
@@ -782,6 +839,7 @@ class AsoundConfWizard:
                 device,
                 fmt,
                 rate,
+                channel_count,
             ).split(" ")
             try:
                 subprocess_run(
@@ -794,28 +852,58 @@ class AsoundConfWizard:
                 Stylize.warn(f"The speaker test Failed: {err}")
 
                 Stylize.warn(
-                    "Please try again with a different Format and "
-                    "Sampling Rate combination."
+                    "Please try again with a different Format and Sampling Rate combination."
                 )
                 continue
             confirm = Stylize.input(
                 'Please enter "Y" if you heard the test tones: '
             )
             if confirm.lower() == "y":
-                return card, device, fmt, rate, converter
-            Stylize.warn(
-                "Please make sure you're connected to the correct Output and try again."
-            )
+                return card, device, fmt, rate, converter, channel_count
+            Stylize.warn("Please make sure you're connected to the correct Output and try again.")
+
+    def _build_conf(
+            self):
+        try:
+            card, device, fmt, rate, converter, channel_count = self._test_choices()
+        except AsoundConfWizardError as err:
+            raise err
+        rate_converter = ""
+        if converter:
+            rate_converter = f"defaults.pcm.rate_converter {converter}"
+        if channel_count == 1:
+            route = ONE_CH_ROUTE.strip("\n")
+            bindings = ONE_CH_BINDINGS.strip("\n")
+        elif channel_count == 4:
+            route = FOUR_CH_ROUTE.strip("\n")
+            bindings = FOUR_CH_BINDINGS.strip("\n")
+        elif channel_count == 6:
+            route = SIX_CH_ROUTE.strip("\n")
+            bindings = SIX_CH_BINDINGS.strip("\n")
+        elif channel_count == 8:
+            route = EIGHT_CH_ROUTE.strip("\n")
+            bindings = EIGHT_CH_BINDINGS.strip("\n")
+        else:
+            route = TWO_CH_ROUTE.strip("\n")
+            bindings = TWO_CH_BINDINGS.strip("\n")
+        file_data = ASOUND_TEMPLATE.format(
+            card=card,
+            device=device,
+            fmt=fmt,
+            rate=rate,
+            rate_converter=rate_converter,
+            channels=channel_count,
+            route=route,
+            bindings=bindings,
+        ).strip("\n")
+        return file_data
 
     def _write_asound_conf(self):
         Stylize.comment(
             f"This script will backup {ASOUND_FILE_PATH} if it already exists, "
             f"and create a new {ASOUND_FILE_PATH} based on your choices."
         )
-        Stylize.comment(
-            "This will create a system wide static audio configuration "
-            "assuming a 2 channel stereo Output Device."
-        )
+        Stylize.comment("This will create a system wide static audio configuration")
         Stylize.comment("It does not take into account audio inputs at all.")
         Stylize.comment(
             "This script is intended to be used on headless Debian based systems "
@@ -838,7 +926,7 @@ class AsoundConfWizard:
         try:
             self._conflict_check()
             self._build_cmds()
-            card, device, fmt, rate, converter = self._test_choices()
+            file_data = self._build_conf()
         except AsoundConfWizardError as err:
             raise err
         choice = Stylize.input(
@@ -850,16 +938,6 @@ class AsoundConfWizard:
             self._backup_asound_conf()
         except AsoundConfWizardError as err:
             raise err
-        rate_converter = ""
-        if converter:
-            rate_converter = f"defaults.pcm.rate_converter {converter}"
-        file_data = ASOUND_TEMPLATE.format(
-            card,
-            device,
-            fmt,
-            rate,
-            rate_converter,
-        )
         try:
             with open(ASOUND_FILE_PATH, "w", encoding="utf-8") as asf:
                 asf.write(file_data)
