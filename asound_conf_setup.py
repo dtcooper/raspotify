@@ -186,7 +186,11 @@ class AsoundConfWizardError(Exception):
 class AudioSoftwareConflictError(AsoundConfWizardError):
     """Audio Software Conflict Error"""
     def __init__(self, software, message="This script is not compatible with"):
-        self.message = f"{message} {software}"
+        if "/" in software:
+            message_end = "which are installed on your system"
+        else:
+            message_end = "which is installed on your system"
+        self.message = f"{message} {software} {message_end}"
         super().__init__(self.message)
 
 class InsufficientPrivilegesError(AsoundConfWizardError):
@@ -862,12 +866,15 @@ class AsoundConfWizard:
 
     @staticmethod
     def _conflict_check():
+        conflicts = []
         if PULSEAUDIO:
-            raise AudioSoftwareConflictError("PulseAudio")
+            conflicts.append("PulseAudio")
         if PIPEWIRE:
-            raise AudioSoftwareConflictError("PipeWire")
+            conflicts.append("PipeWire")
         if JACKD:
-            raise AudioSoftwareConflictError("JACK Audio")
+            conflicts.append("JACK Audio")
+        if conflicts:
+            raise AudioSoftwareConflictError(" / ".join(conflicts))
 
     @staticmethod
     def _privilege_check():
