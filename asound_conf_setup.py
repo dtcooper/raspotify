@@ -25,6 +25,7 @@
 #
 # For more information, please refer to <http://unlicense.org/>
 
+import wave
 from textwrap import TextWrapper
 from glob import glob
 from shutil import which
@@ -35,10 +36,12 @@ from subprocess import run as subprocess_run
 from os import rename as os_rename
 from os import remove as os_remove
 from time import time as time_time
+from tempfile import gettempdir
 
 ASOUND_FILE_PATH = "/etc/asound.conf"
 DUMMY_FILE_PATH = f"/etc/foobarbaz{int(time_time())}"
 BACKUP_FILE_PATH = f"/etc/asound.conf.bak{int(time_time())}"
+SILENCE_FILE_PATH = f"{gettempdir()}/silence{int(time_time())}.wav"
 CONVERTERS_FILE_PATH = "/usr/lib/*/alsa-lib"
 CONVERTERS_SEARCH_SUFFIX = "/libasound_module_rate_"
 ALSA_PLUGINS = "libasound2-plugins"
@@ -149,116 +152,23 @@ CHANNEL_COUNTS = [
     8,
 ]
 
-ONE_CH_ROUTE = """
-    ttable.0.0 0.5
-    ttable.1.0 0.5
-"""
-
-ONE_CH_BINDINGS = """
-        0 0
-"""
-
-TWO_CH_BINDINGS = """
-        0 0
-        1 1
-"""
-
-FOUR_CH_ROUTE = """
-    ttable.0.0 1
-    ttable.1.1 1
-    ttable.0.2 1
-    ttable.1.3 1
-"""
-
-FOUR_CH_BINDINGS = """
-        0 0
-        1 1
-        2 2
-        3 3
-"""
-
-SIX_CH_ROUTE = """
-    ttable.0.0 1
-    ttable.1.1 1
-    ttable.0.2 1
-    ttable.1.3 1
-    ttable.0.4 0.5
-    ttable.1.4 0.5
-    ttable.1.5 0.5
-    ttable.0.5 0.5
-"""
-
-SIX_CH_BINDINGS = """
-        0 0
-        1 1
-        2 2
-        3 3
-        4 4
-        5 5
-"""
-
-EIGHT_CH_ROUTE = """
-    ttable.0.0 1
-    ttable.1.1 1
-    ttable.0.2 1
-    ttable.1.3 1
-    ttable.0.4 0.5
-    ttable.1.4 0.5
-    ttable.0.5 0.5
-    ttable.1.5 0.5
-    ttable.0.6 1
-    ttable.1.7 1
-"""
-
-EIGHT_CH_BINDINGS = """
-        0 0
-        1 1
-        2 2
-        3 3
-        4 4
-        5 5
-        6 6
-        7 7
-"""
-
-ASOUND_TEMPLATE = """
+ASOUND_TEMPLATE = '''
 {rate_converter}
-
-pcm.default_hw {{
-    type hw
-    card {card}
-    device {device}
-    channels {channels}
-    rate {rate}
-    format {fmt}
-}}
-
-pcm.dmixer {{
-    type dmix
-    slave.pcm default_hw
-    ipc_key {{
-        @func refer
-        name defaults.pcm.ipc_key
-    }}
-    ipc_gid {{
-        @func refer
-        name defaults.pcm.ipc_gid
-    }}
-    ipc_perm {{
-        @func refer
-        name defaults.pcm.ipc_perm
-    }}
-    bindings {{
-{bindings}
-    }}
-}}
+defaults.pcm.dmix.rate {rate}
+defaults.pcm.dmix.format {fmt}
+defaults.pcm.dmix.channels {channels}
 
 pcm.!default {{
     type plug
-{route}
-    slave.pcm dmixer
+    route_policy {route_policy}
+    slave.pcm "{pcm}"
 }}
-"""
+
+ctl.!default {{
+    type hw
+    card {card}
+}}
+'''
 
 class AsoundConfWizardError(Exception):
     """Asound Conf Wizard Error"""
@@ -530,12 +440,12 @@ class AsoundConfWizard:
 
             self._hw_params_cmd_template = (
                 f"{aplay} "
-                "-D{} --dump-hw-params /usr/share/sounds/alsa/Front_Right.wav"
+                f"-D{{}} --dump-hw-params {SILENCE_FILE_PATH}"
             )
 
             self._speaker_test_cmd_template = (
                 f"{speaker_test} "
-                "-Dhw:CARD={},DEV={} -F{} -r{} -l1 -c{} -S25"
+                "-D{} -F{} -r{} -l1 -c{} -S25"
             )
 
         elif not ALSA_UTILS_INSTALL_CMD:
@@ -580,12 +490,12 @@ class AsoundConfWizard:
 
                     self._hw_params_cmd_template = (
                         f"{aplay} "
-                        "-D{} --dump-hw-params /usr/share/sounds/alsa/Front_Right.wav"
+                        f"-D{{}} --dump-hw-params {SILENCE_FILE_PATH}"
                     )
 
                     self._speaker_test_cmd_template = (
                         f"{speaker_test} "
-                        "-Dhw:CARD={},DEV={} -F{} -r{} -l1 -c{} -S25"
+                        "-D{} -F{} -r{} -l1 -c{} -S25"
                     )
 
                 else:
@@ -609,9 +519,7 @@ class AsoundConfWizard:
         hw_pcm_names = [
             [n.strip(), all_pcm_name[i + 1].strip()]
             for i, n in enumerate(all_pcm_name)
-            # HDMI's show up as hw Outputs on Raspberry Pi's,
-            # but I can't get either to work properly with this script.
-            if n.startswith("hw:") and "vc4hdmi," not in n and "CARD=b1," not in n
+            if n.startswith("hw:")
         ]
 
         if not hw_pcm_names:
@@ -659,15 +567,34 @@ class AsoundConfWizard:
         if enter != "":
             self.quit()
 
-        cmd = self._hw_params_cmd_template.format(pcm).split(" ")
+        vc4hdmi = None
+
+        if "vc4hdmi" in pcm:
+            vc4hdmi = pcm.replace("hw:", "hdmi:")
+      
+        cmd = self._hw_params_cmd_template.format(vc4hdmi or pcm).split(" ")
 
         try:
+            # aplay will not dump-hw-params without at least
+            # trying to read a file it does not matter if the
+            # device can actually play it or not so we just write
+            # a 1 sec mono wav to tmp and delete it after aplay
+            # tries to read it.
+            with wave.open(SILENCE_FILE_PATH, mode="wb") as silence:
+                silence.setnchannels(1)
+                silence.setsampwidth(2)
+                silence.setframerate(44100)
+                silence.writeframes(bytearray(44100))
+
+
             hw_params = subprocess_run(
                 cmd,
                 check=False,
                 stderr=STDOUT,
                 stdout=PIPE,
             ).stdout.decode("utf-8")
+
+            os_remove(SILENCE_FILE_PATH)
 
         except Exception as err:
             raise PcmOpenError(err) from err
@@ -711,14 +638,15 @@ class AsoundConfWizard:
             table = Table(title, width)
             table.add(channels)
 
+            Stylize.comment("Channel Up/Down Mixing is considered experimental.")
+
             Stylize.comment(
-                "Channel Up Mixing is done with channel duplication for the "
-                "Right and Left Surround Channels and channel combination for "
-                "the Center and LFE (Sub) Channels without any effects or high/low pass filtering."
+                "Channel Up Mixing is done with channel duplication "
+                "without any effects or high/low pass filtering."
             )
 
             Stylize.comment("It is not true surround sound.")
-            Stylize.comment("Channel Down Mixing is done with channel combination for Mono.")
+            Stylize.comment("Channel Down Mixing is done with channel averaging.")
 
             Stylize.comment(
                 "Some Devices do not map their channels correctly. "
@@ -726,7 +654,8 @@ class AsoundConfWizard:
                 "the mapping manually."
             )
 
-            Stylize.comment("When in doubt choose 2 (Stereo) if available.")
+            if 2 in channels:
+                self._best_choice(2)
 
             while True:
                 choice = Stylize.input("Please choose a Channel Count: ")
@@ -739,6 +668,10 @@ class AsoundConfWizard:
                     break
         else:
             channel_count = channels[0]
+
+            if channel_count != 2:
+                Stylize.warn("Channel Up/Down Mixing is considered experimental.")
+
             Stylize.comment(f"{channel_count} is the only Channel Count so that's what we'll use…")
 
         return channel_count
@@ -914,6 +847,17 @@ class AsoundConfWizard:
         while True:
             card, device, fmt, rate, converter, channel_count = self._get_choices()
 
+            if card == "vc4hdmi":
+                Stylize.warn(
+                    f"{card} does not support software mixing. Only one application "
+                    "will be able to use it at a time."
+                )
+
+                confirm = Stylize.input('Please enter "Y" if you would like to use it anyway: ')
+
+                if confirm.lower() != "y":
+                    continue
+
             title = "Your Choices"
 
             choices = [
@@ -960,9 +904,13 @@ class AsoundConfWizard:
             if enter != "":
                 self.quit()
 
+            if card == "vc4hdmi":
+                pcm = f"hdmi:CARD={card},DEV={device}"
+            else:
+                pcm = f"hw:CARD={card},DEV={device}"
+
             cmd = self._speaker_test_cmd_template.format(
-                card,
-                device,
+                pcm,
                 fmt,
                 rate,
                 channel_count,
@@ -1006,31 +954,28 @@ class AsoundConfWizard:
         if converter:
             rate_converter = f"defaults.pcm.rate_converter {converter}"
 
-        if channel_count == 1:
-            route = ONE_CH_ROUTE.strip("\n")
-            bindings = ONE_CH_BINDINGS.strip("\n")
-        elif channel_count == 4:
-            route = FOUR_CH_ROUTE.strip("\n")
-            bindings = FOUR_CH_BINDINGS.strip("\n")
-        elif channel_count == 6:
-            route = SIX_CH_ROUTE.strip("\n")
-            bindings = SIX_CH_BINDINGS.strip("\n")
-        elif channel_count == 8:
-            route = EIGHT_CH_ROUTE.strip("\n")
-            bindings = EIGHT_CH_BINDINGS.strip("\n")
+        if card == "b1":
+            pcm = f"hw:CARD={card},DEV={device}"
+        elif card == "vc4hdmi":
+            pcm = f"hdmi:CARD={card},DEV={device}"
         else:
-            route = ""
-            bindings = TWO_CH_BINDINGS.strip("\n")
+            pcm = f"dmix:CARD={card},DEV={device}"
+
+        if channel_count == 1:
+            route_policy = "average"
+        elif channel_count == 2:
+            route_policy = "default"
+        else:
+            route_policy = "duplicate"
 
         file_data = ASOUND_TEMPLATE.format(
             card=card,
-            device=device,
+            pcm=pcm,
             fmt=fmt,
             rate=rate,
             rate_converter=rate_converter,
             channels=channel_count,
-            route=route,
-            bindings=bindings,
+            route_policy=route_policy,
         ).strip("\n")
 
         return file_data
