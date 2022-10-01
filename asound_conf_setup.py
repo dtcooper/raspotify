@@ -519,7 +519,7 @@ class AsoundConfWizard:
         hw_pcm_names = [
             [n.strip(), all_pcm_name[i + 1].strip()]
             for i, n in enumerate(all_pcm_name)
-            if n.startswith("hw:")
+            if n.startswith("hw:") or n.startswith("hdmi:")
         ]
 
         if not hw_pcm_names:
@@ -559,20 +559,8 @@ class AsoundConfWizard:
 
         return pcm
 
-    def _get_formats_rates_channels(self, pcm):
-        Stylize.comment("Outputs must not in use while querying their Hardware Parameters.")
-        Stylize.comment("Please make sure the Output you chose is not in use before continuing.")
-        enter = Stylize.input("Please press Enter to continue")
-
-        if enter != "":
-            self.quit()
-
-        vc4hdmi = None
-
-        if "vc4hdmi" in pcm:
-            vc4hdmi = pcm.replace("hw:", "hdmi:")
-      
-        cmd = self._hw_params_cmd_template.format(vc4hdmi or pcm).split(" ")
+    def _get_hw_params(self, pcm):
+        cmd = self._hw_params_cmd_template.format(pcm).split(" ")
 
         try:
             # aplay will not dump-hw-params without at least
@@ -585,7 +573,6 @@ class AsoundConfWizard:
                 silence.setsampwidth(2)
                 silence.setframerate(44100)
                 silence.writeframes(bytearray(44100))
-
 
             hw_params = subprocess_run(
                 cmd,
@@ -602,6 +589,21 @@ class AsoundConfWizard:
         if "audio open error:" in hw_params:
             err = hw_params.split(":")[-1].strip().title()
             raise PcmOpenError(err)
+
+        return hw_params
+
+    def _get_formats_rates_channels(self, pcm):
+        Stylize.comment("Outputs must not in use while querying their Hardware Parameters.")
+        Stylize.comment("Please make sure the Output you chose is not in use before continuing.")
+        enter = Stylize.input("Please press Enter to continue")
+
+        if enter != "":
+            self.quit()
+
+        try:
+            hw_params = self._get_hw_params(pcm)
+        except PcmOpenError as err:
+            raise err
 
         formats = []
         rates = []
@@ -816,10 +818,20 @@ class AsoundConfWizard:
 
             except PcmOpenError as err:
                 Stylize.warn(err)
+                if "busy" in err.message:
+                    Stylize.warn(
+                        "Please make sure the Output you chose is not in use and try again."
+                    )
+                elif "No Such Device" in err.message:
+                    Stylize.warn(
+                        "Digital Outputs may need to be plugged into something to be functional."
+                    )
 
-                Stylize.warn(
-                    "Please make sure the Output you chose is not in use and try again."
-                )
+                    Stylize.warn(
+                        "If so please connect the Output to something and try again."
+                    )
+
+                    Stylize.warn("Otherwise please choose a different Output.")
 
                 continue
 
@@ -832,20 +844,28 @@ class AsoundConfWizard:
                     "The Output you chose may not support any common formats and rates?"
                 )
 
-                Stylize.warn("Please choose a different Output.")
+                Stylize.warn(
+                    "Digital Outputs may need to be plugged into something to be functional."
+                )
+
+                Stylize.warn(
+                    "If so please connect the Output to something and try again."
+                )
+
+                Stylize.warn("Otherwise please choose a different Output.")
                 continue
 
             fmt = self._choose_format(formats)
             rate = self._choose_rate(rates)
             channel_count = self._choose_channel_count(channels)
             converter = self._choose_sample_rate_converter()
-            card, device = self._pcm_to_card_device(pcm)
+            card = self._pcm_to_card(pcm)
 
-            return card, device, fmt, rate, converter, channel_count
+            return pcm, card, fmt, rate, converter, channel_count
 
     def _test_choices(self):
         while True:
-            card, device, fmt, rate, converter, channel_count = self._get_choices()
+            pcm, card, fmt, rate, converter, channel_count = self._get_choices()
 
             if card == "vc4hdmi":
                 Stylize.warn(
@@ -861,8 +881,7 @@ class AsoundConfWizard:
             title = "Your Choices"
 
             choices = [
-                ["Card", card],
-                ["Device", str(device)],
+                ["Output", pcm],
                 ["Format", fmt],
                 ["Sampling Rate", str(rate)],
                 ["Channel Count", str(channel_count)],
@@ -876,7 +895,7 @@ class AsoundConfWizard:
             table.add_choices(choices)
 
             if fmt in NOT_SUPPORTED_BY_SPEAKER_TEST:
-                return card, device, fmt, rate, converter, channel_count
+                return pcm, card, fmt, rate, converter, channel_count
 
             Stylize.comment(
                 "Unless you are ABSOLUTELY certain your choices are correct you should test them."
@@ -887,7 +906,7 @@ class AsoundConfWizard:
             )
 
             if confirm.lower() != "y":
-                return card, device, fmt, rate, converter, channel_count
+                return pcm, card, fmt, rate, converter, channel_count
 
             Stylize.comment(
                 "Please make sure your device is connected, "
@@ -903,11 +922,6 @@ class AsoundConfWizard:
 
             if enter != "":
                 self.quit()
-
-            if card == "vc4hdmi":
-                pcm = f"hdmi:CARD={card},DEV={device}"
-            else:
-                pcm = f"hw:CARD={card},DEV={device}"
 
             cmd = self._speaker_test_cmd_template.format(
                 pcm,
@@ -939,13 +953,13 @@ class AsoundConfWizard:
             )
 
             if confirm.lower() == "y":
-                return card, device, fmt, rate, converter, channel_count
+                return pcm, card, fmt, rate, converter, channel_count
 
             Stylize.warn("Please make sure you're connected to the correct Output and try again.")
 
     def _build_conf(self):
         try:
-            card, device, fmt, rate, converter, channel_count = self._test_choices()
+            pcm, card, fmt, rate, converter, channel_count = self._test_choices()
         except AsoundConfWizardError as err:
             raise err
 
@@ -954,12 +968,8 @@ class AsoundConfWizard:
         if converter:
             rate_converter = f"defaults.pcm.rate_converter {converter}"
 
-        if card == "b1":
-            pcm = f"hw:CARD={card},DEV={device}"
-        elif card == "vc4hdmi":
-            pcm = f"hdmi:CARD={card},DEV={device}"
-        else:
-            pcm = f"dmix:CARD={card},DEV={device}"
+        if card != "b1" and pcm.startswith("hw:"):
+            pcm = pcm.replace("hw:", "dmix:")
 
         if channel_count == 1:
             route_policy = "average"
@@ -1088,15 +1098,15 @@ class AsoundConfWizard:
             Stylize.comment(f"{BACKUP_FILE_PATH}")
 
     @staticmethod
-    def _pcm_to_card_device(pcm):
+    def _pcm_to_card(pcm):
         try:
-            [card, device] = pcm.split(",")
-            card = card.replace("hw:CARD=", "").strip()
-            device = int(device.strip("DEV= "))
+            card = pcm.split(",")[0]
+            for sub in (("hw:CARD=", ""), ("hdmi:CARD=", "")):
+                card = card.replace(*sub).strip()
         except Exception as err:
             raise PcmParsingError(err) from err
 
-        return card, device
+        return card
 
     @staticmethod
     def _invalid_choice(len_choices):
