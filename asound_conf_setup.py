@@ -657,7 +657,8 @@ class AsoundConfWizard:
             )
 
             if 2 in channels:
-                self._best_choice(2)
+                num = channels.index(2) + 1
+                self._best_choice(num, 2)
 
             while True:
                 choice = Stylize.input("Please choose a Channel Count: ")
@@ -692,7 +693,8 @@ class AsoundConfWizard:
 
             for fmt in reversed(COMMON_FORMATS):
                 if fmt in formats:
-                    self._best_choice(fmt)
+                    num = formats.index(fmt) + 1
+                    self._best_choice(num, fmt)
                     break
 
             while True:
@@ -726,13 +728,16 @@ class AsoundConfWizard:
                 "and glitches on low spec devices."
             )
 
-            for rate in rates:
-                choice = None
+            choice = None
+            num = None
+
+            for i, rate in enumerate(rates):
                 if rate >= 44100:
+                    num = i + 1
                     choice = rate
                     break
 
-            self._best_choice(choice or rates[-1])
+            self._best_choice(num or len(rates), choice or rates[-1])
 
             while True:
                 choice = Stylize.input("Please choose a Sampling Rate: ")
@@ -782,7 +787,8 @@ class AsoundConfWizard:
 
             for converter in BEST_CONVERTERS:
                 if converter in converters:
-                    self._best_choice(converter)
+                    num = converters.index(converter) + 1
+                    self._best_choice(num, converter)
                     break
 
             while True:
@@ -1113,8 +1119,8 @@ class AsoundConfWizard:
         Stylize.warn(f"Please enter a number from 1 - {len_choices}.")
 
     @staticmethod
-    def _best_choice(best_choice):
-        Stylize.suggestion(f"{best_choice} is the best choice.")
+    def _best_choice(number, best_choice):
+        Stylize.suggestion(f"Number {number}, {best_choice} is the best choice.")
 
     @staticmethod
     def _get_sample_rate_converters():
