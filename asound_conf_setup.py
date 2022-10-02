@@ -30,6 +30,7 @@ from textwrap import TextWrapper
 from glob import glob
 from shutil import which
 from sys import exit as sys_exit
+from sys import byteorder as sys_byteorder
 from signal import signal, SIGINT, SIGTERM, SIGHUP
 from subprocess import CalledProcessError, PIPE, STDOUT, DEVNULL
 from subprocess import run as subprocess_run
@@ -96,22 +97,50 @@ else:
     CONVERTER_INSTALL_CMD = None
     ALSA_UTILS_INSTALL_CMD = None
 
-COMMON_FORMATS = [
-    "S16_LE",
-    "S16_BE",
-    "S24_LE",
-    "S24_BE",
-    "S24_3LE",
-    "S24_3BE",
-    "S32_LE",
-    "S32_BE",
-]
+# See:
+# https://github.com/alsa-project/alsa-lib/blob/master/src/pcm/pcm_dmix_generic.c#L121
+if sys_byteorder == "little":
+    COMMON_FORMATS = [
+        "U8",
+        "S16_LE",
+        "S24_LE",
+        "S24_3LE",
+        "S32_LE",
+    ]
+else:
+    COMMON_FORMATS = [
+        "U8",
+        "S16_BE",
+        "S24_BE",
+        "S24_3BE",
+        "S32_BE",
+    ]
 
-COMMON_RATES = [
+# See:
+# https://en.wikipedia.org/wiki/Sampling_(signal_processing)#Audio_sampling
+RATES = [
     8000,
     11025,
     16000,
     22050,
+    32000,
+    37800,
+    44056,
+    44100,
+    47250,
+    48000,
+    50000,
+    50400,
+    64000,
+    88200,
+    96000,
+    176400,
+    192000,
+    352800,
+    384000,
+]
+
+STANDARD_RATES = [
     44100,
     48000,
     88200,
@@ -119,7 +148,6 @@ COMMON_RATES = [
     176400,
     192000,
     352800,
-    384000,
 ]
 
 COMMON_RATE_CONVERTERS = [
@@ -501,9 +529,9 @@ class AsoundConfWizard:
                 else:
                     raise MissingDependenciesError()
 
-    def _get_hw_pcm_names(self):
+    def _get_pcms(self):
         try:
-            all_pcm_name = (
+            all_pcm_names = (
                 subprocess_run(
                     self._get_pcm_names_cmd,
                     check=True,
@@ -516,46 +544,47 @@ class AsoundConfWizard:
         except CalledProcessError as err:
             raise NoHwPcmError(err.stderr.decode("utf-8")) from err
 
-        hw_pcm_names = [
-            [n.strip(), all_pcm_name[i + 1].strip()]
-            for i, n in enumerate(all_pcm_name)
-            if n.startswith("hw:") or n.startswith("hdmi:")
+        pcms = [
+            [n.strip(), all_pcm_names[i + 1].strip()]
+            for i, n in enumerate(all_pcm_names)
+            if n.startswith("hdmi:") or
+            (n.startswith("hw:") and not n.replace("hw:", "hdmi:") in all_pcm_names)
         ]
 
-        if not hw_pcm_names:
+        if not pcms:
             raise NoHwPcmError(None)
 
-        return hw_pcm_names
+        return pcms
 
-    def _choose_hw_pcm(self):
+    def _choose_pcm(self):
         try:
-            hw_pcm_names = self._get_hw_pcm_names()
+            pcms = self._get_pcms()
         except NoHwPcmError as err:
             raise err
 
-        if len(hw_pcm_names) > 1:
+        if len(pcms) > 1:
             title = "Outputs"
 
             width = max(
-                len(max([n for s in hw_pcm_names for n in s], key=len)),
+                len(max([n for s in pcms for n in s], key=len)),
                 len(title),
             )
 
             table = Table(title, width)
-            table.add_pcms(hw_pcm_names)
+            table.add_pcms(pcms)
 
             while True:
                 choice = Stylize.input("Please choose an Output: ")
                 try:
-                    pcm = hw_pcm_names[int(choice) - 1][0]
+                    pcm = pcms[int(choice) - 1][0]
                 except (ValueError, IndexError):
-                    self._invalid_choice(len(hw_pcm_names))
+                    self._invalid_choice(len(pcms))
                     continue
                 else:
                     break
         else:
-            pcm = hw_pcm_names[0][0]
-            Stylize.comment(f"{pcm} is the only available Output so that's what we'll use…")
+            pcm = pcms[0][0]
+            Stylize.comment(f"[{pcm}] is the only available Output so that's what we'll use…")
 
         return pcm
 
@@ -593,6 +622,12 @@ class AsoundConfWizard:
         return hw_params
 
     def _get_formats_rates_channels(self, pcm):
+        def try_get_int(thing):
+            try:
+                return int(thing)
+            except ValueError:
+                return None
+
         Stylize.comment("Outputs must not in use while querying their Hardware Parameters.")
         Stylize.comment("Please make sure the Output you chose is not in use before continuing.")
         enter = Stylize.input("Please press Enter to continue")
@@ -611,23 +646,26 @@ class AsoundConfWizard:
 
         for line in hw_params.split("\n"):
             if line.startswith("FORMAT:"):
-                for fmt in line.strip("FORMAT: ").split(" "):
-                    if fmt in COMMON_FORMATS:
-                        formats.append(fmt)
+                formats = [
+                    fmt for fmt in COMMON_FORMATS
+                    if fmt in line.strip("FORMAT: ").split(" ")
+                ]
 
             elif line.startswith("RATE:"):
-                for rate in line.strip("RATE:[ ]").split(" "):
-                    try:
-                        rates.append(int(rate))
-                    except ValueError:
-                        pass
+                rates = [
+                    rate for rate in RATES
+                    if rate in [
+                        try_get_int(rate) for rate in line.strip("RATE:[ ]").split(" ")
+                    ]
+                ]
 
             elif line.startswith("CHANNELS:"):
-                for channel in line.strip("CHANNELS:[ ]").split(" "):
-                    try:
-                        channels.append(int(channel))
-                    except ValueError:
-                        pass
+                channels = [
+                    channel for channel in CHANNEL_COUNTS
+                    if channel in [
+                        try_get_int(channel) for channel in line.strip("CHANNELS:[ ]").split(" ")
+                    ]
+                ]
 
         return formats, rates, channels
 
@@ -675,7 +713,9 @@ class AsoundConfWizard:
             if channel_count != 2:
                 Stylize.warn("Channel Up/Down Mixing is considered experimental.")
 
-            Stylize.comment(f"{channel_count} is the only Channel Count so that's what we'll use…")
+            Stylize.comment(
+                f"[{channel_count}] is the only Channel Count so that's what we'll use…"
+            )
 
         return channel_count
 
@@ -690,6 +730,8 @@ class AsoundConfWizard:
                 "It's generally advised to choose the highest bit "
                 "depth format that your device supports."
             )
+
+            Stylize.comment("U8 should be avoided if possible as it is a low fidelity Format.")
 
             for fmt in reversed(COMMON_FORMATS):
                 if fmt in formats:
@@ -708,14 +750,17 @@ class AsoundConfWizard:
                     break
         else:
             fmt = formats[0]
-            Stylize.comment(f"{fmt} is the only Format so that's what we'll use…")
+            Stylize.comment(f"[{fmt}] is the only Format so that's what we'll use…")
+
+        if fmt == "U8":
+            Stylize.warn(f"[{fmt}] is a low fidelity Format.")
 
         return fmt
 
     def _choose_rate(self, rates):
         if len(rates) > 1:
             r_range = range(rates[0], rates[-1] + 1)
-            rates = [r for r in COMMON_RATES if r in r_range]
+            rates = [r for r in RATES if r in r_range]
             title = "Sampling Rates"
             width = max(len(max([str(r) for r in rates], key=len)), len(title))
             table = Table(title, width)
@@ -728,14 +773,32 @@ class AsoundConfWizard:
                 "and glitches on low spec devices."
             )
 
+            Stylize.comment(
+                "Sample Rates outside of the Common Sampling Rates of:"
+            )
+
+            Stylize.comment(STANDARD_RATES)
+
+            Stylize.comment(
+                "Should probably be avoided if possible."
+            )
+
+            Stylize.comment(
+                "If you select an uncommon Sampling Rate you ABSOLUTELY should test it."
+            )
+
             choice = None
             num = None
 
             for i, rate in enumerate(rates):
-                if rate >= 44100:
+                # Prefer integer multiples of 44100
+                if rate % 44100 == 0:
                     num = i + 1
                     choice = rate
                     break
+                if rate % 48000 == 0:
+                    num = i + 1
+                    choice = rate
 
             self._best_choice(num or len(rates), choice or rates[-1])
 
@@ -750,7 +813,12 @@ class AsoundConfWizard:
                     break
         else:
             rate = rates[0]
-            Stylize.comment(f"{rate} is the only Sampling Rate so that's what we'll use…")
+            Stylize.comment(f"[{rate}] is the only Sampling Rate so that's what we'll use…")
+
+            if rate not in STANDARD_RATES:
+                Stylize.warn(
+                    f"[{rate}] is an uncommon Sampling Rate, you ABSOLUTELY should test it."
+                )
 
             if rate > 88200:
                 Stylize.warn(
@@ -805,7 +873,7 @@ class AsoundConfWizard:
                 converter = converters[0]
 
                 Stylize.comment(
-                    f"{converter} is the only Sample Rate Converter so that's what we'll use…"
+                    f"[{converter}] is the only Sample Rate Converter so that's what we'll use…"
                 )
             else:
                 converter = None
@@ -815,7 +883,7 @@ class AsoundConfWizard:
     def _get_choices(self):
         while True:
             try:
-                pcm = self._choose_hw_pcm()
+                pcm = self._choose_pcm()
 
             except NoHwPcmError as err:
                 raise err
@@ -875,7 +943,7 @@ class AsoundConfWizard:
 
             if card == "vc4hdmi":
                 Stylize.warn(
-                    f"{card} does not support software mixing. Only one application "
+                    f"[{card}] does not support software mixing. Only one application "
                     "will be able to use it at a time."
                 )
 
@@ -1070,13 +1138,12 @@ class AsoundConfWizard:
 
     @staticmethod
     def _conflict_check():
-        conflicts = []
-        if which("pulseaudio"):
-            conflicts.append("PulseAudio")
-        if  which("pipewire"):
-            conflicts.append("PipeWire")
-        if which("jackd"):
-            conflicts.append("JACK Audio")
+        conflicts = [
+            name for program, name in
+            (("pulseaudio", "PulseAudio"), ("pipewire", "PipeWire"), ("jackd", "JACK Audio"))
+            if which(program)
+        ]
+
         if conflicts:
             raise AudioSoftwareConflictError(" / ".join(conflicts))
 
@@ -1116,11 +1183,11 @@ class AsoundConfWizard:
 
     @staticmethod
     def _invalid_choice(len_choices):
-        Stylize.warn(f"Please enter a number from 1 - {len_choices}.")
+        Stylize.warn(f"Please enter a Number: [1 - {len_choices}].")
 
     @staticmethod
     def _best_choice(number, best_choice):
-        Stylize.suggestion(f"Number {number}, {best_choice} is the best choice.")
+        Stylize.suggestion(f"Number {number}: [{best_choice}], is probably the best choice.")
 
     @staticmethod
     def _get_sample_rate_converters():
