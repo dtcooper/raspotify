@@ -55,42 +55,42 @@ SUDO = which("sudo")
 
 if APT:
     if SUDO:
-        UPDATE_CMD = [SUDO, APT, "update"]
+        UPDATE_CMD = (SUDO, APT, "update")
 
-        ALSA_UTILS_INSTALL_CMD = [
+        ALSA_UTILS_INSTALL_CMD = (
             SUDO,
             APT,
             "install",
             "-y",
             ALSA_UTILS,
-        ]
+        )
 
-        CONVERTER_INSTALL_CMD = [
+        CONVERTER_INSTALL_CMD = (
             SUDO,
             APT,
             "install",
             "-y",
             "--no-install-recommends",
             ALSA_PLUGINS,
-        ]
+        )
 
     else:
-        UPDATE_CMD = [APT, "update"]
+        UPDATE_CMD = (APT, "update")
 
-        ALSA_UTILS_INSTALL_CMD = [
+        ALSA_UTILS_INSTALL_CMD = (
             APT,
             "install",
             "-y",
             ALSA_UTILS,
-        ]
+        )
 
-        CONVERTER_INSTALL_CMD = [
+        CONVERTER_INSTALL_CMD = (
             APT,
             "install",
             "-y",
             "--no-install-recommends",
             ALSA_PLUGINS,
-        ]
+        )
 
 else:
     UPDATE_CMD = None
@@ -100,25 +100,25 @@ else:
 # See:
 # https://github.com/alsa-project/alsa-lib/blob/master/src/pcm/pcm_dmix_generic.c#L121
 if sys_byteorder == "little":
-    COMMON_FORMATS = [
+    FORMATS = (
         "U8",
         "S16_LE",
         "S24_LE",
         "S24_3LE",
         "S32_LE",
-    ]
+    )
 else:
-    COMMON_FORMATS = [
+    FORMATS = (
         "U8",
         "S16_BE",
         "S24_BE",
         "S24_3BE",
         "S32_BE",
-    ]
+    )
 
 # See:
 # https://en.wikipedia.org/wiki/Sampling_(signal_processing)#Audio_sampling
-RATES = [
+RATES = (
     8000,
     11025,
     16000,
@@ -138,9 +138,9 @@ RATES = [
     192000,
     352800,
     384000,
-]
+)
 
-STANDARD_RATES = [
+STANDARD_RATES = (
     44100,
     48000,
     88200,
@@ -148,9 +148,9 @@ STANDARD_RATES = [
     176400,
     192000,
     352800,
-]
+)
 
-COMMON_RATE_CONVERTERS = [
+COMMON_RATE_CONVERTERS = (
     "speexrate",
     "speexrate_medium",
     "speexrate_best",
@@ -164,7 +164,7 @@ COMMON_RATE_CONVERTERS = [
     "samplerate",
     "samplerate_medium",
     "samplerate_best",
-]
+)
 
 BEST_CONVERTERS = (
     "speexrate_medium",
@@ -172,13 +172,13 @@ BEST_CONVERTERS = (
     "samplerate",
 )
 
-CHANNEL_COUNTS = [
+CHANNELS = (
     1,
     2,
     4,
     6,
     8,
-]
+)
 
 ASOUND_TEMPLATE = '''
 {rate_converter}
@@ -345,8 +345,7 @@ class Table:
         """Add Hw PCMs to the Table"""
         pcm_len = len(pcms)
 
-        for i, pcm in enumerate(pcms):
-            [name, desc] = pcm
+        for i, (name, desc) in enumerate(pcms):
             num = i + 1
 
             self._add_pcm_name_row(name, num)
@@ -364,9 +363,8 @@ class Table:
         pad = int(self._padding / 4)
         choices_len = len(choices)
 
-        for i, choice in enumerate(choices):
+        for i, (key, value) in enumerate(choices):
             num = i + 1
-            [key, value] = choice
             center_pad = (self._width - len(key)) + int(self._padding / 2)
 
             row = (
@@ -544,12 +542,12 @@ class AsoundConfWizard:
         except CalledProcessError as err:
             raise NoHwPcmError(err.stderr.decode("utf-8")) from err
 
-        pcms = [
-            [n.strip(), all_pcm_names[i + 1].strip()]
+        pcms = tuple(
+            (n.strip(), all_pcm_names[i + 1].strip())
             for i, n in enumerate(all_pcm_names)
             if n.startswith("hdmi:") or
             (n.startswith("hw:") and not n.replace("hw:", "hdmi:") in all_pcm_names)
-        ]
+        )
 
         if not pcms:
             raise NoHwPcmError(None)
@@ -566,7 +564,7 @@ class AsoundConfWizard:
             title = "Outputs"
 
             width = max(
-                len(max([n for s in pcms for n in s], key=len)),
+                len(max(tuple(n for s in pcms for n in s), key=len)),
                 len(title),
             )
 
@@ -640,41 +638,41 @@ class AsoundConfWizard:
         except PcmOpenError as err:
             raise err
 
-        formats = []
-        rates = []
-        channels = []
+        formats = ()
+        rates = ()
+        channels = ()
 
         for line in hw_params.split("\n"):
             if line.startswith("FORMAT:"):
-                formats = [
-                    fmt for fmt in COMMON_FORMATS
+                formats = tuple(
+                    fmt for fmt in FORMATS
                     if fmt in line.strip("FORMAT: ").split(" ")
-                ]
+                )
 
             elif line.startswith("RATE:"):
-                rates = [
+                rates = tuple(
                     rate for rate in RATES
-                    if rate in [
+                    if rate in tuple(
                         try_get_int(rate) for rate in line.strip("RATE:[ ]").split(" ")
-                    ]
-                ]
+                    )
+                )
 
             elif line.startswith("CHANNELS:"):
-                channels = [
-                    channel for channel in CHANNEL_COUNTS
-                    if channel in [
+                channels = tuple(
+                    channel for channel in CHANNELS
+                    if channel in tuple(
                         try_get_int(channel) for channel in line.strip("CHANNELS:[ ]").split(" ")
-                    ]
-                ]
+                    )
+                )
 
         return formats, rates, channels
 
     def _choose_channel_count(self, channels):
         if len(channels) > 1:
             c_range = range(channels[0], channels[-1] + 1)
-            channels = [c for c in CHANNEL_COUNTS if c in c_range]
+            channels = tuple(c for c in CHANNELS if c in c_range)
             title = "Channel Counts"
-            width = max(len(max([str(c) for c in channels], key=len)), len(title))
+            width = max(len(max(tuple(str(c) for c in channels), key=len)), len(title))
             table = Table(title, width)
             table.add(channels)
 
@@ -694,6 +692,8 @@ class AsoundConfWizard:
                 "the mapping manually."
             )
 
+            Stylize.comment("Let me know if it works or not!!!")
+
             if 2 in channels:
                 num = channels.index(2) + 1
                 self._best_choice(num, 2)
@@ -712,6 +712,7 @@ class AsoundConfWizard:
 
             if channel_count != 2:
                 Stylize.warn("Channel Up/Down Mixing is considered experimental.")
+                Stylize.warn("Let me know if it works or not!!!")
 
             Stylize.comment(
                 f"[{channel_count}] is the only Channel Count so that's what we'll use…"
@@ -731,9 +732,19 @@ class AsoundConfWizard:
                 "depth format that your device supports."
             )
 
-            Stylize.comment("U8 should be avoided if possible as it is a low fidelity Format.")
+            Stylize.comment(
+                "The higher the bit depth the lower the quantization noise of lossy codecs, "
+                "and the more the headroom of digital volume controls."
+            )
 
-            for fmt in reversed(COMMON_FORMATS):
+            Stylize.comment("It has no negative effect on lossless codecs.")
+
+            if "U8" in formats:
+                Stylize.comment(
+                    "[U8] should be avoided if possible as it is a low fidelity Format."
+                )
+
+            for fmt in reversed(FORMATS):
                 if fmt in formats:
                     num = formats.index(fmt) + 1
                     self._best_choice(num, fmt)
@@ -752,17 +763,17 @@ class AsoundConfWizard:
             fmt = formats[0]
             Stylize.comment(f"[{fmt}] is the only Format so that's what we'll use…")
 
-        if fmt == "U8":
-            Stylize.warn(f"[{fmt}] is a low fidelity Format.")
+            if fmt == "U8":
+                Stylize.warn(f"[{fmt}] is a low fidelity Format.")
 
         return fmt
 
     def _choose_rate(self, rates):
         if len(rates) > 1:
             r_range = range(rates[0], rates[-1] + 1)
-            rates = [r for r in RATES if r in r_range]
+            rates = tuple(r for r in RATES if r in r_range)
             title = "Sampling Rates"
-            width = max(len(max([str(r) for r in rates], key=len)), len(title))
+            width = max(len(max(tuple(str(r) for r in rates), key=len)), len(title))
             table = Table(title, width)
             table.add(rates)
             Stylize.comment("Standard CD quality is 44100.")
@@ -843,14 +854,23 @@ class AsoundConfWizard:
             )
 
             Stylize.comment(
-                "Generally speaking though higher quality = higher CPU usage "
-                "which can be a consideration on low spec devices."
+                "Some people can, some people can't, and some people probably just think they can?"
             )
 
             Stylize.comment(
-                "However, if the audio source matches the Sampling Rate of the "
-                "Output the Converter is bypassed, and will have no performance "
-                "or sound quality impact."
+                "Higher quality tends to equal higher CPU usage with diminishing returns "
+                "the higher up you go, which can be a consideration on low spec devices."
+            )
+
+            Stylize.comment(
+                'It is generally advised to pick a "medium" quality setting, as they tend to '
+                'be "the best bang for your buck" quality vs CPU usage wise.'
+            )
+
+            Stylize.comment(
+                "However, all that being said, if the audio source matches the "
+                "Sampling Rate of the Output the Converter is bypassed, and "
+                "will have no performance or sound quality impact either way."
             )
 
             for converter in BEST_CONVERTERS:
@@ -955,16 +975,16 @@ class AsoundConfWizard:
             title = "Your Choices"
 
             choices = [
-                ["Output", pcm],
-                ["Format", fmt],
-                ["Sampling Rate", str(rate)],
-                ["Channel Count", str(channel_count)],
+                ("Output", pcm),
+                ("Format", fmt),
+                ("Sampling Rate", str(rate)),
+                ("Channel Count", str(channel_count)),
             ]
 
             if converter:
-                choices.append(["Sample Rate Converter", converter])
+                choices.append(("Sample Rate Converter", converter))
 
-            width = max(len(max(["".join(c) for c in choices], key=len)), len(title))
+            width = max(len(max(tuple("".join(c) for c in choices), key=len)), len(title))
             table = Table(title, width)
             table.add_choices(choices)
 
@@ -1048,7 +1068,7 @@ class AsoundConfWizard:
         if channel_count == 1:
             route_policy = "average"
         elif channel_count == 2:
-            route_policy = "default"
+            route_policy = "copy"
         else:
             route_policy = "duplicate"
 
@@ -1138,11 +1158,11 @@ class AsoundConfWizard:
 
     @staticmethod
     def _conflict_check():
-        conflicts = [
+        conflicts = tuple(
             name for program, name in
             (("pulseaudio", "PulseAudio"), ("pipewire", "PipeWire"), ("jackd", "JACK Audio"))
             if which(program)
-        ]
+        )
 
         if conflicts:
             raise AudioSoftwareConflictError(" / ".join(conflicts))
@@ -1192,23 +1212,23 @@ class AsoundConfWizard:
     @staticmethod
     def _get_sample_rate_converters():
         while True:
-            converters = []
+            converters = ()
             base_path = glob(CONVERTERS_FILE_PATH)
 
             if base_path:
                 base_path = base_path[0]
                 search_term = f"{base_path}{CONVERTERS_SEARCH_SUFFIX}"
 
-                converters = [
+                converters = tuple(
                     f.replace(search_term, "").replace(".so", "")
                     for f in glob(f"{search_term}*")
-                ]
+                )
 
-                ordered_converters = [
+                ordered_converters = tuple(
                     i for i in COMMON_RATE_CONVERTERS if i in converters
-                ]
+                )
 
-                leftovers = [i for i in converters if i not in ordered_converters]
+                leftovers = tuple(i for i in converters if i not in ordered_converters)
 
                 converters = ordered_converters + leftovers
 
