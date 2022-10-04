@@ -38,11 +38,13 @@ from os import rename as os_rename
 from os import remove as os_remove
 from time import time as time_time
 from tempfile import gettempdir
+from dataclasses import dataclass
 
 ASOUND_FILE_PATH = "/etc/asound.conf"
 DUMMY_FILE_PATH = f"/etc/foobarbaz{int(time_time())}"
 BACKUP_FILE_PATH = f"/etc/asound.conf.bak{int(time_time())}"
 SILENCE_FILE_PATH = f"{gettempdir()}/silence{int(time_time())}.wav"
+MIC_CHECK_FILE_PATH = f"{gettempdir()}/mic-check{int(time_time())}.wav"
 CONVERTERS_FILE_PATH = "/usr/lib/*/alsa-lib"
 CONVERTERS_SEARCH_SUFFIX = "/libasound_module_rate_"
 ALSA_PLUGINS = "libasound2-plugins"
@@ -140,16 +142,6 @@ RATES = (
     384000,
 )
 
-STANDARD_RATES = (
-    44100,
-    48000,
-    88200,
-    96000,
-    176400,
-    192000,
-    352800,
-)
-
 COMMON_RATE_CONVERTERS = (
     "speexrate",
     "speexrate_medium",
@@ -166,12 +158,6 @@ COMMON_RATE_CONVERTERS = (
     "samplerate_best",
 )
 
-BEST_CONVERTERS = (
-    "speexrate_medium",
-    "lavrate",
-    "samplerate",
-)
-
 CHANNELS = (
     1,
     2,
@@ -180,23 +166,77 @@ CHANNELS = (
     8,
 )
 
-ASOUND_TEMPLATE = '''
-{rate_converter}
-defaults.pcm.dmix.rate {rate}
-defaults.pcm.dmix.format {fmt}
-defaults.pcm.dmix.channels {channels}
-
-pcm.!default {{
-    type plug
-    route_policy {route_policy}
-    slave.pcm "{pcm}"
+# dmix and dsnoop are basically mirror images of each other.
+# playback_capture, dmix_dsnoop, card, device, channels, rate, format
+# See:
+# https://github.com/alsa-project/alsa-lib/blob/master/src/conf/pcm/dmix.conf
+# https://github.com/alsa-project/alsa-lib/blob/master/src/conf/pcm/dsnoop.conf
+PLAYBACK_CAPTURE_TEMPLATE = """
+pcm.{playback_capture} {{
+    type {dmix_dsnoop}
+    ipc_key {{
+        @func refer
+        name defaults.pcm.ipc_key
+    }}
+    ipc_gid {{
+        @func refer
+        name defaults.pcm.ipc_gid
+    }}
+    ipc_perm {{
+        @func refer
+        name defaults.pcm.ipc_perm
+    }}
+    tstamp_type {{
+        @func refer
+        name defaults.pcm.tstamp_type
+    }}
+    slave {{
+        pcm {{
+            type hw
+            card {card}
+            device {device}
+        }}
+        channels {channels}
+        rate {rate}
+        format {fmt}
+    }}
 }}
+"""
 
+# input_converter, input_pcm,
+# output_route_policy, output_converter, output_pcm
+# See:
+# https://github.com/alsa-project/alsa-lib/blob/master/src/pcm/pcm_asym.c#L20
+ASYM_DEFAULT_TEMPLATE = """
+pcm.!default {{
+    type asym
+    capture.pcm {{
+        type plug
+        {input_converter}
+        slave.pcm {input_pcm}
+    }}
+    playback.pcm {{
+        type plug
+        route_policy {output_route_policy}
+        {output_converter}
+        slave.pcm {output_pcm}
+    }}
+}}
+"""
+# output_rate, output_fmt, output_channels
+HDMI_TEMPLATE = """
+defaults.pcm.dmix.rate {output_rate}
+defaults.pcm.dmix.format {output_fmt}
+defaults.pcm.dmix.channels {output_channels}
+"""
+
+# output_card
+DEFAULT_CONTROL_TEMPLATE = """
 ctl.!default {{
     type hw
-    card {card}
+    card {output_card}
 }}
-'''
+"""
 
 class AsoundConfWizardError(Exception):
     """Asound Conf Wizard Error"""
@@ -231,7 +271,7 @@ class MissingDependenciesError(AsoundConfWizardError):
     """Missing Dependencies Error"""
     def __init__(
         self,
-        message="This script requires that aplay and speaker-test be installed",
+        message="This script requires that aplay, arecord and speaker-test be installed",
     ):
         self.message = message
         super().__init__(self.message)
@@ -242,9 +282,17 @@ class RenamingError(AsoundConfWizardError):
         self.message = f"{message}: {error}"
         super().__init__(self.message)
 
-class NoHwPcmError(AsoundConfWizardError):
-    """No Hw Pcm Error"""
-    def __init__(self, error, message="No available hw PCM"):
+class NoOuputPcmError(AsoundConfWizardError):
+    """No Output Pcm Error"""
+    def __init__(self, error, message="No available Output PCM"):
+        if error:
+            message = f"{message}: {error}"
+        self.message = message
+        super().__init__(self.message)
+
+class NoInputPcmError(AsoundConfWizardError):
+    """No Input Pcm Error"""
+    def __init__(self, error, message="No available Input PCM"):
         if error:
             message = f"{message}: {error}"
         self.message = message
@@ -268,13 +316,23 @@ class AsoundConfWriteError(AsoundConfWizardError):
         self.message = f"{message}: {error}"
         super().__init__(self.message)
 
+@dataclass(frozen=True)
+class InputOuput:
+    """Input Ouput data class"""
+    pcm: str
+    card: str
+    device: int
+    fmt: str
+    rate: int
+    converter: str or None
+    channel_count: int
+
 class Stylize:
     """Stylize Text"""
     _BOLD = "\033[1m"
     _CYAN = "\033[36m"
     _BOLD_YELLOW = "\033[1;33m"
     _BOLD_RED = "\033[1;31m"
-    _BOLD_GREEN = "\033[1;32m"
     _RESET = "\033[00m"
 
     _WRAPPER = TextWrapper(initial_indent="\n\t", subsequent_indent="\t")
@@ -322,11 +380,6 @@ class Stylize:
         """Makes the comment text cyan"""
         print(Stylize._WRAPPER.fill(f"{Stylize._CYAN}{text}{Stylize._RESET}"))
 
-    @staticmethod
-    def suggestion(text):
-        """Makes the suggestion text bold green"""
-        print(f"\n\t{Stylize._BOLD_GREEN}{text}{Stylize._RESET}")
-
 class Table:
     """Basic Unicode Table"""
     def __init__(self, title, width, padding=8):
@@ -367,8 +420,8 @@ class Table:
             num = i + 1
             center_pad = (self._width - len(key)) + int(self._padding / 2)
 
-            row = (
-                f"{{:<{pad}}}{{:>{pad}}}{{:>{center_pad}}}{{:>{pad}}}".format("┃", key, value, "┃")
+            row = f"{{:<{pad}}}{{:>{pad}}}{{:>{center_pad}}}{{:>{pad}}}".format(
+                "┃", key, value, "┃"
             )
 
             self._table.append(row)
@@ -439,9 +492,12 @@ class Table:
 class AsoundConfWizard:
     """Generate /etc/asound.conf based on user choices"""
     def __init__(self):
-        self._get_pcm_names_cmd = []
-        self._hw_params_cmd_template = ""
+        self._get_output_pcm_names_cmd = ()
+        self._get_input_pcm_names_cmd = ()
+        self._output_hw_params_cmd_template = ""
+        self._input_hw_params_cmd_template = ""
         self._speaker_test_cmd_template = ""
+        self._mic_test_cmd_template = ""
 
     def run(self):
         """Run the Wizard"""
@@ -459,26 +515,34 @@ class AsoundConfWizard:
 
     def _build_cmds(self):
         aplay = which("aplay")
+        arecord = which("arecord")
         speaker_test = which("speaker-test")
 
-        if aplay and speaker_test:
-            self._get_pcm_names_cmd = [aplay, "-L"]
+        if aplay and arecord and speaker_test:
+            self._get_output_pcm_names_cmd = (aplay, "-L")
+            self._get_input_pcm_names_cmd = (arecord, "-L")
 
-            self._hw_params_cmd_template = (
-                f"{aplay} "
-                f"-D{{}} --dump-hw-params {SILENCE_FILE_PATH}"
+            self._output_hw_params_cmd_template = (
+                f"{aplay} -D{{}} --dump-hw-params {SILENCE_FILE_PATH}"
+            )
+
+            self._input_hw_params_cmd_template = (
+                f"{arecord} -D{{}} -d1 --dump-hw-params {MIC_CHECK_FILE_PATH}"
             )
 
             self._speaker_test_cmd_template = (
-                f"{speaker_test} "
-                "-D{} -F{} -r{} -l1 -c{} -S25"
+                f"{speaker_test} -D{{}} -F{{}} -r{{}} -l1 -c{{}} -S25"
+            )
+
+            self._mic_test_cmd_template = (
+                f"{arecord} -D{{}} -f{{}} -r{{}} -c{{}} " f"-d1 {MIC_CHECK_FILE_PATH}"
             )
 
         elif not ALSA_UTILS_INSTALL_CMD:
             raise MissingDependenciesError()
         else:
             Stylize.comment(
-                "This script requires aplay and speaker-test "
+                "This script requires aplay, arecord and speaker-test "
                 f"which are contained in the {ALSA_UTILS} package"
             )
 
@@ -508,30 +572,41 @@ class AsoundConfWizard:
                 raise InstallError(ALSA_UTILS, err.stderr.decode("utf-8")) from err
             else:
                 aplay = which("aplay")
+                arecord = which("arecord")
                 speaker_test = which("speaker-test")
 
-                if aplay and speaker_test:
+                if aplay and arecord and speaker_test:
                     Stylize.comment(f"{ALSA_UTILS} Installed Successfully")
-                    self._get_pcm_names_cmd = [aplay, "-L"]
+                    self._get_output_pcm_names_cmd = (aplay, "-L")
+                    self._get_input_pcm_names_cmd = (arecord, "-L")
 
-                    self._hw_params_cmd_template = (
-                        f"{aplay} "
-                        f"-D{{}} --dump-hw-params {SILENCE_FILE_PATH}"
+                    self._output_hw_params_cmd_template = (
+                        f"{aplay} -D{{}} --dump-hw-params {SILENCE_FILE_PATH}"
+                    )
+
+                    self._input_hw_params_cmd_template = (
+                        f"{arecord} "
+                        f"-D{{}} -d1 --dump-hw-params {MIC_CHECK_FILE_PATH}"
                     )
 
                     self._speaker_test_cmd_template = (
-                        f"{speaker_test} "
-                        "-D{} -F{} -r{} -l1 -c{} -S25"
+                        f"{speaker_test} -D{{}} -F{{}} -r{{}} -l1 -c{{}} -S25"
+                    )
+
+                    self._mic_test_cmd_template = (
+                        f"{arecord} "
+                        "-D{} -f{} -r{} -c{} "
+                        f"-d1 {MIC_CHECK_FILE_PATH}"
                     )
 
                 else:
                     raise MissingDependenciesError()
 
-    def _get_pcms(self):
+    def _get_output_pcms(self):
         try:
-            all_pcm_names = (
+            pcm_names = (
                 subprocess_run(
-                    self._get_pcm_names_cmd,
+                    self._get_output_pcm_names_cmd,
                     check=True,
                     stdout=PIPE,
                     stderr=PIPE,
@@ -540,39 +615,63 @@ class AsoundConfWizard:
                 .split("\n")
             )
         except CalledProcessError as err:
-            raise NoHwPcmError(err.stderr.decode("utf-8")) from err
+            raise NoOuputPcmError(err.stderr.decode("utf-8")) from err
 
         pcms = tuple(
-            (n.strip(), all_pcm_names[i + 1].strip())
-            for i, n in enumerate(all_pcm_names)
-            if n.startswith("hdmi:") or
-            (n.startswith("hw:") and not n.replace("hw:", "hdmi:") in all_pcm_names)
+            (n.strip(), pcm_names[i + 1].strip())
+            for i, n in enumerate(pcm_names)
+            if n.startswith("hdmi:")
+            or (n.startswith("hw:") and not n.replace("hw:", "hdmi:") in pcm_names)
         )
 
         if not pcms:
-            raise NoHwPcmError(None)
+            raise NoOuputPcmError(None)
 
         return pcms
 
-    def _choose_pcm(self):
+    def _get_input_pcms(self):
         try:
-            pcms = self._get_pcms()
-        except NoHwPcmError as err:
-            raise err
+            pcm_names = (
+                subprocess_run(
+                    self._get_input_pcm_names_cmd,
+                    check=True,
+                    stdout=PIPE,
+                    stderr=PIPE,
+                )
+                .stdout.decode("utf-8")
+                .split("\n")
+            )
+        except CalledProcessError as err:
+            raise NoInputPcmError(err.stderr.decode("utf-8")) from err
+
+        pcms = tuple(
+            (n.strip(), pcm_names[i + 1].strip())
+            for i, n in enumerate(pcm_names)
+            if n.startswith("hw:")
+        )
+
+        if not pcms:
+            raise NoInputPcmError(None)
+
+        return pcms
+
+    def _choose_pcm(self, pcm_type):
+        if pcm_type == "Input":
+            try:
+                pcms = self._get_input_pcms()
+            except NoInputPcmError as err:
+                raise err
+        else:
+            try:
+                pcms = self._get_output_pcms()
+            except NoOuputPcmError as err:
+                raise err
 
         if len(pcms) > 1:
-            title = "Outputs"
-
-            width = max(
-                len(max(tuple(n for s in pcms for n in s), key=len)),
-                len(title),
-            )
-
-            table = Table(title, width)
-            table.add_pcms(pcms)
+            self._show_pcm_table(f"{pcm_type}s", pcms)
 
             while True:
-                choice = Stylize.input("Please choose an Output: ")
+                choice = Stylize.input(f"Please choose an {pcm_type}: ")
                 try:
                     pcm = pcms[int(choice) - 1][0]
                 except (ValueError, IndexError):
@@ -582,61 +681,75 @@ class AsoundConfWizard:
                     break
         else:
             pcm = pcms[0][0]
-            Stylize.comment(f"[{pcm}] is the only available Output so that's what we'll use…")
+            Stylize.comment(
+                f"[{pcm}] is the only available {pcm_type} so that's what we'll use…"
+            )
 
         return pcm
 
-    def _get_hw_params(self, pcm):
-        cmd = self._hw_params_cmd_template.format(pcm).split(" ")
-
-        try:
-            # aplay will not dump-hw-params without at least
-            # trying to read a file it does not matter if the
-            # device can actually play it or not so we just write
-            # a 1 sec mono wav to tmp and delete it after aplay
-            # tries to read it.
-            with wave.open(SILENCE_FILE_PATH, mode="wb") as silence:
-                silence.setnchannels(1)
-                silence.setsampwidth(2)
-                silence.setframerate(44100)
-                silence.writeframes(bytearray(44100))
-
-            hw_params = subprocess_run(
-                cmd,
-                check=False,
-                stderr=STDOUT,
-                stdout=PIPE,
-            ).stdout.decode("utf-8")
-
-            os_remove(SILENCE_FILE_PATH)
-
-        except Exception as err:
-            raise PcmOpenError(err) from err
-
-        if "audio open error:" in hw_params:
-            err = hw_params.split(":")[-1].strip().title()
-            raise PcmOpenError(err)
-
-        return hw_params
-
-    def _get_formats_rates_channels(self, pcm):
+    def _get_params(self, pcm, pcm_type):
         def try_get_int(thing):
             try:
                 return int(thing)
             except ValueError:
                 return None
 
-        Stylize.comment("Outputs must not in use while querying their Hardware Parameters.")
-        Stylize.comment("Please make sure the Output you chose is not in use before continuing.")
+        Stylize.comment(
+            f"{pcm_type}s must not be in use while querying their Hardware Parameters."
+        )
+
+        Stylize.comment(
+            f"Please make sure the {pcm_type} you chose is not in use before continuing."
+        )
+
         enter = Stylize.input("Please press Enter to continue")
 
         if enter != "":
             self.quit()
 
         try:
-            hw_params = self._get_hw_params(pcm)
-        except PcmOpenError as err:
-            raise err
+            if pcm_type == "Input":
+                cmd = self._input_hw_params_cmd_template.format(pcm).split(" ")
+
+                hw_params = subprocess_run(
+                    cmd,
+                    check=False,
+                    stderr=STDOUT,
+                    stdout=PIPE,
+                ).stdout.decode("utf-8")
+
+                os_remove(MIC_CHECK_FILE_PATH)
+            else:
+                cmd = self._output_hw_params_cmd_template.format(pcm).split(" ")
+
+                # aplay will not dump-hw-params without at least
+                # trying to read a file it does not matter if the
+                # device can actually play it or not so we just write
+                # a 1 sec mono wav to tmp and delete it after aplay
+                # tries to read it.
+                with wave.open(SILENCE_FILE_PATH, mode="wb") as silence:
+                    silence.setnchannels(1)
+                    silence.setsampwidth(2)
+                    silence.setframerate(44100)
+                    silence.writeframes(bytearray(44100))
+
+                hw_params = subprocess_run(
+                    cmd,
+                    check=False,
+                    stderr=STDOUT,
+                    stdout=PIPE,
+                ).stdout.decode("utf-8")
+
+                os_remove(SILENCE_FILE_PATH)
+
+        except FileNotFoundError:
+            pass
+        except Exception as err:
+            raise PcmOpenError(err) from err
+
+        if "audio open error:" in hw_params:
+            err = hw_params.split(":")[-1].strip().title()
+            raise PcmOpenError(err)
 
         formats = ()
         rates = ()
@@ -645,61 +758,41 @@ class AsoundConfWizard:
         for line in hw_params.split("\n"):
             if line.startswith("FORMAT:"):
                 formats = tuple(
-                    fmt for fmt in FORMATS
-                    if fmt in line.strip("FORMAT: ").split(" ")
+                    fmt for fmt in FORMATS if fmt in line.strip("FORMAT: ").split(" ")
                 )
 
             elif line.startswith("RATE:"):
                 rates = tuple(
-                    rate for rate in RATES
-                    if rate in tuple(
+                    rate
+                    for rate in RATES
+                    if rate
+                    in tuple(
                         try_get_int(rate) for rate in line.strip("RATE:[ ]").split(" ")
                     )
                 )
 
             elif line.startswith("CHANNELS:"):
                 channels = tuple(
-                    channel for channel in CHANNELS
-                    if channel in tuple(
-                        try_get_int(channel) for channel in line.strip("CHANNELS:[ ]").split(" ")
+                    channel
+                    for channel in CHANNELS
+                    if channel
+                    in tuple(
+                        try_get_int(channel)
+                        for channel in line.strip("CHANNELS:[ ]").split(" ")
                     )
                 )
 
         return formats, rates, channels
 
-    def _choose_channel_count(self, channels):
+    def _choose_channel_count(self, channels, pcm_type):
         if len(channels) > 1:
             c_range = range(channels[0], channels[-1] + 1)
             channels = tuple(c for c in CHANNELS if c in c_range)
-            title = "Channel Counts"
-            width = max(len(max(tuple(str(c) for c in channels), key=len)), len(title))
-            table = Table(title, width)
-            table.add(channels)
 
-            Stylize.comment("Channel Up/Down Mixing is considered experimental.")
-
-            Stylize.comment(
-                "Channel Up Mixing is done with channel duplication "
-                "without any effects or high/low pass filtering."
-            )
-
-            Stylize.comment("It is not true surround sound.")
-            Stylize.comment("Channel Down Mixing is done with channel averaging.")
-
-            Stylize.comment(
-                "Some Devices do not map their channels correctly. "
-                f"If so you may need to edit {ASOUND_FILE_PATH} and correct "
-                "the mapping manually."
-            )
-
-            Stylize.comment("Let me know if it works or not!!!")
-
-            if 2 in channels:
-                num = channels.index(2) + 1
-                self._best_choice(num, 2)
+            self._show_channel_count_table(f"{pcm_type} Channel Counts", channels)
 
             while True:
-                choice = Stylize.input("Please choose a Channel Count: ")
+                choice = Stylize.input(f"Please choose an {pcm_type} Channel Count: ")
                 try:
                     channel_count = channels[int(choice) - 1]
                 except (ValueError, IndexError):
@@ -710,48 +803,18 @@ class AsoundConfWizard:
         else:
             channel_count = channels[0]
 
-            if channel_count != 2:
-                Stylize.warn("Channel Up/Down Mixing is considered experimental.")
-                Stylize.warn("Let me know if it works or not!!!")
-
             Stylize.comment(
-                f"[{channel_count}] is the only Channel Count so that's what we'll use…"
+                f"[{channel_count}] is the only {pcm_type} Channel Count so that's what we'll use…"
             )
 
         return channel_count
 
-    def _choose_format(self, formats):
+    def _choose_format(self, formats, pcm_type):
         if len(formats) > 1:
-            title = "Formats"
-            width = max(len(max(formats, key=len)), len(title))
-            table = Table(title, width)
-            table.add(formats)
-
-            Stylize.comment(
-                "It's generally advised to choose the highest bit "
-                "depth format that your device supports."
-            )
-
-            Stylize.comment(
-                "The higher the bit depth the lower the quantization noise of lossy codecs, "
-                "and the more the headroom of digital volume controls."
-            )
-
-            Stylize.comment("It has no negative effect on lossless codecs.")
-
-            if "U8" in formats:
-                Stylize.comment(
-                    "[U8] should be avoided if possible as it is a low fidelity Format."
-                )
-
-            for fmt in reversed(FORMATS):
-                if fmt in formats:
-                    num = formats.index(fmt) + 1
-                    self._best_choice(num, fmt)
-                    break
+            self._show_format_table(f"{pcm_type} Formats", formats)
 
             while True:
-                choice = Stylize.input("Please choose a Format: ")
+                choice = Stylize.input(f"Please choose an {pcm_type} Format: ")
                 try:
                     fmt = formats[int(choice) - 1]
                 except (ValueError, IndexError):
@@ -761,60 +824,21 @@ class AsoundConfWizard:
                     break
         else:
             fmt = formats[0]
-            Stylize.comment(f"[{fmt}] is the only Format so that's what we'll use…")
-
-            if fmt == "U8":
-                Stylize.warn(f"[{fmt}] is a low fidelity Format.")
+            Stylize.comment(
+                f"[{fmt}] is the only {pcm_type} Format so that's what we'll use…"
+            )
 
         return fmt
 
-    def _choose_rate(self, rates):
+    def _choose_rate(self, rates, pcm_type):
         if len(rates) > 1:
             r_range = range(rates[0], rates[-1] + 1)
             rates = tuple(r for r in RATES if r in r_range)
-            title = "Sampling Rates"
-            width = max(len(max(tuple(str(r) for r in rates), key=len)), len(title))
-            table = Table(title, width)
-            table.add(rates)
-            Stylize.comment("Standard CD quality is 44100.")
 
-            Stylize.comment(
-                "An unnecessarily high sampling rate can lead to high CPU usage, "
-                "degraded audio quality, and audio dropouts "
-                "and glitches on low spec devices."
-            )
-
-            Stylize.comment(
-                "Sample Rates outside of the Common Sampling Rates of:"
-            )
-
-            Stylize.comment(STANDARD_RATES)
-
-            Stylize.comment(
-                "Should probably be avoided if possible."
-            )
-
-            Stylize.comment(
-                "If you select an uncommon Sampling Rate you ABSOLUTELY should test it."
-            )
-
-            choice = None
-            num = None
-
-            for i, rate in enumerate(rates):
-                # Prefer integer multiples of 44100
-                if rate % 44100 == 0:
-                    num = i + 1
-                    choice = rate
-                    break
-                if rate % 48000 == 0:
-                    num = i + 1
-                    choice = rate
-
-            self._best_choice(num or len(rates), choice or rates[-1])
+            self._show_rate_table(f"{pcm_type} Sampling Rates", rates)
 
             while True:
-                choice = Stylize.input("Please choose a Sampling Rate: ")
+                choice = Stylize.input(f"Please choose an {pcm_type} Sampling Rate: ")
                 try:
                     rate = rates[int(choice) - 1]
                 except (ValueError, IndexError):
@@ -824,63 +848,22 @@ class AsoundConfWizard:
                     break
         else:
             rate = rates[0]
-            Stylize.comment(f"[{rate}] is the only Sampling Rate so that's what we'll use…")
 
-            if rate not in STANDARD_RATES:
-                Stylize.warn(
-                    f"[{rate}] is an uncommon Sampling Rate, you ABSOLUTELY should test it."
-                )
-
-            if rate > 88200:
-                Stylize.warn(
-                    "High sampling rates can lead to high CPU usage, degraded "
-                    "audio quality, and audio dropouts and "
-                    "glitches on low spec devices."
-                )
+            Stylize.comment(
+                f"[{rate}] is the only {pcm_type} Sampling Rate so that's what we'll use…"
+            )
 
         return rate
 
-    def _choose_sample_rate_converter(self):
-        converters = self._get_sample_rate_converters()
+    def _choose_sample_rate_converter(self, pcm_type, ask):
+        converters = self._get_sample_rate_converters(ask)
         if len(converters) > 1:
-            title = "Sample Rate Converters"
-            width = max(len(max(converters, key=len)), len(title))
-            table = Table(title, width)
-            table.add(converters)
-
-            Stylize.comment(
-                "Sample Rate Converters are very subjective as far as if you can "
-                "actually tell the difference audibly."
-            )
-
-            Stylize.comment(
-                "Some people can, some people can't, and some people probably just think they can?"
-            )
-
-            Stylize.comment(
-                "Higher quality tends to equal higher CPU usage with diminishing returns "
-                "the higher up you go, which can be a consideration on low spec devices."
-            )
-
-            Stylize.comment(
-                'It is generally advised to pick a "medium" quality setting, as they tend to '
-                'be "the best bang for your buck" quality vs CPU usage wise.'
-            )
-
-            Stylize.comment(
-                "However, all that being said, if the audio source matches the "
-                "Sampling Rate of the Output the Converter is bypassed, and "
-                "will have no performance or sound quality impact either way."
-            )
-
-            for converter in BEST_CONVERTERS:
-                if converter in converters:
-                    num = converters.index(converter) + 1
-                    self._best_choice(num, converter)
-                    break
+            self._show_converter_table(f"{pcm_type} Rate Converters", converters)
 
             while True:
-                choice = Stylize.input("Please choose a Sample Rate Converter: ")
+                choice = Stylize.input(
+                    f"Please choose an {pcm_type} Sample Rate Converter: "
+                )
                 try:
                     converter = converters[int(choice) - 1]
                 except (ValueError, IndexError):
@@ -893,39 +876,41 @@ class AsoundConfWizard:
                 converter = converters[0]
 
                 Stylize.comment(
-                    f"[{converter}] is the only Sample Rate Converter so that's what we'll use…"
+                    f"[{converter}] is the only {pcm_type} "
+                    "Sample Rate Converter so that's what we'll use…"
                 )
             else:
                 converter = None
 
         return converter
 
-    def _get_choices(self):
+    def _get_choices(self, pcm_type, ask):
         while True:
             try:
-                pcm = self._choose_pcm()
+                pcm = self._choose_pcm(pcm_type)
 
-            except NoHwPcmError as err:
+            except (NoOuputPcmError, NoInputPcmError) as err:
                 raise err
             try:
-                formats, rates, channels = self._get_formats_rates_channels(pcm)
+                formats, rates, channels = self._get_params(pcm, pcm_type)
 
             except PcmOpenError as err:
                 Stylize.warn(err)
                 if "busy" in err.message:
                     Stylize.warn(
-                        "Please make sure the Output you chose is not in use and try again."
+                        f"Please make sure the {pcm_type} you chose is not in use and try again."
                     )
                 elif "No Such Device" in err.message:
                     Stylize.warn(
-                        "Digital Outputs may need to be plugged into something to be functional."
+                        f"Digital {pcm_type}s may need to be plugged into "
+                        "something to be functional."
                     )
 
                     Stylize.warn(
-                        "If so please connect the Output to something and try again."
+                        f"If so please connect the {pcm_type} to something and try again."
                     )
 
-                    Stylize.warn("Otherwise please choose a different Output.")
+                    Stylize.warn(f"Otherwise please choose a different {pcm_type}.")
 
                 continue
 
@@ -935,61 +920,59 @@ class AsoundConfWizard:
                 )
 
                 Stylize.warn(
-                    "The Output you chose may not support any common formats and rates?"
+                    f"The {pcm_type} you chose may not support any common formats and rates?"
                 )
 
                 Stylize.warn(
-                    "Digital Outputs may need to be plugged into something to be functional."
+                    f"Digital {pcm_type}s may need to be plugged into something to be functional."
                 )
 
                 Stylize.warn(
-                    "If so please connect the Output to something and try again."
+                    f"If so please connect the {pcm_type} to something and try again."
                 )
 
-                Stylize.warn("Otherwise please choose a different Output.")
+                Stylize.warn(f"Otherwise please choose a different {pcm_type}.")
                 continue
 
-            fmt = self._choose_format(formats)
-            rate = self._choose_rate(rates)
-            channel_count = self._choose_channel_count(channels)
-            converter = self._choose_sample_rate_converter()
-            card = self._pcm_to_card(pcm)
+            fmt = self._choose_format(formats, pcm_type)
+            rate = self._choose_rate(rates, pcm_type)
+            channel_count = self._choose_channel_count(channels, pcm_type)
+            converter = self._choose_sample_rate_converter(pcm_type, ask)
+            card, device = self._pcm_to_card_and_device(pcm)
 
-            return pcm, card, fmt, rate, converter, channel_count
+            return InputOuput(pcm, card, device, fmt, rate, converter, channel_count)
 
-    def _test_choices(self):
+    def _test_output_choices(self):
         while True:
-            pcm, card, fmt, rate, converter, channel_count = self._get_choices()
+            output_choices = self._get_choices("Output", True)
 
-            if card == "vc4hdmi":
+            if output_choices.card == "vc4hdmi":
                 Stylize.warn(
-                    f"[{card}] does not support software mixing. Only one application "
+                    "[vc4hdmi] does not support software mixing. Only one application "
                     "will be able to use it at a time."
                 )
 
-                confirm = Stylize.input('Please enter "Y" if you would like to use it anyway: ')
+                confirm = Stylize.input(
+                    'Please enter "Y" if you would like to use it anyway: '
+                )
 
                 if confirm.lower() != "y":
                     continue
 
-            title = "Your Choices"
-
             choices = [
-                ("Output", pcm),
-                ("Format", fmt),
-                ("Sampling Rate", str(rate)),
-                ("Channel Count", str(channel_count)),
+                ("Output", output_choices.pcm),
+                ("Format", output_choices.fmt),
+                ("Sampling Rate", str(output_choices.rate)),
+                ("Channel Count", str(output_choices.channel_count)),
             ]
 
-            if converter:
-                choices.append(("Sample Rate Converter", converter))
+            if output_choices.converter:
+                choices.append(("Sample Rate Converter", output_choices.converter))
 
-            width = max(len(max(tuple("".join(c) for c in choices), key=len)), len(title))
-            table = Table(title, width)
-            table.add_choices(choices)
+            self._show_choices_table("Your Output Choices", choices)
 
-            if fmt in NOT_SUPPORTED_BY_SPEAKER_TEST:
-                return pcm, card, fmt, rate, converter, channel_count
+            if output_choices.fmt in NOT_SUPPORTED_BY_SPEAKER_TEST:
+                return output_choices
 
             Stylize.comment(
                 "Unless you are ABSOLUTELY certain your choices are correct you should test them."
@@ -1000,10 +983,10 @@ class AsoundConfWizard:
             )
 
             if confirm.lower() != "y":
-                return pcm, card, fmt, rate, converter, channel_count
+                return output_choices
 
             Stylize.comment(
-                "Please make sure your device is connected, "
+                "Please make sure your Output is connected, "
                 "and set the volume to a comfortable level."
             )
 
@@ -1018,10 +1001,10 @@ class AsoundConfWizard:
                 self.quit()
 
             cmd = self._speaker_test_cmd_template.format(
-                pcm,
-                fmt,
-                rate,
-                channel_count,
+                output_choices.pcm,
+                output_choices.fmt,
+                output_choices.rate,
+                output_choices.channel_count,
             ).split(" ")
 
             try:
@@ -1033,7 +1016,7 @@ class AsoundConfWizard:
                 )
 
             except CalledProcessError as err:
-                Stylize.warn(f"The speaker test Failed: {err.stderr.decode('utf-8')}")
+                Stylize.warn(f"The Speaker Test Failed: {err.stderr.decode('utf-8')}")
 
                 Stylize.warn(
                     "Please try again with a different Format, "
@@ -1042,45 +1025,188 @@ class AsoundConfWizard:
 
                 continue
 
-            confirm = Stylize.input(
-                'Please enter "Y" if you heard the test tones: '
-            )
+            confirm = Stylize.input('Please enter "Y" if you heard the test tones: ')
 
             if confirm.lower() == "y":
-                return pcm, card, fmt, rate, converter, channel_count
+                return output_choices
 
-            Stylize.warn("Please make sure you're connected to the correct Output and try again.")
+            Stylize.warn(
+                "Please make sure you're connected to the correct Output and try again."
+            )
+
+    def _test_input_choices(self):
+        confirm = Stylize.input(
+            'Please enter "Y" if you would like to configure an Input also: '
+        )
+
+        if confirm.lower() != "y":
+            return None
+
+        while True:
+            try:
+                input_choices = self._get_choices("Input", False)
+            except NoInputPcmError as err:
+                Stylize.warn(err)
+                Stylize.warn("Please make sure the Input is connected.")
+                confirm = Stylize.input(
+                    'Please enter "Y" if you would like to try again: '
+                )
+
+                if confirm.lower() != "y":
+                    return None
+
+                continue
+
+            choices = [
+                ("Input", input_choices.pcm),
+                ("Format", input_choices.fmt),
+                ("Sampling Rate", str(input_choices.rate)),
+                ("Channel Count", str(input_choices.channel_count)),
+            ]
+
+            if input_choices.converter:
+                choices.append(("Sample Rate Converter", input_choices.converter))
+
+            self._show_choices_table("Your Input Choices", choices)
+
+            Stylize.comment(
+                "Unless you are ABSOLUTELY certain your choices are correct you should test them."
+            )
+
+            confirm = Stylize.input(
+                'Please enter "Y" if you would like to test your choices: '
+            )
+
+            if confirm.lower() != "y":
+                return input_choices
+
+            cmd = self._mic_test_cmd_template.format(
+                input_choices.pcm,
+                input_choices.fmt,
+                input_choices.rate,
+                input_choices.channel_count,
+            ).split(" ")
+
+            try:
+                subprocess_run(
+                    cmd,
+                    check=True,
+                    stderr=PIPE,
+                    stdout=DEVNULL,
+                )
+
+                os_remove(MIC_CHECK_FILE_PATH)
+
+            except FileNotFoundError:
+                pass
+            except CalledProcessError as err:
+                Stylize.warn(f"The Mic Test Failed: {err.stderr.decode('utf-8')}")
+
+                Stylize.warn(
+                    "Please try again with a different Format, "
+                    "Sampling Rate and Channel Count combination."
+                )
+
+                continue
+
+            return input_choices
 
     def _build_conf(self):
+        input_choices = None
         try:
-            pcm, card, fmt, rate, converter, channel_count = self._test_choices()
+            output_choices = self._test_output_choices()
         except AsoundConfWizardError as err:
             raise err
 
-        rate_converter = ""
+        try:
+            input_choices = self._test_input_choices()
+        except AsoundConfWizardError as err:
+            raise err
 
-        if converter:
-            rate_converter = f"defaults.pcm.rate_converter {converter}"
-
-        if card != "b1" and pcm.startswith("hw:"):
-            pcm = pcm.replace("hw:", "dmix:")
-
-        if channel_count == 1:
-            route_policy = "average"
-        elif channel_count == 2:
-            route_policy = "copy"
+        if output_choices.converter:
+            output_converter = f"rate_converter {output_choices.converter}"
         else:
-            route_policy = "duplicate"
+            output_converter = ""
 
-        file_data = ASOUND_TEMPLATE.format(
-            card=card,
-            pcm=pcm,
-            fmt=fmt,
-            rate=rate,
-            rate_converter=rate_converter,
-            channels=channel_count,
-            route_policy=route_policy,
-        ).strip("\n")
+        if input_choices and input_choices.converter:
+            input_converter = f"rate_converter {input_choices.converter}"
+        else:
+            input_converter = ""
+
+        config_blocks = []
+
+        if output_choices.card == "b1" or output_choices.pcm.startswith("hdmi:"):
+            output_pcm = output_choices.pcm
+
+            playback = HDMI_TEMPLATE.format(
+                output_rate=output_choices.rate,
+                output_fmt=output_choices.fmt,
+                output_channels=output_choices.channel_count,
+            ).strip()
+
+        else:
+            output_pcm = "playback"
+
+            playback = PLAYBACK_CAPTURE_TEMPLATE.format(
+                playback_capture="playback",
+                dmix_dsnoop="dmix",
+                card=output_choices.card,
+                device=output_choices.device,
+                channels=output_choices.channel_count,
+                rate=output_choices.rate,
+                fmt=output_choices.fmt,
+            ).strip()
+
+        config_blocks.append(playback)
+        config_blocks.append("\n")
+
+        if input_choices:
+            input_pcm = "capture"
+
+            capture = PLAYBACK_CAPTURE_TEMPLATE.format(
+                playback_capture="capture",
+                dmix_dsnoop="dsnoop",
+                card=input_choices.card,
+                device=input_choices.device,
+                channels=input_choices.channel_count,
+                rate=input_choices.rate,
+                fmt=input_choices.fmt,
+            ).strip()
+
+            config_blocks.append(capture)
+            config_blocks.append("\n")
+
+        else:
+            input_pcm = "null"
+
+        if output_choices.channel_count == 1:
+            output_route_policy = "average"
+        elif output_choices.channel_count == 2:
+            output_route_policy = "copy"
+        else:
+            output_route_policy = "duplicate"
+
+        asym_default = ASYM_DEFAULT_TEMPLATE.format(
+            input_converter=input_converter,
+            input_pcm=f'"{input_pcm}"',
+            output_route_policy=output_route_policy,
+            output_converter=output_converter,
+            output_pcm=f'"{output_pcm}"',
+        ).strip()
+
+        config_blocks.append(
+            "\n".join(tuple(l for l in asym_default.split("\n") if l.strip()))
+        )
+
+        config_blocks.append("\n")
+
+        control = DEFAULT_CONTROL_TEMPLATE.format(
+            output_card=output_choices.card
+        ).strip()
+
+        config_blocks.append(control)
+
+        file_data = "\n".join(config_blocks).strip()
 
         return file_data
 
@@ -1090,8 +1216,7 @@ class AsoundConfWizard:
             f"and create a new {ASOUND_FILE_PATH} based on your choices."
         )
 
-        Stylize.comment("This will create a system wide static audio configuration")
-        Stylize.comment("It does not take into account audio inputs at all.")
+        Stylize.comment("This will create a system wide static audio configuration.")
 
         Stylize.comment(
             "This script is intended to be used on headless Debian based systems "
@@ -1159,8 +1284,12 @@ class AsoundConfWizard:
     @staticmethod
     def _conflict_check():
         conflicts = tuple(
-            name for program, name in
-            (("pulseaudio", "PulseAudio"), ("pipewire", "PipeWire"), ("jackd", "JACK Audio"))
+            name
+            for program, name in (
+                ("pulseaudio", "PulseAudio"),
+                ("pipewire", "PipeWire"),
+                ("jackd", "JACK Audio"),
+            )
             if which(program)
         )
 
@@ -1191,26 +1320,63 @@ class AsoundConfWizard:
             Stylize.comment(f"{BACKUP_FILE_PATH}")
 
     @staticmethod
-    def _pcm_to_card(pcm):
+    def _pcm_to_card_and_device(pcm):
         try:
-            card = pcm.split(",")[0]
+            card, device = pcm.split(",")
             for sub in (("hw:CARD=", ""), ("hdmi:CARD=", "")):
                 card = card.replace(*sub).strip()
+            device = int(device.replace("DEV=", "").strip())
         except Exception as err:
             raise PcmParsingError(err) from err
 
-        return card
+        return card, device
+
+    @staticmethod
+    def _show_pcm_table(title, pcms):
+        width = max(
+            len(max(tuple(n for s in pcms for n in s), key=len)),
+            len(title),
+        )
+
+        table = Table(title, width)
+        table.add_pcms(pcms)
+
+    @staticmethod
+    def _show_rate_table(title, rates):
+        width = max(len(max(tuple(str(r) for r in rates), key=len)), len(title))
+        table = Table(title, width)
+        table.add(rates)
+
+    @staticmethod
+    def _show_format_table(title, formats):
+        width = max(len(max(formats, key=len)), len(title))
+        table = Table(title, width)
+        table.add(formats)
+
+    @staticmethod
+    def _show_channel_count_table(title, channels):
+        width = max(len(max(tuple(str(c) for c in channels), key=len)), len(title))
+        table = Table(title, width)
+        table.add(channels)
+
+    @staticmethod
+    def _show_converter_table(title, converters):
+        width = max(len(max(converters, key=len)), len(title))
+        table = Table(title, width)
+        table.add(converters)
+
+    @staticmethod
+    def _show_choices_table(title, choices):
+        width = max(len(max(tuple("".join(c) for c in choices), key=len)), len(title))
+        table = Table(title, width)
+        table.add_choices(choices)
 
     @staticmethod
     def _invalid_choice(len_choices):
         Stylize.warn(f"Please enter a Number: [1 - {len_choices}].")
 
     @staticmethod
-    def _best_choice(number, best_choice):
-        Stylize.suggestion(f"Number {number}: [{best_choice}], is probably the best choice.")
-
-    @staticmethod
-    def _get_sample_rate_converters():
+    def _get_sample_rate_converters(ask):
         while True:
             converters = ()
             base_path = glob(CONVERTERS_FILE_PATH)
@@ -1232,7 +1398,7 @@ class AsoundConfWizard:
 
                 converters = ordered_converters + leftovers
 
-            if converters or not UPDATE_CMD:
+            if converters or not UPDATE_CMD or not ask:
                 return converters
 
             confirm = Stylize.input(
