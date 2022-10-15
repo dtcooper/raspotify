@@ -30,7 +30,7 @@ jobs:
 
       -
         name: Download .deb file
-        uses: robinraju/release-downloader@v1.3
+        uses: robinraju/release-downloader@v1.5
         with:
           repository: dtcooper/raspotify
           tag: ${{ github.event.inputs.tag }}
