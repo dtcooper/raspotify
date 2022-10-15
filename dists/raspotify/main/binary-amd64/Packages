@@ -3,50 +3,19 @@ Version: 0.1.1
 Architecture: amd64
 Maintainer: Jason Gray <jasonlevigray3@gmail.com>
 Installed-Size: 618
-Depends: libasound2 (>= 1.2.4), libc6 (>= 2.31)
+Depends: libc6 (>= 2.31), libasound2 (>= 1.2.4)
 Priority: optional
 Section: base
 Filename: pool/main/a/asound-conf-wizard/asound-conf-wizard_0.1.1_amd64.deb
-Size: 220396
-SHA256: af2400f8a1645e6f535924157179de8ba9cb41d172e3249312679c20ee2cbd18
-SHA1: 3c52fb8918f796ee3cd816d7cb6f7a8ef6c481db
-MD5sum: db30011e427306a323f773f2a8da9330
+Size: 219672
+SHA256: ab56b46a0fd233e6a77851bbd1e9805d76d8b381ceb8ed9ce488cc255f337d5f
+SHA1: 9176d159f2af168e02dfbd969afa304fe22ea135
+MD5sum: bc2be4b3777f3d062ad56fb2a8ee8b82
 Description: An interactive utility that generates a very simple /etc/asound.conf.
- # asound-conf-wizard
- .
- asound-conf-wizard is an interactive utility that generates a very simple
- `/etc/asound.conf`.
- .
- It is designed to be used on headless sytems that run bare ALSA.
- .
- It will **NOT** run on systems that have PulseAudio, Jack Audio or PipeWire
- installed. **That is by design.**
- .
- You should use those to configure audio if they are installed.
- .
- ## Limitations
- .
- asound-conf-wizard is intentionally very simple and it generates a very basic
- `/etc/asound.conf` that (ideally) creates a default duplex device with full
- software conversion and mixing for both Playback and Capture. If your use case
- is more niche and/or complex then that asound-conf-wizard is not for you.
- .
- asound-conf-wizard suports `hw:`, `hdmi:` `iec958:` ALSA PCMs, `U8` and
- depending on the platform either the `LE` or `BE` varants of `S16`, `S24_3`,
- `S24` and `S32` formats and any number of channels and sampling rates.
- Basically it supports what `dmix` and `dsnoop` both support.
- .
- ## Usage
- .
- asound-conf-wizard requires write privileges to `/etc`.
- .
- Other then that, basically just run the binary and follow the prompts.
- .
- ![screen-shot](https://github.com/JasonLG1979/asound-conf-wizard/blob/main/Screenshot.png)
- ## Building
- See the [Building the Binary or Package(s)
- Yourself](https://github.com/JasonLG1979/asound-conf-wizard/wiki/Building-the-Binary-or-Package(s)-Yourself)
- wiki page for build instructions.
+ An interactive utility that generates a very simple /etc/asound.conf. It is
+ designed to be used on headless sytems that run bare ALSA. It will NOT run on
+ systems that have PulseAudio, Jack Audio or PipeWire installed. That is by
+ design. You should use those to configure audio if they are installed.
 
 Package: raspotify
 Version: 0.42.6~librespot.v0.4.2-6537c44
