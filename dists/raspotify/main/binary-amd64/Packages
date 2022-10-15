@@ -3,15 +3,15 @@ Version: 0.1.1
 Architecture: amd64
 Maintainer: Jason Gray <jasonlevigray3@gmail.com>
 Installed-Size: 618
-Depends: libc6 (>= 2.31), libasound2 (>= 1.2.4)
+Depends: libasound2 (>= 1.2.4), libc6 (>= 2.31)
 Priority: optional
 Section: base
 Filename: pool/main/a/asound-conf-wizard/asound-conf-wizard_0.1.1_amd64.deb
-Size: 219672
-SHA256: ab56b46a0fd233e6a77851bbd1e9805d76d8b381ceb8ed9ce488cc255f337d5f
-SHA1: 9176d159f2af168e02dfbd969afa304fe22ea135
-MD5sum: bc2be4b3777f3d062ad56fb2a8ee8b82
-Description: An interactive utility that generates a very simple /etc/asound.conf.
+Size: 219536
+SHA256: a8ca97f8fc2b4f7b43b140cb8e86d8c0c122224d0d22760f8ab18473794d5189
+SHA1: 2efecfe9b4190763973f02db1bf8f0fdc6b6221f
+MD5sum: 6e486e8e07fa2698401c3da83ea21f0c
+Description: asound-conf-wizard
  An interactive utility that generates a very simple /etc/asound.conf. It is
  designed to be used on headless sytems that run bare ALSA. It will NOT run on
  systems that have PulseAudio, Jack Audio or PipeWire installed. That is by

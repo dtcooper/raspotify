@@ -3,15 +3,15 @@ Version: 0.1.1
 Architecture: armhf
 Maintainer: Jason Gray <jasonlevigray3@gmail.com>
 Installed-Size: 545
-Depends: libasound2 (>= 1.2.4), libc6 (>= 2.31)
+Depends: libc6 (>= 2.31), libasound2 (>= 1.2.4)
 Priority: optional
 Section: base
 Filename: pool/main/a/asound-conf-wizard/asound-conf-wizard_0.1.1_armhf.deb
-Size: 198696
-SHA256: 0f6e239c097ac01b4269ff42f11bdc60ff802a6297eaf0dfde1cffe731c9035c
-SHA1: ff4e808492a4d241016bb8345680bf9907caa2b8
-MD5sum: f17dae9a80016099606b7c79c05cc426
-Description: An interactive utility that generates a very simple /etc/asound.conf.
+Size: 198760
+SHA256: cc8eaf0d874d88cc25de80a65fe4ad256808a111f9fc4749d9668e8ef81bf398
+SHA1: 8d247d6a22b6287dca8d60413bd07814f1459211
+MD5sum: fefd4ae175f67419b77a7b7bd8a138d4
+Description: asound-conf-wizard
  An interactive utility that generates a very simple /etc/asound.conf. It is
  designed to be used on headless sytems that run bare ALSA. It will NOT run on
  systems that have PulseAudio, Jack Audio or PipeWire installed. That is by
