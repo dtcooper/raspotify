@@ -107,7 +107,7 @@ echo "$RASPOTIFY_ARMHF_DEB_PKG_NAME, $RASPOTIFY_ARM64_DEB_PKG_NAME, $RASPOTIFY_A
 echo "$AWIZ_ARMHF_DEB_PKG_NAME, $AWIZ_ARM64_DEB_PKG_NAME, and $AWIZ_AMD64_DEB_PKG_NAME."
 
 gpg --armor --export "$GPG_KEY_ID" > key.asc
-cp -v ../README.md ../LICENSE ../install.sh ../awiz-install.sh .
+cp -v ../README.md ../LICENSE ../install.sh .
 git add -A
 git -c 'user.name=Automated Release' -c 'user.email=automated-release@users.noreply.github.com' \
     commit -m "Update gh-pages apt repository (released tag $RELEASE_TAG)"
