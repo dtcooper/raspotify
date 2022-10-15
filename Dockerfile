@@ -19,6 +19,8 @@ RUN apt-get update \
         libpulse-dev:armhf \
         curl \
         git \
+        dpkg-dev \
+        liblzma-dev \
         pandoc \
         pkg-config \
         python3-pip \
@@ -47,3 +49,5 @@ RUN mkdir /.cargo
 
 RUN echo '[target.aarch64-unknown-linux-gnu]\nlinker = "aarch64-linux-gnu-gcc"' > /.cargo/config \
     && echo '[target.armv7-unknown-linux-gnueabihf]\nlinker = "arm-linux-gnueabihf-gcc"' >> /.cargo/config
+
+RUN cargo install cargo-deb

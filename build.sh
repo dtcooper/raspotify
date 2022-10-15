@@ -69,7 +69,25 @@ pandoc -f markdown -t plain --columns=80 README.md \
 # Finally, build debian package
 dpkg-deb -b raspotify "$DEB_PKG_NAME"
 
+echo "Raspotify package built as $DEB_PKG_NAME"
+
+if [ ! -d asound-conf-wizard ]; then
+    echo "No directory named asound-conf-wizard exists! Cloning..."
+    git clone https://github.com/JasonLG1979/asound-conf-wizard.git
+fi
+
+cd asound-conf-wizard
+
+# Build asound-conf-wizard
+/build/cache/bin/cargo-deb --profile default --target $BUILD_TARGET
+
+cd /build/$BUILD_TARGET/debian
+
+AWIZ_DEB_PKG_NAME=$(ls -1 *.deb)
+
+cp -v $AWIZ_DEB_PKG_NAME /mnt/raspotify
+
+echo "asound-conf-wizard package built as $AWIZ_DEB_PKG_NAME"
+
 # Perm fixup. Not needed on macOS, but is on Linux
 chown -R "$PERMFIX_UID:$PERMFIX_GID" /mnt/raspotify 2> /dev/null || true
-
-echo "Package built as $DEB_PKG_NAME"

@@ -45,7 +45,7 @@ amd64:
 all: armhf arm64 amd64
 
 clean:
-	rm -rf *.deb librespot raspotify/usr raspotify/DEBIAN/control apt-repo
+	rm -rf *.deb librespot asound-conf-wizard raspotify/usr raspotify/DEBIAN/control apt-repo
 
 distclean: clean
 	docker rmi -f raspotify || true

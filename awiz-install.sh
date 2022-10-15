@@ -24,3 +24,5 @@ wget -q "$PACKAGE_URL"
 
 $SUDO $APT update
 $SUDO $APT -y install "./$PACKAGE"
+
+rm -rf $PACKAGE
