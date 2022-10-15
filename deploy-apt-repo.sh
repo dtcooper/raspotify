@@ -75,7 +75,7 @@ ln -fs "$(find . -name '*_amd64.deb' -type f -printf '%P\n' -quit)" raspotify-la
 echo "Repo created in directory apt-repo with packages $ARMHF_DEB_PKG_NAME, $ARM64_DEB_PKG_NAME and $AMD64_DEB_PKG_NAME"
 
 gpg --armor --export "$GPG_KEY_ID" > key.asc
-cp -v ../README.md ../LICENSE ../install.sh ../asound_conf_setup.py .
+cp -v ../README.md ../LICENSE ../install.sh ../awiz-install.sh .
 git add -A
 git -c 'user.name=Automated Release' -c 'user.email=automated-release@users.noreply.github.com' \
     commit -m "Update gh-pages apt repository (released tag $RELEASE_TAG)"
