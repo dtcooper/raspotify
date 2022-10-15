@@ -1,16 +1,19 @@
 Package: asound-conf-wizard
 Version: 0.1.1
 Architecture: amd64
+Vcs-Browser: https://github.com/JasonLG1979/asound-conf-wizard
+Vcs-Git: https://github.com/JasonLG1979/asound-conf-wizard
+Homepage: https://github.com/JasonLG1979/asound-conf-wizard
 Maintainer: Jason Gray <jasonlevigray3@gmail.com>
-Installed-Size: 618
+Installed-Size: 617
 Depends: libasound2 (>= 1.2.4), libc6 (>= 2.31)
 Priority: optional
 Section: base
 Filename: pool/main/a/asound-conf-wizard/asound-conf-wizard_0.1.1_amd64.deb
-Size: 219536
-SHA256: a8ca97f8fc2b4f7b43b140cb8e86d8c0c122224d0d22760f8ab18473794d5189
-SHA1: 2efecfe9b4190763973f02db1bf8f0fdc6b6221f
-MD5sum: 6e486e8e07fa2698401c3da83ea21f0c
+Size: 219084
+SHA256: 3570cf965c9c3be520575665ab58fc518a2303ef1ccdc826a760c579582d5ea3
+SHA1: ad03b8798d920e1d39db4241e44dffb3f5b320ec
+MD5sum: c2593cc462ab2ac799ab5fdffc4aeb81
 Description: asound-conf-wizard
  An interactive utility that generates a very simple /etc/asound.conf. It is
  designed to be used on headless sytems that run bare ALSA. It will NOT run on
