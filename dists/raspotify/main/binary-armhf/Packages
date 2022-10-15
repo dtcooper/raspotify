@@ -1,3 +1,53 @@
+Package: asound-conf-wizard
+Version: 0.1.1
+Architecture: armhf
+Maintainer: Jason Gray <jasonlevigray3@gmail.com>
+Installed-Size: 545
+Depends: libc6 (>= 2.31), libasound2 (>= 1.2.4)
+Priority: optional
+Section: base
+Filename: pool/main/a/asound-conf-wizard/asound-conf-wizard_0.1.1_armhf.deb
+Size: 199040
+SHA256: 72c9e11c27cf8603bb9aaa3e0f580daec572cca6d0ec02f0bae7e63a5afc555c
+SHA1: 4882fdf96a5c5511df4086c8ffaedcae85834dd8
+MD5sum: 29cb514447487db594df25af94586d6e
+Description: An interactive utility that generates a very simple /etc/asound.conf.
+ # asound-conf-wizard
+ .
+ asound-conf-wizard is an interactive utility that generates a very simple
+ `/etc/asound.conf`.
+ .
+ It is designed to be used on headless sytems that run bare ALSA.
+ .
+ It will **NOT** run on systems that have PulseAudio, Jack Audio or PipeWire
+ installed. **That is by design.**
+ .
+ You should use those to configure audio if they are installed.
+ .
+ ## Limitations
+ .
+ asound-conf-wizard is intentionally very simple and it generates a very basic
+ `/etc/asound.conf` that (ideally) creates a default duplex device with full
+ software conversion and mixing for both Playback and Capture. If your use case
+ is more niche and/or complex then that asound-conf-wizard is not for you.
+ .
+ asound-conf-wizard suports `hw:`, `hdmi:` `iec958:` ALSA PCMs, `U8` and
+ depending on the platform either the `LE` or `BE` varants of `S16`, `S24_3`,
+ `S24` and `S32` formats and any number of channels and sampling rates.
+ Basically it supports what `dmix` and `dsnoop` both support.
+ .
+ ## Usage
+ .
+ asound-conf-wizard requires write privileges to `/etc`.
+ .
+ Other then that, basically just run the binary and follow the prompts.
+ .
+ ![screen-shot](https://github.com/JasonLG1979/asound-conf-wizard/blob/main/Screenshot.png)
+ ## Building
+ See the [Building the Binary or Package(s)
+ Yourself](https://github.com/JasonLG1979/asound-conf-wizard/wiki/Building-the-Binary-or-Package(s)-Yourself)
+ wiki page for build instructions.
+
 Package: raspotify
 Version: 0.42.6~librespot.v0.4.2-6537c44
 Architecture: armhf
