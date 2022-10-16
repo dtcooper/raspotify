@@ -37,7 +37,7 @@ Or you can just download the latest .deb package and install it manually from he
 
 ## Configuration
 
-The [Basic Setup Guide](https://github.com/dtcooper/raspotify/wiki/Basic-Setup-Guide) is particularly useful, especially the [System Audio Config Wizard](https://github.com/dtcooper/raspotify/wiki/Basic-Setup-Guide#the-easy-way).
+The [Basic Setup Guide](https://github.com/dtcooper/raspotify/wiki/Basic-Setup-Guide) is particularly useful.
 
 ## Bug Reports and Feature Requests
 
