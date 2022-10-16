@@ -1,6 +1,7 @@
 apt-repo/
 librespot/
-raspotify*.deb
+asound-conf-wizard/
+*.deb
 raspotify/DEBIAN/control
 raspotify/usr/bin/librespot
 raspotify/usr/share/doc/raspotify/copyright
