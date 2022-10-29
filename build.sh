@@ -26,6 +26,10 @@ git checkout -f master
 LIBRESPOT_VER="$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null || echo unknown)"
 LIBRESPOT_HASH="$(git rev-parse HEAD | cut -c 1-7 2>/dev/null || echo unknown)"
 
+# https://github.com/librespot-org/librespot does not regularly or really ever update their dependencies on released versions.
+# https://github.com/librespot-org/librespot/pull/1068
+cargo update
+
 # Don't hang on panic just abort.
 # The ncodegen-units = 1 and lto = true bits are meant to be optimizations,
 # but they probably do nothing or very little but what the heck it's worth a shot.  
