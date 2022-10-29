@@ -15,25 +15,19 @@ RASPOTIFY_GIT_VER="$(git describe --tags `git rev-list --tags --max-count=1` 2>/
 
 if [ ! -d librespot ]; then
     echo "No directory named librespot exists! Cloning..."
-    git clone https://github.com/librespot-org/librespot.git
+    # Use a vendered version of librespot.
+    # https://github.com/librespot-org/librespot does not regularly or really ever update their dependencies on released versions.
+    # https://github.com/librespot-org/librespot/pull/1068
+    git clone https://github.com/JasonLG1979/librespot
 fi
 
 cd librespot
 
-git checkout -f master
+git checkout raspotify
 
 # Get the git rev of librespot for .deb versioning
 LIBRESPOT_VER="$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null || echo unknown)"
 LIBRESPOT_HASH="$(git rev-parse HEAD | cut -c 1-7 2>/dev/null || echo unknown)"
-
-# https://github.com/librespot-org/librespot does not regularly or really ever update their dependencies on released versions.
-# https://github.com/librespot-org/librespot/pull/1068
-cargo update
-
-# Don't hang on panic just abort.
-# The ncodegen-units = 1 and lto = true bits are meant to be optimizations,
-# but they probably do nothing or very little but what the heck it's worth a shot.  
-echo "\n[profile.raspotify]\ninherits = \"release\"\npanic = \"abort\"\ncodegen-units = 1\nlto = true" >> Cargo.toml
 
 # Build librespot
 cargo build --profile raspotify --target $BUILD_TARGET --no-default-features --features "alsa-backend pulseaudio-backend"
