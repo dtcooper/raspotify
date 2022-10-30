@@ -3,7 +3,7 @@
 
 Raspotify is a
 [Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_(file_format)) for Debian Stable and other Debian Stable based/compatible OS's 
-which thinly wraps the awesome
+which thinly wraps [a fork](https://github.com/JasonLG1979/librespot/tree/raspotify) of the awesome
 [librespot](https://github.com/librespot-org/librespot) library by
 [Paul Lietar](https://github.com/plietar) and others up as a [systemd](https://en.wikipedia.org/wiki/Systemd) [daemon](https://en.wikipedia.org/wiki/Daemon_(computing)). **Librespot, and therefore Raspotify, requires a premium account.**
 
@@ -41,9 +41,7 @@ The [Basic Setup Guide](https://github.com/dtcooper/raspotify/wiki/Basic-Setup-G
 
 ## Bug Reports and Feature Requests
 
-**Please read the [Troubleshooting wiki page](https://github.com/dtcooper/raspotify/wiki/Troubleshooting) before opening an issue or asking a question.**
-
-As stated above Raspotify is just a package. The actual program that's run by the service is [librespot](https://github.com/librespot-org/librespot). Unless it's a packaging issue or a basic confguration question this is the wrong place to file your bug reports and/or feature requests.
+**Please read the [Troubleshooting wiki page](https://github.com/dtcooper/raspotify/wiki/Troubleshooting) and the [Basic Setup Guide](https://github.com/dtcooper/raspotify/wiki/Basic-Setup-Guide) before opening an issue or asking a question.**
 
 ## Disclaimer
 
@@ -62,7 +60,7 @@ file for details.
 
 Special thanks to [Paul Lietar](https://github.com/plietar), [librespot org](https://github.com/librespot-org)
 and its [many contributors](https://github.com/librespot-org/librespot/graphs/contributors) for [librespot](https://github.com/librespot-org/librespot),
-which Raspotify packages. Without [librespot](https://github.com/librespot-org/librespot),
+which Raspotify packages (a slightly modded version of). Without [librespot](https://github.com/librespot-org/librespot),
 Raspotify would simply not exist.
 
 ### 📻 *"And Now, For Something Completely Different!"* 🎙️
