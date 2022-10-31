@@ -41,7 +41,7 @@ The [Basic Setup Guide](https://github.com/dtcooper/raspotify/wiki/Basic-Setup-G
 
 ## Bug Reports and Feature Requests
 
-**Please read the [Troubleshooting wiki page](https://github.com/dtcooper/raspotify/wiki/Troubleshooting) and the [Basic Setup Guide](https://github.com/dtcooper/raspotify/wiki/Basic-Setup-Guide) and search though [open](https://github.com/dtcooper/raspotify/issues?q=is%3Aopen+is%3Aissue) and [closed](https://github.com/dtcooper/raspotify/issues?q=is%3Aissue+is%3Aclosed) issues before opening an issue or asking a question.**
+**Please read the [Troubleshooting Guide](https://github.com/dtcooper/raspotify/wiki/Troubleshooting), the [Basic Setup Guide](https://github.com/dtcooper/raspotify/wiki/Basic-Setup-Guide), and search though [open](https://github.com/dtcooper/raspotify/issues?q=is%3Aopen+is%3Aissue) and [closed](https://github.com/dtcooper/raspotify/issues?q=is%3Aissue+is%3Aclosed) issues and [discussions](https://github.com/dtcooper/raspotify/discussions) before opening an issue or asking a question.**
 
 ## Disclaimer
 
