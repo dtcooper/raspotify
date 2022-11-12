@@ -1,7 +1,7 @@
 
 [<img src="https://raw.githubusercontent.com/dtcooper/raspotify/master/raspotify.svg?sanitize=true">](https://github.com/dtcooper/raspotify)
 
-Raspotify is a
+Raspotify is a 
 [Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_(file_format)) for Debian Stable and other Debian Stable based/compatible OS's 
 which thinly wraps [a fork](https://github.com/JasonLG1979/librespot/tree/raspotify) of the awesome
 [librespot](https://github.com/librespot-org/librespot) library by
