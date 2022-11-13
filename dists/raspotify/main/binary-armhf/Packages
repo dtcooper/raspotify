@@ -6,14 +6,14 @@ Vcs-Git: https://github.com/JasonLG1979/asound-conf-wizard
 Homepage: https://github.com/JasonLG1979/asound-conf-wizard
 Maintainer: Jason Gray <jasonlevigray3@gmail.com>
 Installed-Size: 577
-Depends: libasound2 (>= 1.2.4), libc6 (>= 2.31)
+Depends: libc6 (>= 2.31), libasound2 (>= 1.2.4)
 Priority: optional
 Section: base
 Filename: pool/main/a/asound-conf-wizard/asound-conf-wizard_0.1.9_armhf.deb
-Size: 210296
-SHA256: 1de10debeca487123bb1869df6d989d8f65199b7a5c26b41fc2833ff5c58bbc5
-SHA1: 2d4e92a1472999a1f1a1918b1c040dea26a4a376
-MD5sum: a4603f44c849146f07268bf9bafb328f
+Size: 210340
+SHA256: 90f1ffdb22f1e4601a6fcf875989bc9706f0280cab1e6a6bc9ef68479c99bb81
+SHA1: 41a379aaa6e0c15e3863f7325005c062214eaeb2
+MD5sum: ceeae6afa556af8d1b04f133fd3f4ed6
 Description: asound-conf-wizard
  An interactive utility that generates a very simple /etc/asound.conf. It is
  designed to be used on headless sytems that run bare ALSA. It will NOT run on
@@ -21,18 +21,18 @@ Description: asound-conf-wizard
  design. You should use those to configure audio if they are installed.
 
 Package: raspotify
-Version: 0.43.2~librespot.v0.4.2-9b6449b
+Version: 0.43.3~librespot.v0.4.2-e16e384
 Architecture: armhf
 Depends: libc6 (>= 2.31), libasound2 (>= 1.2.4), alsa-utils (>= 1.2.4), libpulse0 (>= 14.2), systemd (>= 247.3), init-system-helpers (>= 1.60)
 Maintainer: Jason Gray <jasonlevigray3@gmail.com>
 Homepage: https://github.com/dtcooper/raspotify
 Priority: optional
 Section: base
-Filename: pool/main/r/raspotify/raspotify_0.43.2~librespot.v0.4.2-9b6449b_armhf.deb
-Size: 1736344
-SHA256: 415bc1495d6a96ab12aefb6a48045155d42ec48454380fca94c92e002b8ec383
-SHA1: 3fc81a558aa28a5fd8b8328670130da82c8ebb08
-MD5sum: c3c74c8d7cbc2bceba5d92f89904be11
+Filename: pool/main/r/raspotify/raspotify_0.43.3~librespot.v0.4.2-e16e384_armhf.deb
+Size: 1737352
+SHA256: 61313946a57374f78c0b57a4ed0966253cb4493ebe5a9bd3493ea1564634bc32
+SHA1: d69aa13187f8ec23f7c1a762129d713e55cb90b3
+MD5sum: 3977b06d5694d46ed47fe29b5530cf28
 Description: Raspotify
  A Spotify Connect systemd daemon for Debian Stable based headless systems which thinly wraps librespot.
  [Built with rustc 1.65.0 (897e37553 2022-11-02)]
