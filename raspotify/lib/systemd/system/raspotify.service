@@ -13,6 +13,9 @@ SupplementaryGroups=audio
 
 Restart=always
 RestartSec=10
+StartLimitBurst=5
+StartLimitIntervalSec=60
+RestartPreventExitStatus=0
 
 # Some of these may be implied by DynamicUser=yes
 RestrictRealtime=true
