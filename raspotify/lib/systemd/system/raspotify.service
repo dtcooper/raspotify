@@ -7,17 +7,18 @@ Documentation=https://github.com/librespot-org/librespot/wiki/Options
 Wants=network.target sound.target
 After=network.target sound.target
 
-StartLimitBurst=5
-StartLimitIntervalSec=60
-
 OnFailure=raspotify-crash-report-generator.service
 
 [Service]
 DynamicUser=yes
 SupplementaryGroups=audio
 
-Restart=on-failure
-RestartSec=10
+# /usr/bin/raspotify-crash-report-generator.sh run by
+# raspotify-crash-report-generator.service handles
+# restart logic.
+ 
+#Restart=on-failure
+#RestartSec=10
 
 # Some of these may be implied by DynamicUser=yes
 RestrictRealtime=true
