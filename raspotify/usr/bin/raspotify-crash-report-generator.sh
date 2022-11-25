@@ -44,7 +44,9 @@ systemctl reset-failed raspotify
 
 fail_count=$(journalctl -u raspotify --since "1min ago" -q | grep -o "raspotify.service: Failed" | wc -l)
 
-if [ "$fail_count" -lt 5 ]
+if [ "$fail_count" -lt 6 ]
 then
+    # delay restarts by 10 sec to debounce
+    sleep 10
     systemctl restart raspotify
 fi
