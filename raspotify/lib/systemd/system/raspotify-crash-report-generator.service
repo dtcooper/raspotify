@@ -1,0 +1,6 @@
+[Unit]
+Description=Raspotify Crash Report Generator
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/raspotify-crash-report-generator.sh

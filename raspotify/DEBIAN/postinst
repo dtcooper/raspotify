@@ -12,6 +12,7 @@ fi
 
 # This will only remove masks created by d-s-h on package removal.
 deb-systemd-helper unmask raspotify.service >/dev/null || true
+deb-systemd-helper unmask raspotify-crash-report-generator.service >/dev/null || true
 
 # was-enabled defaults to true, so new installations run enable.
 if deb-systemd-helper --quiet was-enabled raspotify.service; then

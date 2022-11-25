@@ -10,13 +10,14 @@ After=network.target sound.target
 StartLimitBurst=5
 StartLimitIntervalSec=60
 
+OnFailure=raspotify-crash-report-generator.service
+
 [Service]
 DynamicUser=yes
 SupplementaryGroups=audio
 
-Restart=always
+Restart=on-failure
 RestartSec=10
-RestartPreventExitStatus=0
 
 # Some of these may be implied by DynamicUser=yes
 RestrictRealtime=true

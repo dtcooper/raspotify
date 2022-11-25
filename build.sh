@@ -35,7 +35,7 @@ cargo build --profile raspotify --target $BUILD_TARGET --no-default-features --f
 
 # Copy librespot to pkg root
 cd /mnt/raspotify
-mkdir -p raspotify/usr/bin
+
 cp -v /build/$BUILD_TARGET/raspotify/librespot raspotify/usr/bin
 
 # Strip dramatically decreases the size of the binary --disabled so we get tracebacks
