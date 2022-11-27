@@ -1,34 +1,34 @@
 Codename: raspotify
-Date: Sat, 26 Nov 2022 00:00:47 UTC
+Date: Sun, 27 Nov 2022 06:45:07 UTC
 Architectures: armhf arm64 amd64
 Components: main
 MD5Sum:
- 504232b5213d9c5b1194824bced7f287 1777 main/binary-armhf/Packages
- 575c68dff2ab5b503a9f943e04286863 898 main/binary-armhf/Packages.gz
+ bc9a2eafa86771e4062e1b4cdde4e664 1779 main/binary-armhf/Packages
+ 3699cae47941450260f196ee3335dd3d 901 main/binary-armhf/Packages.gz
  12961a515ba3ee17d1840d76faa90087 36 main/binary-armhf/Release
- 39ff7867bc04161f2d009adb95c4b84c 1777 main/binary-arm64/Packages
- 9c271b9647200213ac5b997cf51010ff 901 main/binary-arm64/Packages.gz
+ 7091487cc78518317dd19d7269d4c276 1779 main/binary-arm64/Packages
+ ba8b4e5c536e61f33dcdf55a40c8a828 903 main/binary-arm64/Packages.gz
  e89c28b1abf5bb6bbd1e9a3ebe9fe004 36 main/binary-arm64/Release
- e1b131a31b7b17520a3ee86f65ce0130 1777 main/binary-amd64/Packages
- 5e43d6a0fc883f76e64f03e44708c4dc 895 main/binary-amd64/Packages.gz
+ 8aa3db37a05865e94428e5f1e237eaf6 1779 main/binary-amd64/Packages
+ 3865deef44c4c64b9e23d7d01924ea68 897 main/binary-amd64/Packages.gz
  063287201b2354699acfe229a752201d 36 main/binary-amd64/Release
 SHA1:
- 26e01244f69fad1d62cf5c458eee608c14c76094 1777 main/binary-armhf/Packages
- 30cd9cb8a19578812172d449f4b6244738156807 898 main/binary-armhf/Packages.gz
+ f3c591a1cf75cc92ec2790b52d73699f219158ac 1779 main/binary-armhf/Packages
+ ec8deba72a1fb8afbf5e507f96d86bfe6b865895 901 main/binary-armhf/Packages.gz
  4922cd1d17e2d85529687db8f44c58948bc42f94 36 main/binary-armhf/Release
- b92505498c31cc4c8d93a0b9c83bd3407dde3ac0 1777 main/binary-arm64/Packages
- f8d7500ff9b3b7f56a9e3d450e44380ce7aa320e 901 main/binary-arm64/Packages.gz
+ e29929c609abb141c11a750d89c86e1d04894a87 1779 main/binary-arm64/Packages
+ 3c6690200870acbd8ae8a119c50afe91dd7b5453 903 main/binary-arm64/Packages.gz
  26519fde445e683e74519b33601c3901c8a45e3b 36 main/binary-arm64/Release
- 9f5a6269f4ace7ce0d54ea1d26297d2bca455b84 1777 main/binary-amd64/Packages
- a983baa84e82915c48e893a673530933b0ae00ea 895 main/binary-amd64/Packages.gz
+ f46c6fa2edf158ca73e802125bbb0f25c10b48df 1779 main/binary-amd64/Packages
+ 90848da7189ee5729a03b8dc0275370dda9fd346 897 main/binary-amd64/Packages.gz
  f9082edea14092794f38390390e06abf8a922f7d 36 main/binary-amd64/Release
 SHA256:
- 04fc1b0e82f6ceb33a971e60659e6a180725ddfb05c4fee3b4a6069073d480c4 1777 main/binary-armhf/Packages
- b0d904a0c787a48b0fae744610059e916b2a9dd1f0ef1841471ac01458ab2cc4 898 main/binary-armhf/Packages.gz
+ 38d6cd85904eea14968bcf1f3b836366c8e57919397c7dbfdf23f7c1f6863595 1779 main/binary-armhf/Packages
+ 26c1d0717437af3e1de46de579fa08ac0e6ad00b559abb17eefb2fb6afe3e91e 901 main/binary-armhf/Packages.gz
  adaec1ced8009abfb20fa51310087da3b7332d5f3b2c5edfda188ddffe634677 36 main/binary-armhf/Release
- 06d58ebc25b51f68ee3f150b6d84d2a0ce814c25a8ee051e27ef292f67580471 1777 main/binary-arm64/Packages
- 70e90126f6b75f3eed175871fc7dbe7d05ef661cc988b10296dd2b6ea36bd004 901 main/binary-arm64/Packages.gz
+ fa615f8c893d069c98f6f3f01f240410271d4cc6b2dd965642bdd8e54a273941 1779 main/binary-arm64/Packages
+ 16924ce94060a6ac88e750ab7cc51e898960f172efb0c2ad848ecb56ced3e0cd 903 main/binary-arm64/Packages.gz
  1d2a5a16922021225a06cc93f71f6e6008afdf7049fe22e22d7e98be73c59edf 36 main/binary-arm64/Release
- 2c410b269243fefdaef49e27018780c0713994d642ab19a5ff5360e72e8d5102 1777 main/binary-amd64/Packages
- 4d8e894addd22cd8e69ce2b40c6db8719dcedcce1999fef81bb5d9674df7037f 895 main/binary-amd64/Packages.gz
+ 3996d33ba67b09cf0f8da16af0e89ac11a0dbd9dee3d82a035592c5cd15e2abe 1779 main/binary-amd64/Packages
+ 8641568980013b1c4198fd8b5ca65dc17f7a9ae0d3af45f41978a6049eaf5bcd 897 main/binary-amd64/Packages.gz
  f4aafa353a338baedf9e98523c13d7ffeda979ec3cf745f9fad977dd770595c8 36 main/binary-amd64/Release
