@@ -5,5 +5,5 @@
 set -e
 
 if [ -d /run/systemd/system ]; then
-    deb-systemd-invoke stop raspotify.service >/dev/null
+	deb-systemd-invoke stop raspotify.service >/dev/null
 fi

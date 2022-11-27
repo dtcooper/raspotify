@@ -12,7 +12,6 @@ armhf:
 			--env PERMFIX_GID="$$(id -g)" \
 			--env RASPOTIFY_AUTHOR="$(RASPOTIFY_AUTHOR)" \
 			--env BUILD_TARGET="armv7-unknown-linux-gnueabihf" \
-			--env STRIP_COMMAND="arm-linux-gnueabihf-strip" \
 			--env ARCHITECTURE="armhf" \
 		raspotify /mnt/raspotify/build.sh
 
@@ -25,7 +24,6 @@ arm64:
 			--env PERMFIX_GID="$$(id -g)" \
 			--env RASPOTIFY_AUTHOR="$(RASPOTIFY_AUTHOR)" \
 			--env BUILD_TARGET="aarch64-unknown-linux-gnu" \
-			--env STRIP_COMMAND="aarch64-linux-gnu-strip" \
 			--env ARCHITECTURE="arm64" \
 		raspotify /mnt/raspotify/build.sh
 
@@ -38,7 +36,6 @@ amd64:
 			--env PERMFIX_GID="$$(id -g)" \
 			--env RASPOTIFY_AUTHOR="$(RASPOTIFY_AUTHOR)" \
 			--env BUILD_TARGET="x86_64-unknown-linux-gnu" \
-			--env STRIP_COMMAND="strip" \
 			--env ARCHITECTURE="amd64" \
 		raspotify /mnt/raspotify/build.sh
 

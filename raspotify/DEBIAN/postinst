@@ -4,8 +4,8 @@ set -e
 
 # Secure the config, there may be credentials in there
 if [ -d /etc/raspotify ]; then
-    chmod 600 /etc/raspotify -Rf
-    chown root:root /etc/raspotify -Rf
+	chmod 600 /etc/raspotify -Rf
+	chown root:root /etc/raspotify -Rf
 fi
 
 # Based off what debhelper would have added
@@ -16,16 +16,16 @@ deb-systemd-helper unmask raspotify-crash-report-generator.service >/dev/null ||
 
 # was-enabled defaults to true, so new installations run enable.
 if deb-systemd-helper --quiet was-enabled raspotify.service; then
-        # Enables the unit on first installation, creates new
-        # symlinks on upgrades if the unit file has changed.
-        deb-systemd-helper enable raspotify.service >/dev/null || true
+	# Enables the unit on first installation, creates new
+	# symlinks on upgrades if the unit file has changed.
+	deb-systemd-helper enable raspotify.service >/dev/null || true
 else
-        # Update the statefile to add new symlinks (if any), which need to be
-        # cleaned up on purge. Also remove old symlinks.
-        deb-systemd-helper update-state raspotify.service >/dev/null || true
+	# Update the statefile to add new symlinks (if any), which need to be
+	# cleaned up on purge. Also remove old symlinks.
+	deb-systemd-helper update-state raspotify.service >/dev/null || true
 fi
 
 if [ -d /run/systemd/system ]; then
-    systemctl --system daemon-reload >/dev/null || true
-    deb-systemd-invoke start raspotify.service >/dev/null || true
+	systemctl --system daemon-reload >/dev/null || true
+	deb-systemd-invoke start raspotify.service >/dev/null || true
 fi
