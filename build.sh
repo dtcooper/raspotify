@@ -30,7 +30,7 @@ LIBRESPOT_VER="$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev
 LIBRESPOT_HASH="$(git rev-parse HEAD | cut -c 1-7 2>/dev/null || echo unknown)"
 
 # Build librespot
-cargo build --profile raspotify --target $BUILD_TARGET --no-default-features --features "alsa-backend pulseaudio-backend"
+cargo build --jobs "$(nproc)" --profile raspotify --target $BUILD_TARGET --no-default-features --features "alsa-backend pulseaudio-backend"
 
 # Copy librespot to pkg root
 cd /mnt/raspotify
@@ -72,7 +72,7 @@ fi
 cd asound-conf-wizard
 
 # Build asound-conf-wizard
-/build/cache/bin/cargo-deb --profile default --target $BUILD_TARGET
+/build/cache/bin/cargo-deb --profile default --target $BUILD_TARGET -- --jobs "$(nproc)"
 
 cd /build/$BUILD_TARGET/debian
 
