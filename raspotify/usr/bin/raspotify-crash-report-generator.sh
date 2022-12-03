@@ -42,7 +42,5 @@ done <$config
 systemctl reset-failed raspotify
 
 if [ "$fail_count" -lt 6 ]; then
-	# delay restarts by 10 sec to debounce
-	sleep 10
 	systemctl restart raspotify
 fi
