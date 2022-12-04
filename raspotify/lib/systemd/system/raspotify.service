@@ -83,7 +83,7 @@ EnvironmentFile=-%E/%N/conf
 # Delay start up to debounce restarts
 # and to help prevent librespot from
 # starting to soon during boot up.
-ExecStartPre=/usr/bin/sleep 10
+ExecStartPre=/bin/sleep 10
 ExecStart=/usr/bin/librespot
 
 [Install]
