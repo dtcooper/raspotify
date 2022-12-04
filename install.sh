@@ -6,6 +6,7 @@ SOURCE_REPO="deb [signed-by=/usr/share/keyrings/raspotify_key.asc] https://dtcoo
 ERROR_MESG="Please make sure you are running a compatible armhf (ARMv7), arm64, or amd64 Debian based OS."
 
 LIBC_MIN_VER="2.31"
+CUTILS_MIN_VER="8.32"
 SYSTEMD_MIN_VER="247.3"
 HELPER_MIN_VER="1.6"
 LIBASOUND_MIN_VER="1.2.4"
@@ -15,7 +16,7 @@ LIBPULSE_MIN_VER="14.2"
 SUDO="sudo"
 APT="apt"
 
-REQ_PACKAGES="libc6 systemd init-system-helpers libasound2 alsa-utils libpulse0"
+REQ_PACKAGES="libc6 coreutils systemd init-system-helpers libasound2 alsa-utils libpulse0"
 
 PACKAGES_TO_INSTALL=
 MIN_NOT_MET=
@@ -66,6 +67,9 @@ for package in $REQ_PACKAGES; do
 	case "$package" in
 	"libc6")
 		MIN_VER=$LIBC_MIN_VER
+		;;
+	"coreutils")
+		MIN_VER=$CUTILS_MIN_VER
 		;;
 	"systemd")
 		MIN_VER=$SYSTEMD_MIN_VER

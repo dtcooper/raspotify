@@ -11,9 +11,9 @@ Priority: optional
 Section: base
 Filename: pool/main/a/asound-conf-wizard/asound-conf-wizard_0.1.11_armhf.deb
 Size: 210428
-SHA256: 24db3f533f555a611c6c6e876b175564bb5ea8a5f5a42a289a94535a6f2b2c43
-SHA1: f7a94f88a8e468d32d10c5b5bc9b755f8e297528
-MD5sum: a0adce355832f5715f1da3cc3a96c821
+SHA256: b202fc27a86f8dd9cf04e54f6cde328d7b32fed9e177472fcfb736b0f8679361
+SHA1: 6374f2d7d26a732e7d7d8a0f3df1195ddb365b9e
+MD5sum: 89021494c3d93c40658a0550f68910ba
 Description: asound-conf-wizard
  An interactive utility that generates a very simple /etc/asound.conf. It is
  designed to be used on headless sytems that run bare ALSA. It will NOT run on
@@ -21,18 +21,18 @@ Description: asound-conf-wizard
  design. You should use those to configure audio if they are installed.
 
 Package: raspotify
-Version: 0.43.12~librespot.v0.4.2-86743ea
+Version: 0.43.13~librespot.v0.4.2-86743ea
 Architecture: armhf
-Depends: libc6 (>= 2.31), libasound2 (>= 1.2.4), alsa-utils (>= 1.2.4), libpulse0 (>= 14.2), systemd (>= 247.3), init-system-helpers (>= 1.60)
+Depends: libc6 (>= 2.31), coreutils (>= 8.32), libasound2 (>= 1.2.4), alsa-utils (>= 1.2.4), libpulse0 (>= 14.2), systemd (>= 247.3), init-system-helpers (>= 1.60)
 Maintainer: Jason Gray <jasonlevigray3@gmail.com>
 Homepage: https://github.com/dtcooper/raspotify
 Priority: optional
 Section: base
-Filename: pool/main/r/raspotify/raspotify_0.43.12~librespot.v0.4.2-86743ea_armhf.deb
-Size: 1748592
-SHA256: 8d3d7f69b52990f03996e8e31a73a701a096624979d579f88b3a81b05c71bdca
-SHA1: 6a45638640c29d0b51744289d6acd4d621a179e3
-MD5sum: b6ff0eb3d0cda0e65d31ba9e79208a43
+Filename: pool/main/r/raspotify/raspotify_0.43.13~librespot.v0.4.2-86743ea_armhf.deb
+Size: 1744656
+SHA256: d2c76243119bfe1d47c8da49e5506057418069b3b29778b9a7656978fae40950
+SHA1: fcfae812065bcd7cdf1f72c478a40d5cca3ce7e5
+MD5sum: 3499727dba67a1c1683ed5ca5b75de6f
 Description: Raspotify
  A Spotify Connect systemd daemon for Debian Stable based headless systems which thinly wraps librespot.
  [Built with rustc 1.65.0 (897e37553 2022-11-02)]
