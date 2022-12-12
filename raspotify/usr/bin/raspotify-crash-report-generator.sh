@@ -42,5 +42,6 @@ done <$config
 systemctl reset-failed raspotify
 
 if [ "$fail_count" -lt 6 ]; then
+	sleep 10
 	systemctl restart raspotify
 fi

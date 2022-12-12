@@ -77,13 +77,8 @@ Environment=LIBRESPOT_SYSTEM_CACHE=%S/%N
 # It is overridden in the config.
 # See the config for details.
 Environment=TMPDIR=%t/%N
-
 EnvironmentFile=-%E/%N/conf
 
-# Delay start up to debounce restarts
-# and to help prevent librespot from
-# starting to soon during boot up.
-ExecStartPre=/bin/sleep 10
 ExecStart=/usr/bin/librespot
 
 [Install]
