@@ -9,11 +9,12 @@ username="LIBRESPOT_USERNAME"
 password="LIBRESPOT_PASSWORD"
 
 librespot="LIBRESPOT_"
-tmp_dir="TMPDIR"
 
 logs=$(journalctl -u raspotify --since "1min ago" -q)
 
 fail_count=$(echo "$logs" | grep -o "raspotify.service: Failed" | wc -l)
+# Discovery already has retries built into it in librespot.
+discovery_fail_count=$(echo "$logs" | grep -o "Could not initialise discovery:" | wc -l)
 
 {
 	echo -e "-- System Info --\n"
@@ -25,9 +26,22 @@ fail_count=$(echo "$logs" | grep -o "raspotify.service: Failed" | wc -l)
 } >$crash_report 2>/dev/null
 
 while read -r line; do
-	if { [[ $line = $librespot* ]] && [[ $line != $username* ]] && [[ $line != $password* ]]; } || [[ $line = $tmp_dir* ]]; then
-		echo "$line" >>$crash_report 2>/dev/null
-	fi
+	stripped_line=$(echo "$line" | awk '{$1=$1};1')
+
+	case $stripped_line in
+	$username*)
+		echo "$username=XXXXXXXX" >>$crash_report 2>/dev/null
+		;;
+	$password*)
+		echo "$password=XXXXXXXX" >>$crash_report 2>/dev/null
+		;;
+	$librespot*)
+		echo "$stripped_line" >>$crash_report 2>/dev/null
+		;;
+	*)
+		:
+		;;
+	esac
 done <$config
 
 {
@@ -41,7 +55,7 @@ done <$config
 
 systemctl reset-failed raspotify
 
-if [ "$fail_count" -lt 6 ]; then
+if [ "$fail_count" -lt 6 ] && [ "$discovery_fail_count" -eq 0 ]; then
 	sleep 10
 	systemctl restart raspotify
 fi
