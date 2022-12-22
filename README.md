@@ -12,7 +12,7 @@ Raspotify is primarily intended to be used in a *[headless enviroment](https://e
 
 If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify Connect support we recommend [moOde™ audio player](https://moodeaudio.org/).
 
-## Dependencies
+## Dependencies 
 
 **Raspotify will not install without these packages and minimum versions:**
 * [libc6 (>= 2.31)](https://tracker.debian.org/pkg/libc6)
