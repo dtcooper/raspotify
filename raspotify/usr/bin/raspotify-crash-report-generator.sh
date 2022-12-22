@@ -13,8 +13,6 @@ librespot="LIBRESPOT_"
 logs=$(journalctl -u raspotify --since "1min ago" -q)
 
 fail_count=$(echo "$logs" | grep -o "raspotify.service: Failed" | wc -l)
-# Discovery already has retries built into it in librespot.
-discovery_fail_count=$(echo "$logs" | grep -o "Could not initialise discovery:" | wc -l)
 
 {
 	echo -e "-- System Info --\n"
@@ -55,7 +53,7 @@ done <$config
 
 systemctl reset-failed raspotify
 
-if [ "$fail_count" -lt 6 ] && [ "$discovery_fail_count" -eq 0 ]; then
+if [ "$fail_count" -lt 6 ]; then
 	sleep 10
 	systemctl restart raspotify
 fi
