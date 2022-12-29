@@ -52,7 +52,10 @@ pandoc -f markdown -t plain --columns=80 README.md |
 DEB_PKG_VER="${RASPOTIFY_GIT_VER}~librespot.${LIBRESPOT_VER}-${LIBRESPOT_HASH}"
 DEB_PKG_NAME="raspotify_${DEB_PKG_VER}_${ARCHITECTURE}.deb"
 
-INSTALLED_SIZE="$(du -ks raspotify --exclude=raspotify/DEBIAN | cut -f 1)"
+# https://www.debian.org/doc/debian-policy/ch-controlfields.html#installed-size
+# "The disk space is given as the integer value of the estimated installed size in bytes,
+# divided by 1024 and rounded up."
+INSTALLED_SIZE="$((($(du -bs raspotify --exclude=raspotify/DEBIAN/control | cut -f 1) + 2048) / 1024)))"
 
 jinja2 \
 	-D "VERSION=$DEB_PKG_VER" \
