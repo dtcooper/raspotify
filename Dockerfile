@@ -2,6 +2,9 @@ FROM debian:stable
 
 ENV INSIDE_DOCKER_CONTAINER 1
 
+ENV DEBIAN_FRONTEND noninteractive
+ENV DEBCONF_NOWARNINGS yes
+
 RUN dpkg --add-architecture arm64 \
     && dpkg --add-architecture armhf
 
@@ -28,6 +31,8 @@ RUN apt-get update \
         python3-wheel \
     && rm -rf /var/lib/apt/lists/*
 
+ENV PIP_ROOT_USER_ACTION ignore
+
 RUN pip3 install \
         jinja2-cli \
         unidecode
@@ -51,3 +56,5 @@ RUN echo '[target.aarch64-unknown-linux-gnu]\nlinker = "aarch64-linux-gnu-gcc"' 
     && echo '[target.armv7-unknown-linux-gnueabihf]\nlinker = "arm-linux-gnueabihf-gcc"' >> /.cargo/config
 
 RUN cargo install --jobs "$(nproc)" cargo-deb
+
+RUN git config --global --add safe.directory /mnt/raspotify
