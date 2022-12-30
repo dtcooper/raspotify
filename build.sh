@@ -55,7 +55,7 @@ DEB_PKG_NAME="raspotify_${DEB_PKG_VER}_${ARCHITECTURE}.deb"
 # https://www.debian.org/doc/debian-policy/ch-controlfields.html#installed-size
 # "The disk space is given as the integer value of the estimated installed size in bytes,
 # divided by 1024 and rounded up."
-INSTALLED_SIZE="$((($(du -bs raspotify --exclude=raspotify/DEBIAN/control | cut -f 1) + 2048) / 1024)))"
+INSTALLED_SIZE="$((($(du -bs raspotify --exclude=raspotify/DEBIAN/control | cut -f 1) + 2048) / 1024))"
 
 jinja2 \
 	-D "VERSION=$DEB_PKG_VER" \
