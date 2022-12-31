@@ -82,7 +82,7 @@ fi
 cd asound-conf-wizard
 
 # Build asound-conf-wizard
-/build/cache/bin/cargo-deb --profile default --target "$BUILD_TARGET" -- --jobs "$(nproc)"
+cargo-deb --profile default --target "$BUILD_TARGET" -- --jobs "$(nproc)"
 
 cd /build/"$BUILD_TARGET"/debian
 
