@@ -35,11 +35,7 @@ RUN mkdir /build \
         git \
         dpkg-dev \
         liblzma-dev \
-        pandoc \
         pkg-config \
-        python3-pip \
-        python3-setuptools \
-        python3-wheel \
+        gettext-base \
     && rm -rf /var/lib/apt/lists/* \
-    && pip3 install jinja2-cli unidecode \
     && git config --global --add safe.directory /mnt/raspotify

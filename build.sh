@@ -42,11 +42,8 @@ cp -v /build/"$BUILD_TARGET"/raspotify/librespot raspotify/usr/bin
 DOC_DIR="raspotify/usr/share/doc/raspotify"
 mkdir -p "$DOC_DIR"
 cp -v LICENSE "$DOC_DIR/copyright"
+cp -v readme "$DOC_DIR/readme"
 cp -v librespot/LICENSE "$DOC_DIR/librespot.copyright"
-
-# Markdown to plain text for readme
-pandoc -f markdown -t plain --columns=80 README.md |
-	sed "s/LICENSE/copyright/" | unidecode -e utf8 >"$DOC_DIR/readme"
 
 # Compute final package version + filename for Debian control file
 DEB_PKG_VER="${RASPOTIFY_GIT_VER}~librespot.${LIBRESPOT_VER}-${LIBRESPOT_HASH}"
@@ -57,13 +54,10 @@ DEB_PKG_NAME="raspotify_${DEB_PKG_VER}_${ARCHITECTURE}.deb"
 # divided by 1024 and rounded up."
 INSTALLED_SIZE="$((($(du -bs raspotify --exclude=raspotify/DEBIAN/control | cut -f 1) + 2048) / 1024))"
 
-jinja2 \
-	-D "VERSION=$DEB_PKG_VER" \
-	-D "RUST_VERSION=$(rustc -V)" \
-	-D "RASPOTIFY_AUTHOR=$RASPOTIFY_AUTHOR" \
-	-D "ARCHITECTURE=$ARCHITECTURE" \
-	-D "INSTALLED_SIZE=$INSTALLED_SIZE" \
-	control.debian.tmpl >raspotify/DEBIAN/control
+export DEB_PKG_VER
+export RUST_VER=$(rustc -V)
+export INSTALLED_SIZE
+envsubst <control.debian.tmpl >raspotify/DEBIAN/control
 
 # Finally, build debian package
 dpkg-deb -b raspotify "$DEB_PKG_NAME"
