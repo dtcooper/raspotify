@@ -32,7 +32,6 @@ RUN mkdir /build \
         crossbuild-essential-armhf \
         libasound2-dev:armhf \
         libpulse-dev:armhf \
-        curl \
         git \
         dpkg-dev \
         liblzma-dev \
