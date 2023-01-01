@@ -14,7 +14,6 @@ cd /mnt/raspotify
 RASPOTIFY_GIT_VER="$(git describe --tags "$(git rev-list --tags --max-count=1)" 2>/dev/null || echo unknown)"
 
 if [ ! -d librespot ]; then
-	echo "No directory named librespot exists! Cloning..."
 	# Use a vendored version of librespot.
 	# https://github.com/librespot-org/librespot does not regularly or really ever update their dependencies on released versions.
 	# https://github.com/librespot-org/librespot/pull/1068
@@ -22,6 +21,12 @@ if [ ! -d librespot ]; then
 	cd librespot
 	git checkout raspotify
 	cd /mnt/raspotify
+	# Copy over copyright files
+	DOC_DIR="raspotify/usr/share/doc/raspotify"
+	mkdir -p "$DOC_DIR"
+	cp -v LICENSE "$DOC_DIR/copyright"
+	cp -v readme "$DOC_DIR/readme"
+	cp -v librespot/LICENSE "$DOC_DIR/librespot.copyright"
 fi
 
 cd librespot
@@ -38,13 +43,6 @@ cd /mnt/raspotify
 
 cp -v /build/"$BUILD_TARGET"/raspotify/librespot raspotify/usr/bin
 
-# Copy over copyright files
-DOC_DIR="raspotify/usr/share/doc/raspotify"
-mkdir -p "$DOC_DIR"
-cp -v LICENSE "$DOC_DIR/copyright"
-cp -v readme "$DOC_DIR/readme"
-cp -v librespot/LICENSE "$DOC_DIR/librespot.copyright"
-
 # Compute final package version + filename for Debian control file
 DEB_PKG_VER="${RASPOTIFY_GIT_VER}~librespot.${LIBRESPOT_VER}-${LIBRESPOT_HASH}"
 DEB_PKG_NAME="raspotify_${DEB_PKG_VER}_${ARCHITECTURE}.deb"
@@ -55,7 +53,6 @@ DEB_PKG_NAME="raspotify_${DEB_PKG_VER}_${ARCHITECTURE}.deb"
 INSTALLED_SIZE="$((($(du -bs raspotify --exclude=raspotify/DEBIAN/control | cut -f 1) + 2048) / 1024))"
 
 export DEB_PKG_VER
-export RUST_VER=$(rustc -V)
 export INSTALLED_SIZE
 envsubst <control.debian.tmpl >raspotify/DEBIAN/control
 
@@ -69,7 +66,6 @@ echo "Raspotify package estimated Size $PACKAGE_SIZE (Bytes)"
 echo "Raspotify package estimated Installed Size $INSTALLED_SIZE (KiB)"
 
 if [ ! -d asound-conf-wizard ]; then
-	echo "No directory named asound-conf-wizard exists! Cloning..."
 	git clone https://github.com/JasonLG1979/asound-conf-wizard.git
 fi
 
