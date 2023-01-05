@@ -13,7 +13,7 @@ RASPOTIFY_GIT_VER="$(git describe --tags "$(git rev-list --tags --max-count=1)" 
 
 RASPOTIFY_HASH="$(git rev-parse HEAD | cut -c 1-7 2>/dev/null || echo unknown)"
 
-echo "Building Raspotify $RASPOTIFY_GIT_VER $RASPOTIFY_HASH $ARCHITECTURE"
+echo "Build Raspotify $RASPOTIFY_GIT_VER~$RASPOTIFY_HASH $ARCHITECTURE..."
 
 packages() {
 	cd /mnt/raspotify
@@ -31,7 +31,7 @@ packages() {
 	DOC_DIR="raspotify/usr/share/doc/raspotify"
 
 	if [ ! -d "$DOC_DIR" ]; then
-		# Copy over copyright files
+		echo "Copy over copyright & readme files..."
 		mkdir -p "$DOC_DIR"
 		cp -v LICENSE "$DOC_DIR/copyright"
 		cp -v readme "$DOC_DIR/readme"
@@ -45,11 +45,11 @@ packages() {
 
 	LIBRESPOT_HASH="$(git rev-parse HEAD | cut -c 1-7 2>/dev/null || echo unknown)"
 
-	echo "Building Librespot $ARCHITECTURE binary..."
+	echo "Build Librespot binary..."
 
 	cargo build --jobs "$(nproc)" --profile raspotify --target "$BUILD_TARGET" --no-default-features --features "alsa-backend pulseaudio-backend"
 
-	# Copy librespot to pkg root
+	echo "Copy Librespot binary to pkg root..."
 	cd /mnt/raspotify
 
 	cp -v /build/"$BUILD_TARGET"/raspotify/librespot raspotify/usr/bin
@@ -63,19 +63,19 @@ packages() {
 	# in bytes, divided by 1024 and rounded up."
 	INSTALLED_SIZE="$((($(du -bs raspotify --exclude=raspotify/DEBIAN/control | cut -f 1) + 2048) / 1024))"
 
-	# Generate Debian control
+	echo "Generate Debian control..."
 	export DEB_PKG_VER
 	export INSTALLED_SIZE
 	envsubst <control.debian.tmpl >raspotify/DEBIAN/control
 
-	# Build raspotify deb
+	echo "Build Raspotify deb..."
 	dpkg-deb -b raspotify "$DEB_PKG_NAME"
 
 	PACKAGE_SIZE="$(du -bs "$DEB_PKG_NAME" | cut -f 1)"
 
-	echo "Raspotify package built as $DEB_PKG_NAME"
-	echo "Estimated package size $PACKAGE_SIZE (Bytes)"
-	echo "Estimated package snstalled Size $INSTALLED_SIZE (KiB)"
+	echo "Raspotify package built as: $DEB_PKG_NAME"
+	echo "Estimated package size:     $PACKAGE_SIZE (Bytes)"
+	echo "Estimated installed size:   $INSTALLED_SIZE (KiB)"
 
 	if [ ! -d asound-conf-wizard ]; then
 		git clone https://github.com/JasonLG1979/asound-conf-wizard.git
@@ -84,7 +84,7 @@ packages() {
 	cd asound-conf-wizard
 
 	# Build asound-conf-wizard deb
-	echo "Building asound-conf-wizard $ARCHITECTURE deb..."
+	echo "Build asound-conf-wizard deb..."
 
 	cargo-deb --profile default --target "$BUILD_TARGET" -- --jobs "$(nproc)"
 
@@ -94,11 +94,11 @@ packages() {
 
 	PACKAGE_SIZE="$(du -bs "$AWIZ_DEB_PKG_NAME" | cut -f 1)"
 
-	# Copy asound-conf-wizard to pkg root
+	echo "Copy asound-conf-wizard to pkg root..."
 	cp -v "$AWIZ_DEB_PKG_NAME" /mnt/raspotify
 
-	echo "asound-conf-wizard package built as $AWIZ_DEB_PKG_NAME"
-	echo "Estimated package size $PACKAGE_SIZE (Bytes)"
+	echo "asound-conf-wizard package built as: $AWIZ_DEB_PKG_NAME"
+	echo "Estimated package size:              $PACKAGE_SIZE (Bytes)"
 }
 
 armhf() {
@@ -146,3 +146,5 @@ build
 
 # Perm fixup. Not needed on macOS, but is on Linux
 chown -R "$PERMFIX_UID:$PERMFIX_GID" /mnt/raspotify 2>/dev/null || true
+
+echo "Build complete"
