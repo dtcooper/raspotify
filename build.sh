@@ -5,82 +5,144 @@ if [ "$INSIDE_DOCKER_CONTAINER" != "1" ]; then
 	exit 1
 fi
 
-echo "Building in docker container"
-
 set -e
 cd /mnt/raspotify
 
 # Get the git rev of raspotify for .deb versioning
 RASPOTIFY_GIT_VER="$(git describe --tags "$(git rev-list --tags --max-count=1)" 2>/dev/null || echo unknown)"
 
-if [ ! -d librespot ]; then
-	# Use a vendored version of librespot.
-	# https://github.com/librespot-org/librespot does not regularly or really ever update their dependencies on released versions.
-	# https://github.com/librespot-org/librespot/pull/1068
-	git clone https://github.com/JasonLG1979/librespot
-	cd librespot
-	git checkout raspotify
+RASPOTIFY_HASH="$(git rev-parse HEAD | cut -c 1-7 2>/dev/null || echo unknown)"
+
+echo "Building Raspotify $RASPOTIFY_GIT_VER $RASPOTIFY_HASH $ARCHITECTURE"
+
+packages() {
 	cd /mnt/raspotify
-	# Copy over copyright files
+	if [ ! -d librespot ]; then
+		# Use a vendored version of librespot.
+		# https://github.com/librespot-org/librespot does not regularly or
+		# really ever update their dependencies on released versions.
+		# https://github.com/librespot-org/librespot/pull/1068
+		git clone https://github.com/JasonLG1979/librespot
+		cd librespot
+		git checkout raspotify
+		cd /mnt/raspotify
+	fi
+
 	DOC_DIR="raspotify/usr/share/doc/raspotify"
-	mkdir -p "$DOC_DIR"
-	cp -v LICENSE "$DOC_DIR/copyright"
-	cp -v readme "$DOC_DIR/readme"
-	cp -v librespot/LICENSE "$DOC_DIR/librespot.copyright"
-fi
 
-cd librespot
+	if [ ! -d "$DOC_DIR" ]; then
+		# Copy over copyright files
+		mkdir -p "$DOC_DIR"
+		cp -v LICENSE "$DOC_DIR/copyright"
+		cp -v readme "$DOC_DIR/readme"
+		cp -v librespot/LICENSE "$DOC_DIR/librespot.copyright"
+	fi
 
-# Get the git rev of librespot for .deb versioning
-LIBRESPOT_VER="$(git describe --tags "$(git rev-list --tags --max-count=1)" 2>/dev/null || echo unknown)"
-LIBRESPOT_HASH="$(git rev-parse HEAD | cut -c 1-7 2>/dev/null || echo unknown)"
+	cd librespot
 
-# Build librespot
-cargo build --jobs "$(nproc)" --profile raspotify --target "$BUILD_TARGET" --no-default-features --features "alsa-backend pulseaudio-backend"
+	# Get the git rev of librespot for .deb versioning
+	LIBRESPOT_VER="$(git describe --tags "$(git rev-list --tags --max-count=1)" 2>/dev/null || echo unknown)"
 
-# Copy librespot to pkg root
-cd /mnt/raspotify
+	LIBRESPOT_HASH="$(git rev-parse HEAD | cut -c 1-7 2>/dev/null || echo unknown)"
 
-cp -v /build/"$BUILD_TARGET"/raspotify/librespot raspotify/usr/bin
+	echo "Building Librespot $ARCHITECTURE binary..."
 
-# Compute final package version + filename for Debian control file
-DEB_PKG_VER="${RASPOTIFY_GIT_VER}~librespot.${LIBRESPOT_VER}-${LIBRESPOT_HASH}"
-DEB_PKG_NAME="raspotify_${DEB_PKG_VER}_${ARCHITECTURE}.deb"
+	cargo build --jobs "$(nproc)" --profile raspotify --target "$BUILD_TARGET" --no-default-features --features "alsa-backend pulseaudio-backend"
 
-# https://www.debian.org/doc/debian-policy/ch-controlfields.html#installed-size
-# "The disk space is given as the integer value of the estimated installed size in bytes,
-# divided by 1024 and rounded up."
-INSTALLED_SIZE="$((($(du -bs raspotify --exclude=raspotify/DEBIAN/control | cut -f 1) + 2048) / 1024))"
+	# Copy librespot to pkg root
+	cd /mnt/raspotify
 
-export DEB_PKG_VER
-export INSTALLED_SIZE
-envsubst <control.debian.tmpl >raspotify/DEBIAN/control
+	cp -v /build/"$BUILD_TARGET"/raspotify/librespot raspotify/usr/bin
 
-# Finally, build debian package
-dpkg-deb -b raspotify "$DEB_PKG_NAME"
+	# Compute final package version + filename for Debian control file
+	DEB_PKG_VER="${RASPOTIFY_GIT_VER}~librespot.${LIBRESPOT_VER}-${LIBRESPOT_HASH}"
+	DEB_PKG_NAME="raspotify_${DEB_PKG_VER}_${ARCHITECTURE}.deb"
 
-PACKAGE_SIZE="$(du -bs "$DEB_PKG_NAME" | cut -f 1)"
+	# https://www.debian.org/doc/debian-policy/ch-controlfields.html#installed-size
+	# "The disk space is given as the integer value of the estimated installed size
+	# in bytes, divided by 1024 and rounded up."
+	INSTALLED_SIZE="$((($(du -bs raspotify --exclude=raspotify/DEBIAN/control | cut -f 1) + 2048) / 1024))"
 
-echo "Raspotify package built as $DEB_PKG_NAME"
-echo "Raspotify package estimated Size $PACKAGE_SIZE (Bytes)"
-echo "Raspotify package estimated Installed Size $INSTALLED_SIZE (KiB)"
+	# Generate Debian control
+	export DEB_PKG_VER
+	export INSTALLED_SIZE
+	envsubst <control.debian.tmpl >raspotify/DEBIAN/control
 
-if [ ! -d asound-conf-wizard ]; then
-	git clone https://github.com/JasonLG1979/asound-conf-wizard.git
-fi
+	# Build raspotify deb
+	dpkg-deb -b raspotify "$DEB_PKG_NAME"
 
-cd asound-conf-wizard
+	PACKAGE_SIZE="$(du -bs "$DEB_PKG_NAME" | cut -f 1)"
 
-# Build asound-conf-wizard
-cargo-deb --profile default --target "$BUILD_TARGET" -- --jobs "$(nproc)"
+	echo "Raspotify package built as $DEB_PKG_NAME"
+	echo "Estimated package size $PACKAGE_SIZE (Bytes)"
+	echo "Estimated package snstalled Size $INSTALLED_SIZE (KiB)"
 
-cd /build/"$BUILD_TARGET"/debian
+	if [ ! -d asound-conf-wizard ]; then
+		git clone https://github.com/JasonLG1979/asound-conf-wizard.git
+	fi
 
-AWIZ_DEB_PKG_NAME=$(ls -1 -- *.deb)
+	cd asound-conf-wizard
 
-cp -v "$AWIZ_DEB_PKG_NAME" /mnt/raspotify
+	# Build asound-conf-wizard deb
+	echo "Building asound-conf-wizard $ARCHITECTURE deb..."
 
-echo "asound-conf-wizard package built as $AWIZ_DEB_PKG_NAME"
+	cargo-deb --profile default --target "$BUILD_TARGET" -- --jobs "$(nproc)"
+
+	cd /build/"$BUILD_TARGET"/debian
+
+	AWIZ_DEB_PKG_NAME=$(ls -1 -- *.deb)
+
+	PACKAGE_SIZE="$(du -bs "$AWIZ_DEB_PKG_NAME" | cut -f 1)"
+
+	# Copy asound-conf-wizard to pkg root
+	cp -v "$AWIZ_DEB_PKG_NAME" /mnt/raspotify
+
+	echo "asound-conf-wizard package built as $AWIZ_DEB_PKG_NAME"
+	echo "Estimated package size $PACKAGE_SIZE (Bytes)"
+}
+
+armhf() {
+	ARCHITECTURE="armhf"
+	BUILD_TARGET="armv7-unknown-linux-gnueabihf"
+	packages
+}
+
+arm64() {
+	ARCHITECTURE="arm64"
+	BUILD_TARGET="aarch64-unknown-linux-gnu"
+	packages
+}
+
+amd64() {
+	ARCHITECTURE="amd64"
+	BUILD_TARGET="x86_64-unknown-linux-gnu"
+	packages
+}
+
+all() {
+	armhf
+	arm64
+	amd64
+}
+
+build() {
+	case $ARCHITECTURE in
+	"armhf")
+		armhf
+		;;
+	"arm64")
+		arm64
+		;;
+	"amd64")
+		amd64
+		;;
+	"all")
+		all
+		;;
+	esac
+}
+
+build
 
 # Perm fixup. Not needed on macOS, but is on Linux
 chown -R "$PERMFIX_UID:$PERMFIX_GID" /mnt/raspotify 2>/dev/null || true
