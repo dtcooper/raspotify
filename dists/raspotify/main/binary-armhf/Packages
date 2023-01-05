@@ -1,19 +1,19 @@
 Package: asound-conf-wizard
-Version: 0.1.12
+Version: 0.1.13
 Architecture: armhf
 Vcs-Browser: https://github.com/JasonLG1979/asound-conf-wizard
 Vcs-Git: https://github.com/JasonLG1979/asound-conf-wizard
 Homepage: https://github.com/JasonLG1979/asound-conf-wizard
 Maintainer: Jason Gray <jasonlevigray3@gmail.com>
 Installed-Size: 577
-Depends: libc6 (>= 2.31), libasound2 (>= 1.2.4)
+Depends: libasound2 (>= 1.2.4), libc6 (>= 2.31)
 Priority: optional
 Section: base
-Filename: pool/main/a/asound-conf-wizard/asound-conf-wizard_0.1.12_armhf.deb
-Size: 210904
-SHA256: 7058f8d300614420777513e788f3ff52f2d2c13f401d4faf5154a4cea56d3ccd
-SHA1: d5795408dc9763e41a21687fdec82e1d01a9090d
-MD5sum: 63878a6a7365bb242726b4e60234db26
+Filename: pool/main/a/asound-conf-wizard/asound-conf-wizard_0.1.13_armhf.deb
+Size: 210852
+SHA256: 3562525cc6244f98286a0bbef7f6ca81f9e49071e6e1788373afc6ebaf752290
+SHA1: b02633ec61534610df3b6a4807adb1de28d0e750
+MD5sum: 2fe3f2d825b2f33218ada72aacc0dd75
 Description: asound-conf-wizard
  An interactive utility that generates a very simple /etc/asound.conf. It is
  designed to be used on headless sytems that run bare ALSA. It will NOT run on
@@ -21,8 +21,8 @@ Description: asound-conf-wizard
  design. You should use those to configure audio if they are installed.
 
 Package: raspotify
-Version: 0.43.22~librespot.v0.4.2-b44a68b
-Installed-Size: 7522
+Version: 0.43.23~librespot.v0.4.2-fc45a0e
+Installed-Size: 7515
 Architecture: armhf
 Depends: libc6 (>= 2.31), coreutils (>= 8.32), libasound2 (>= 1.2.4), alsa-utils (>= 1.2.4), libpulse0 (>= 14.2), systemd (>= 247.3), init-system-helpers (>= 1.60)
 Maintainer: Jason Gray <jasonlevigray3@gmail.com>
@@ -31,12 +31,12 @@ Vcs-Browser: https://github.com/dtcooper/raspotify
 Vcs-Git: https://github.com/dtcooper/raspotify
 Priority: optional
 Section: base
-Filename: pool/main/r/raspotify/raspotify_0.43.22~librespot.v0.4.2-b44a68b_armhf.deb
-Size: 1747404
-SHA256: 36784a71361e5c457f38a26c809b81a0d23127c852dcb4c32cd5a71cceee30be
-SHA1: 10a8830a0c6f5d13d5399e96aed109826f37ab5b
-MD5sum: c0f64a92ee18e674974c587734a2674b
+Filename: pool/main/r/raspotify/raspotify_0.43.23~librespot.v0.4.2-fc45a0e_armhf.deb
+Size: 1744712
+SHA256: b4fcb43aa1054b21d22f4eaad573ecc1dc5e4cdeea9f5f2a35576736637c526c
+SHA1: 0e1ad58feb70ba52d73a3b81cd7c516938d34a0e
+MD5sum: 7239ee2866399ebe9e85cdfb70ea24cf
 Description: Raspotify
  A Spotify Connect systemd daemon for Debian Stable based headless systems which thinly wraps a fork of librespot.
- [Built with rustc 1.66.0 (69f9c33d7 2022-12-12)]
+ [Built with rustc 1.66.0]
 
