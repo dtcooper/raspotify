@@ -33,6 +33,7 @@ RUN mkdir /build \
         libasound2-dev:armhf \
         libpulse-dev:armhf \
         git \
+        bc \
         dpkg-dev \
         liblzma-dev \
         pkg-config \
