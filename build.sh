@@ -8,29 +8,24 @@ fi
 set -e
 
 now() {
-	date +%s.%N
+	date -u +%s.%N
 }
 
 duration_since() {
 	duration_secs=$(echo "$(now) - $1" | bc)
 
-	days=$(echo "$duration_secs / 86400" | bc)
-	remaining_secs=$(echo "$duration_secs - ($days * 86400)" | bc)
-
-	hours=$(echo "$remaining_secs / 3600" | bc)
-	remaining_secs=$(echo "$remaining_secs - ($hours * 3600)" | bc)
+	hours=$(echo "$duration_secs / 3600" | bc)
+	remaining_secs=$(echo "$duration_secs - ($hours * 3600)" | bc)
 
 	mins=$(echo "$remaining_secs / 60" | bc)
 	secs=$(echo "$remaining_secs - ($mins * 60)" | bc)
 
-	if [ "$((mins + hours + days))" -eq 0 ]; then
+	if [ "$((mins + hours))" -eq 0 ]; then
 		echo """$secs""s"
-	elif [ "$((hours + days))" -eq 0 ]; then
+	elif [ "$hours" -eq 0 ]; then
 		echo """$mins""m ""$secs""s"
-	elif [ "$days" -eq 0 ]; then
-		echo """$hours""h ""$mins""m ""$secs""s"
 	else
-		echo """$days""d ""$hours""h ""$mins""m ""$secs""s"
+		echo """$hours""h ""$mins""m ""$secs""s"
 	fi
 }
 
