@@ -23,18 +23,14 @@ duration_since() {
 	mins=$(echo "$remaining_secs / 60" | bc)
 	secs=$(echo "$remaining_secs - ($mins * 60)" | bc)
 
-	if [ "$(echo "$mins + $hours + $days" | bc)" -eq 0 ]; then
-		printf "%02.6fs\n" "$secs"
+	if [ "$((mins + hours + days))" -eq 0 ]; then
+		echo """$secs""s"
+	elif [ "$((hours + days))" -eq 0 ]; then
+		echo """$mins""m ""$secs""s"
+	elif [ "$days" -eq 0 ]; then
+		echo """$hours""h ""$mins""m ""$secs""s"
 	else
-		if [ "$(echo "$hours + $days" | bc)" -eq 0 ]; then
-			printf "%dm %02.6fs\n" "$mins" "$secs"
-		else
-			if [ "$days" -eq 0 ]; then
-				printf "%dh %dm %02.6fs\n" "$hours" "$mins" "$secs"
-			else
-				printf "%dd %dh %dm %02.6fs\n" "$days" "$hours" "$mins" "$secs"
-			fi
-		fi
+		echo """$days""d ""$hours""h ""$mins""m ""$secs""s"
 	fi
 }
 
