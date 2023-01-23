@@ -4,23 +4,13 @@
 Raspotify is a [Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_(file_format)) for Debian Stable and other Debian Stable based/compatible OS's
 which thinly wraps [a fork](https://github.com/JasonLG1979/librespot/tree/raspotify) of the awesome
 [librespot](https://github.com/librespot-org/librespot) library by
-[Paul Lietar](https://github.com/plietar) and others up as a [systemd](https://en.wikipedia.org/wiki/Systemd) [daemon](https://en.wikipedia.org/wiki/Daemon_(computing)). **Librespot, and therefore Raspotify, requires a premium account.**
+[Paul Lietar](https://github.com/plietar) and others up as a [systemd](https://en.wikipedia.org/wiki/Systemd) [daemon](https://en.wikipedia.org/wiki/Daemon_(computing)).
 
 Raspotify is primarily intended to be used in a *[headless enviroment](https://en.wikipedia.org/wiki/Headless_computer)*.
-
 *For desktop OS's [spotifyd](https://github.com/Spotifyd/spotifyd) offers similar functionality and is probably a better choice.*
-
 If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify Connect support we recommend [moOde™ audio player](https://moodeaudio.org/).
 
-## Dependencies
-
-**Raspotify will not install without these packages and minimum versions:**
-* [libc6 (>= 2.31)](https://tracker.debian.org/pkg/libc6)
-* [systemd (>= 247.3)](https://tracker.debian.org/pkg/systemd)
-* [libasound2 (>= 1.2.4)](https://tracker.debian.org/pkg/libasound2)
-* [alsa-utils (>= 1.2.4)](https://tracker.debian.org/pkg/alsa-utils)
-* [libpulse0 (>= 14.2)](https://tracker.debian.org/pkg/libpulse0)
-* [init-system-helpers (>= 1.60)](https://tracker.debian.org/pkg/init-system-helpers)
+**Librespot, and therefore Raspotify, requires a premium account.**
 
 ## Installation
 ### [Support for ARMv6 (Pi v1 and Pi Zero v1.x) has been dropped.](https://github.com/dtcooper/raspotify/wiki/Raspotify-on-Pi-v1's-and-Pi-Zero-v1.x)
@@ -36,7 +26,7 @@ Or you can just download the latest .deb package and install it manually from he
 
 ## Configuration
 
-The [Basic Setup Guide](https://github.com/dtcooper/raspotify/wiki/Basic-Setup-Guide) is particularly useful.
+The [wiki](https://github.com/dtcooper/raspotify/wiki) is full of useful information. The [Basic Setup Guide](https://github.com/dtcooper/raspotify/wiki/Basic-Setup-Guide) is a good place to start.
 
 ## Bug Reports, Questions and Feature Requests
 
