@@ -7,7 +7,7 @@ which thinly wraps [a fork](https://github.com/JasonLG1979/librespot/tree/raspot
 [Paul Lietar](https://github.com/plietar) and others up as a [systemd](https://en.wikipedia.org/wiki/Systemd) [daemon](https://en.wikipedia.org/wiki/Daemon_(computing)).
 
 Raspotify is primarily intended to be used in a *[headless enviroment](https://en.wikipedia.org/wiki/Headless_computer)*.
-*For desktop OS's [spotifyd](https://github.com/Spotifyd/spotifyd) offers similar functionality and is probably a better choice.*
+For desktop OS's [spotifyd](https://github.com/Spotifyd/spotifyd) offers similar functionality and is probably a better choice.
 If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify Connect support we recommend [moOde™ audio player](https://moodeaudio.org/).
 
 **Librespot, and therefore Raspotify, requires a premium account.**
