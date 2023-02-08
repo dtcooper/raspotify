@@ -21,11 +21,11 @@ duration_since() {
 	secs=$(echo "$remaining_secs - ($mins * 60)" | bc)
 
 	if [ "$((mins + hours))" -eq 0 ]; then
-		echo """$secs""s"
+		printf "%fs\n" "$secs"
 	elif [ "$hours" -eq 0 ]; then
-		echo """$mins""m ""$secs""s"
+		printf "%dm %fs\n" "$mins" "$secs"
 	else
-		echo """$hours""h ""$mins""m ""$secs""s"
+		printf "%dh %dm %fs\n" "$hours" "$mins" "$secs"
 	fi
 }
 
