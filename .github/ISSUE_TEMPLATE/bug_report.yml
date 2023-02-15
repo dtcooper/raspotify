@@ -77,8 +77,7 @@ body:
     id: logs
     attributes:
       label: Relevant log output and/or the contents of /etc/raspotify/crash_report if any
-      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
-      placeholder: sudo journalctl -u raspotify -b and sudo cat /etc/raspotify/crash_report
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks. ( sudo journalctl -u raspotify -b and sudo cat /etc/raspotify/crash_report )
       render: shell
     validations:
       required: true
