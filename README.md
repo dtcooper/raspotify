@@ -6,14 +6,14 @@ which thinly wraps [a fork](https://github.com/JasonLG1979/librespot/tree/raspot
 [librespot](https://github.com/librespot-org/librespot) library by
 [Paul Lietar](https://github.com/plietar) and others up as a [systemd](https://en.wikipedia.org/wiki/Systemd) [daemon](https://en.wikipedia.org/wiki/Daemon_(computing)).
 
-Raspotify is primarily intended to be used in a *[headless enviroment](https://en.wikipedia.org/wiki/Headless_computer)*.
-For desktop OS's [spotifyd](https://github.com/Spotifyd/spotifyd) offers similar functionality and is probably a better choice.
+Raspotify is intended to be used in a *[headless enviroment](https://en.wikipedia.org/wiki/Headless_computer)*.
+For desktop OS's [spotifyd](https://github.com/Spotifyd/spotifyd) offers similar functionality and is a better choice.
 If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify Connect support we recommend [moOde™ audio player](https://moodeaudio.org/).
 
 **Librespot, and therefore Raspotify, requires a premium account.**
 
 ## Installation
-### [Support for ARMv6 (Pi v1 and Pi Zero v1.x) has been dropped.](https://github.com/dtcooper/raspotify/wiki/Raspotify-on-Pi-v1's-and-Pi-Zero-v1.x)
+### [Raspotify does NOT support ARMv6 Pi's (Pi v1 and Pi Zero v1.x).](https://github.com/dtcooper/raspotify/wiki/Raspotify-on-Pi-v1's-and-Pi-Zero-v1.x)
 
 ```sh
 sudo apt-get -y install curl && curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
