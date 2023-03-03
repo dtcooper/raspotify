@@ -13,7 +13,7 @@ If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify C
 **Librespot, and therefore Raspotify, requires a premium account.**
 
 ## Installation
-### [Raspotify does NOT support ARMv6 Pi's (Pi v1 and Pi Zero v1.x).](https://github.com/dtcooper/raspotify/wiki/Raspotify-on-Pi-v1's-and-Pi-Zero-v1.x)
+### [Raspotify does NOT support ARMv6 Pi's (Pi v1 and Pi Zero v1.x)](https://github.com/dtcooper/raspotify/wiki/Raspotify-on-Pi-v1's-and-Pi-Zero-v1.x)
 
 ```sh
 sudo apt-get -y install curl && curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
