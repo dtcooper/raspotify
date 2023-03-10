@@ -3,7 +3,6 @@ FROM rust:bullseye
 ENV INSIDE_DOCKER_CONTAINER=1 \
     DEBIAN_FRONTEND=noninteractive \
     DEBCONF_NOWARNINGS=yes \
-    PIP_ROOT_USER_ACTION=ignore \
     PKG_CONFIG_ALLOW_CROSS=1 \
     PKG_CONFIG_PATH="/usr/lib/arm-linux-gnueabihf/pkgconfig" \
     PATH="/root/.cargo/bin/:$PATH" \
