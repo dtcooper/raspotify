@@ -55,7 +55,7 @@ body:
       label: Are you sure?
       description: Before submitting this issue you have made sure that you are not running version 0.31.8.1 on a Pi v1 or Pi Zero?
       options:
-        - label: I'm not running Raspotify 0.31.8.1 on a on a Pi v1 or Pi Zero
+        - label: I'm not running Raspotify 0.31.8.1 on a Pi v1 or Pi Zero
           required: true
   - type: checkboxes
     id: due-diligence
