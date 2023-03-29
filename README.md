@@ -24,6 +24,7 @@ Or you can just download the latest .deb package and install it manually from he
 * [`raspotify-latest_amd64.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_amd64.deb)
 
 ## Configuration
+There are various *"guides"* floating around online. Most if not all of them are outdated and/or present incorrect information. Don't follow them.
 
 The [wiki](https://github.com/dtcooper/raspotify/wiki) is full of useful information. The [Basic Setup Guide](https://github.com/dtcooper/raspotify/wiki/Basic-Setup-Guide) is a good place to start.
 
