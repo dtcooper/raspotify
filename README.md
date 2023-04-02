@@ -14,8 +14,6 @@ If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify C
 ## Installation
 There are various *"guides"* floating around online. Most if not all of them are outdated and/or present incorrect information. Don't follow them.
 
-### [Raspotify does NOT support ARMv6 Pi's (Pi v1 and Pi Zero v1.x)](https://github.com/dtcooper/raspotify/wiki/Raspotify-on-Pi-v1's-and-Pi-Zero-v1.x)
-
 ```sh
 sudo apt-get -y install curl && curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
 ```
@@ -24,6 +22,8 @@ Or you can just download the latest .deb package and install it manually from he
 * [`raspotify-latest_armhf.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_armhf.deb)
 * [`raspotify-latest_arm64.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_arm64.deb)
 * [`raspotify-latest_amd64.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_amd64.deb)
+
+### [Raspotify does NOT support ARMv6 Pi's (Pi v1 and Pi Zero v1.x)](https://github.com/dtcooper/raspotify/wiki/Raspotify-on-Pi-v1's-and-Pi-Zero-v1.x)
 
 ## Configuration
 The [wiki](https://github.com/dtcooper/raspotify/wiki) is full of useful information. The [Basic Setup Guide](https://github.com/dtcooper/raspotify/wiki/Basic-Setup-Guide) is a good place to start.
