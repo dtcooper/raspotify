@@ -1,13 +1,9 @@
 
 [<img src="https://raw.githubusercontent.com/dtcooper/raspotify/master/raspotify.svg?sanitize=true">](https://github.com/dtcooper/raspotify)
 
-Raspotify is a [Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_(file_format)) for [Debian Stable](https://www.debian.org/releases/stable/) ( ***Currently Debian 11 "Bullseye"*** ) and other Debian Stable based/compatible OS's ( ***your mileage may vary*** ) which thinly wraps [a fork](https://github.com/JasonLG1979/librespot/tree/raspotify) of the awesome
-[librespot](https://github.com/librespot-org/librespot) library by
-[Paul Lietar](https://github.com/plietar) and others up as a [systemd](https://en.wikipedia.org/wiki/Systemd) [daemon](https://en.wikipedia.org/wiki/Daemon_(computing)).
+Raspotify is a [Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_(file_format)) for [Debian Stable](https://www.debian.org/releases/stable/) ( ***Currently Debian 11 "Bullseye"*** ) and other Debian Stable based/compatible OS's ( ***your mileage may vary*** ) which thinly wraps [a fork](https://github.com/JasonLG1979/librespot/tree/raspotify) of the awesome [librespot](https://github.com/librespot-org/librespot) library by [Paul Lietar](https://github.com/plietar) and others up as a [systemd](https://en.wikipedia.org/wiki/Systemd) [daemon](https://en.wikipedia.org/wiki/Daemon_(computing)).
 
-Raspotify is intended to be used in a *[headless enviroment](https://en.wikipedia.org/wiki/Headless_computer)*.
-For desktop OS's [spotifyd](https://github.com/Spotifyd/spotifyd) offers similar functionality and is a better choice.
-If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify Connect support we recommend [moOde™ audio player](https://moodeaudio.org/).
+Raspotify is intended to be used in a *[headless enviroment](https://en.wikipedia.org/wiki/Headless_computer)*. For desktop OS's [spotifyd](https://github.com/Spotifyd/spotifyd) offers similar functionality and is a better choice. If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify Connect support we recommend [moOde™ audio player](https://moodeaudio.org/).
 
 **Librespot, and therefore Raspotify, requires a premium account.**
 
@@ -34,9 +30,7 @@ The [wiki](https://github.com/dtcooper/raspotify/wiki) is full of useful informa
 
 ## Disclaimer
 
-Per librespot's disclaimer, using librespot &mdash; the underlying library behind
-raspotify &mdash; to connect to Spotify's API *"is probably forbidden by them."*
-We've not received word about that, however use at your own risk.
+Per librespot's disclaimer, using librespot &mdash; the underlying library behind raspotify &mdash; to connect to Spotify's API *"is probably forbidden by them."* We've not received word about that, however use at your own risk.
 
 **Raspotify and librespot are intended for personal private use. Please DO NOT use Raspotify or librespot in any sort of commercial and/or public presentation. Doing so is a flagrant violation of Spotify's terms of service and could potentially lead to them blocking all Raspotify and librespot users.**
 
@@ -47,10 +41,7 @@ file for details.
 
 ## Acknowledgments
 
-Special thanks to [Paul Lietar](https://github.com/plietar), [librespot org](https://github.com/librespot-org)
-and its [many contributors](https://github.com/librespot-org/librespot/graphs/contributors) for [librespot](https://github.com/librespot-org/librespot),
-which Raspotify packages (a slightly modded version of). Without [librespot](https://github.com/librespot-org/librespot),
-Raspotify would simply not exist.
+Special thanks to [Paul Lietar](https://github.com/plietar), [librespot org](https://github.com/librespot-org) and its [many contributors](https://github.com/librespot-org/librespot/graphs/contributors) for [librespot](https://github.com/librespot-org/librespot), which Raspotify packages (a slightly modded version of). Without [librespot](https://github.com/librespot-org/librespot), Raspotify would simply not exist.
 
 ### 📻 *"And Now, For Something Completely Different!"* 🎙️
 
