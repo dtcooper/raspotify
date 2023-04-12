@@ -22,6 +22,7 @@ Or you can just download the latest .deb package and install it manually from he
 ### [Raspotify does NOT support ARMv6 Pi's (Pi v1 and Pi Zero v1.x)](https://github.com/dtcooper/raspotify/wiki/Raspotify-on-Pi-v1's-and-Pi-Zero-v1.x)
 
 ## Configuration
+
 The [wiki](https://github.com/dtcooper/raspotify/wiki) is full of useful information. The [Basic Setup Guide](https://github.com/dtcooper/raspotify/wiki/Basic-Setup-Guide) is a good place to start.
 
 ## Bug Reports, Questions and Feature Requests
@@ -36,8 +37,7 @@ Per librespot's disclaimer, using librespot &mdash; the underlying library behin
 
 ## License
 
-This project is licensed under the MIT License - see the [`LICENSE`](LICENSE)
-file for details.
+This project is licensed under the MIT License - see the [`LICENSE`](LICENSE) file for details.
 
 ## Acknowledgments
 
