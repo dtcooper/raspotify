@@ -8,6 +8,7 @@ Raspotify is intended to be used in a *[headless enviroment](https://en.wikipedi
 **Librespot, and therefore Raspotify, requires a premium account.**
 
 ## Installation
+
 There are various *"guides"* floating around online. Most if not all of them are outdated and/or present incorrect information. Don't follow them.
 
 ```sh
