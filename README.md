@@ -9,7 +9,7 @@ Raspotify is intended to be used in a *[headless enviroment](https://en.wikipedi
 
 ## Installation
 
-There are various *"guides"* floating around online. Most if not all of them are outdated and/or present incorrect information. Don't follow them.
+There are various *"guides"* floating around online. Most if not all of them are outdated and/or present incorrect information. **Don't follow them.**
 
 ```sh
 sudo apt-get -y install curl && curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
