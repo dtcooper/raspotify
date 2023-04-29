@@ -46,13 +46,9 @@ Special thanks to [Paul Lietar](https://github.com/plietar), [librespot org](htt
 
 ### 📻 *"And Now, For Something Completely Different!"* 🎙️
 
-Raspotify's author [David Cooper](https://jew.pizza/) has abandoned being a software
-engineer to pursue a career as a radio personality. If you find Raspotify useful, you
-can support him by checking out his [radio work here](https://jew.pizza/) or
-[give him a follow on Twitter](https://twitter.com/dtcooper).
+Raspotify's author [David Cooper](https://jew.pizza/) has abandoned being a software engineer to pursue a career as a radio personality. If you find Raspotify useful, you can support him by checking out his [radio work here](https://jew.pizza/) or [give him a follow on Twitter](https://twitter.com/dtcooper).
 
-On a related note, [@JasonLG1979](https://github.com/JasonLG1979) has become the
-de-facto maintainer of the project. So an additional thank you to him as well.
+On a related note, [@JasonLG1979](https://github.com/JasonLG1979) has become the de-facto maintainer of the project. So an additional thank you to him as well.
 
 If you'd like to buy Jason a Red Bull you can [❤️ Sponsor Him](https://github.com/sponsors/JasonLG1979).
 
