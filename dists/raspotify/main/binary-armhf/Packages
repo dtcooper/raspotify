@@ -10,10 +10,10 @@ Depends: libc6 (>= 2.31), libasound2 (>= 1.2.4)
 Priority: optional
 Section: base
 Filename: pool/main/a/asound-conf-wizard/asound-conf-wizard_0.1.17_armhf.deb
-Size: 212504
-SHA256: 48a56e05f06969dff23f5a786f140b62716d685d24436d7c64bc77fb3832ad31
-SHA1: 94547cc8c1f720fff9b5c214e1b72ca5f4bebc55
-MD5sum: ea2b8fd5dd3a24333532fe4b19a20350
+Size: 212384
+SHA256: 5a6cfb1a02bafa387e828db6e2bfbc7c6a30a85480e0073c59414e2845dcbecf
+SHA1: 2c975e05f5e39458b4367df23818b60356808e1a
+MD5sum: 5cd992c4dc08fdde97b728e3f8b5aa6b
 Description: asound-conf-wizard
  An interactive utility that generates a very simple /etc/asound.conf. It is
  designed to be used on headless sytems that run bare ALSA. It will NOT run on
@@ -21,8 +21,8 @@ Description: asound-conf-wizard
  design. You should use those to configure audio if they are installed.
 
 Package: raspotify
-Version: 0.43.45~librespot.v0.4.2-626a51a
-Installed-Size: 7616
+Version: 0.43.46~librespot.v0.4.2-59ba283
+Installed-Size: 7619
 Architecture: armhf
 Depends: libc6 (>= 2.31), coreutils (>= 8.32), libasound2 (>= 1.2.4), alsa-utils (>= 1.2.4), libpulse0 (>= 14.2), systemd (>= 247.3), init-system-helpers (>= 1.60)
 Maintainer: Jason Gray <jasonlevigray3@gmail.com>
@@ -31,11 +31,11 @@ Vcs-Browser: https://github.com/dtcooper/raspotify
 Vcs-Git: https://github.com/dtcooper/raspotify
 Priority: optional
 Section: base
-Filename: pool/main/r/raspotify/raspotify_0.43.45~librespot.v0.4.2-626a51a_armhf.deb
-Size: 1755552
-SHA256: b33fa80295eb996ca89e8f2c48f0b6fa120e521dd9a9d087c880085e78d4b744
-SHA1: 32469e710a5630f0371b04e063d7614f089aec1b
-MD5sum: dc66f9b8d6dde56a6370b5cc34ded476
+Filename: pool/main/r/raspotify/raspotify_0.43.46~librespot.v0.4.2-59ba283_armhf.deb
+Size: 1755844
+SHA256: c656fa7be97019f08b4d7bf41ef91d629b63dad5fb4286a115826e4929e887f5
+SHA1: 4849671ac4303a3f1dbdc8ad26d9468d550fb0d2
+MD5sum: 9456d9987f3a1ca40c05310ab68eb8be
 Description: Raspotify
  A Spotify Connect systemd daemon for Debian Stable based headless systems which thinly wraps a fork of librespot.
  [Built with rustc 1.69.0]
