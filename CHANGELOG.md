@@ -19,3 +19,10 @@ Revert changes to write_buf - See: https://github.com/JasonLG1979/librespot/comm
 
 Improve "debug-ability" of ALSA backend - See: https://github.com/JasonLG1979/librespot/commit/626a51abc0429303d07c5f190c27c4362c240974
 
+## [0.43.46] - 2023-05-12
+
+### Changed
+Updated dependencies
+
+Modularize Normalisation a bit - See: https://github.com/JasonLG1979/librespot/commit/1416b09be86677022c3cf7b91260457fd57847d7
+
