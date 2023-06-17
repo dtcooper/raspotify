@@ -34,3 +34,7 @@ Updated dependencies
 ### Added
 Resampling Support - See: https://github.com/JasonLG1979/librespot/commit/88f38aa7b3d194bb17011df7a0146dbf38460bc8
 
+## [0.43.48] - 2023-06-17
+
+### Fixed
+https://github.com/JasonLG1979/librespot/commit/85a7d263ea66ef4231ce021d8431b905081d487c
