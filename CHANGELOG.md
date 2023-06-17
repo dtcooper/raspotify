@@ -28,6 +28,9 @@ Modularize Normalisation a bit - See: https://github.com/JasonLG1979/librespot/c
 
 ## [0.43.47] - 2023-06-17
 
+### Changed
+Updated dependencies
+
 ### Added
 Resampling Support - See: https://github.com/JasonLG1979/librespot/commit/e24f57cbb13a5b4a1cbb07ea160b3c96726abf94
 
