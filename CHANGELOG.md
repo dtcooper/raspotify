@@ -43,3 +43,9 @@ https://github.com/JasonLG1979/librespot/commit/85a7d263ea66ef4231ce021d8431b905
 
 ### Changed
 Move audio processing out of player - See: https://github.com/JasonLG1979/librespot/commit/28fe6d1e53b47431232028dff098bee35abf1452
+
+## [0.43.50] - 2023-06-18
+
+### Changed
+Update ALSA list_compatible_devices to show all combos of supported Formats & Sampling Rates. - See: https://github.com/JasonLG1979/librespot/commit/6b73f4ee38d035a2c94828400d12aff5f6f3d7fb
+Make normalization more efficient. - See: https://github.com/JasonLG1979/librespot/commit/bffbbc7daa17241fca8b49809da812fb1d1c554a
