@@ -38,3 +38,8 @@ Resampling Support - See: https://github.com/JasonLG1979/librespot/commit/88f38a
 
 ### Fixed
 https://github.com/JasonLG1979/librespot/commit/85a7d263ea66ef4231ce021d8431b905081d487c
+
+## [0.43.49] - 2023-06-17
+
+### Changed
+Move audio processing out of player - See: https://github.com/JasonLG1979/librespot/commit/28fe6d1e53b47431232028dff098bee35abf1452
