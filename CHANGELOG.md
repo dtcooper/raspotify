@@ -59,3 +59,8 @@ Move the rest of the audio processing and playback out of player - See: https://
 
 ### Added
 Add debug logging and explicit error handling in ResampleWorker - See: https://github.com/JasonLG1979/librespot/commit/33747434366f0e2543fe1498dcea0075686bc233
+
+## [0.43.53] - 2023-06-20
+
+### Added
+Add debug logging and explicit error handling in Player - See: https://github.com/JasonLG1979/librespot/commit/c1093860c99270324de2adc07e1c45836d0a00c4
