@@ -80,3 +80,7 @@ Fixed default normalisation calculation
 
 For both - See: https://github.com/JasonLG1979/librespot/commit/1a3e870591b4287648427eb5418dcae52dd44c91
 
+## [0.43.56] - 2023-06-21
+
+### Changed
+Load balance the Resampler Worker threads - See: https://github.com/JasonLG1979/librespot/commit/24f7f8ae3c05af2cff67894f7a79989881046815
