@@ -69,3 +69,14 @@ Add debug logging and explicit error handling in Player - See: https://github.co
 
 ### Added
 Deal with SamplePipeline latency - See: https://github.com/JasonLG1979/librespot/commit/9630b5f787d463e082926785912f51e2bc4e6e2a
+
+## [0.43.55] - 2023-06-21
+
+### Changed
+Move time/pcm frame calculations out of player and into seperate PlayerTime helper struct
+
+### Fixed
+Fixed default normalisation calculation
+
+For both - See: https://github.com/JasonLG1979/librespot/commit/1a3e870591b4287648427eb5418dcae52dd44c91
+
