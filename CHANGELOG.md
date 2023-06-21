@@ -64,3 +64,8 @@ Add debug logging and explicit error handling in ResampleWorker - See: https://g
 
 ### Added
 Add debug logging and explicit error handling in Player - See: https://github.com/JasonLG1979/librespot/commit/c1093860c99270324de2adc07e1c45836d0a00c4
+
+## [0.43.54] - 2023-06-20
+
+### Added
+Deal with SamplePipeline latency - See: https://github.com/JasonLG1979/librespot/commit/9630b5f787d463e082926785912f51e2bc4e6e2a
