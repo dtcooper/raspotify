@@ -3,15 +3,15 @@
 set -e
 
 SOURCE_REPO="deb [signed-by=/usr/share/keyrings/raspotify_key.asc] https://dtcooper.github.io/raspotify raspotify main"
-ERROR_MESG="Please make sure you are running a compatible armhf (ARMv7), arm64, or amd64 Debian based OS."
+ERROR_MESG="Please make sure you are running a compatible armhf (ARMv7), arm64, or amd64 Debian 12+ based OS."
 
-LIBC_MIN_VER="2.31"
-CUTILS_MIN_VER="8.32"
-SYSTEMD_MIN_VER="247.3"
-HELPER_MIN_VER="1.6"
-LIBASOUND_MIN_VER="1.2.4"
-ALSA_UTILS_VER="1.2.4"
-LIBPULSE_MIN_VER="14.2"
+LIBC_MIN_VER="2.36"
+CUTILS_MIN_VER="9.1"
+SYSTEMD_MIN_VER="252.6"
+HELPER_MIN_VER="1.65.2"
+LIBASOUND_MIN_VER="1.2.8"
+ALSA_UTILS_VER="1.2.8"
+LIBPULSE_MIN_VER="16.1"
 
 SUDO="sudo"
 APT="apt"
@@ -35,10 +35,6 @@ if uname -a | grep -F -ivq -e armv7 -e aarch64 -e x86_64; then
 	echo "\nUnspported architecture:\n"
 	echo "$ERROR_MESG"
 	echo "\nSupport for ARMv6 (Pi v1 and Pi Zero v1.x) has been dropped."
-	echo "0.31.8.1 was the last version to be built with ARMv6 support."
-	echo "\nhttps://github.com/dtcooper/raspotify/releases/tag/0.31.8.1\n"
-	echo "You can install and run that version on an ARMv6 device,"
-	echo "but you will never get updates and doing so is completely unsupported."
 	exit 1
 fi
 

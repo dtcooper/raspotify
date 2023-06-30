@@ -72,12 +72,15 @@ Environment=LIBRESPOT_NAME="%N (%H)"
 Environment=LIBRESPOT_BACKEND="alsa"
 Environment=LIBRESPOT_CACHE=%C/%N
 Environment=LIBRESPOT_SYSTEM_CACHE=%S/%N
+Environment=RESTRICT_NETWORK_INTERFACES=""
 
 # This Moves librespot's /tmp to RAM
 # It is overridden in the config.
 # See the config for details.
 Environment=TMPDIR=%t/%N
 EnvironmentFile=-%E/%N/conf
+
+RestrictNetworkInterfaces=RESTRICT_NETWORK_INTERFACES
 
 ExecStart=/usr/bin/librespot
 
