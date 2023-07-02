@@ -152,4 +152,4 @@ TMPDIR=/tmp
 #
 # The loopback interface ("lo") is not treated in any special way, you have to configure it explicitly in the unit file.
 #
-# RESTRICT_NETWORK_INTERFACES=""
+#RESTRICT_NETWORK_INTERFACES=""
