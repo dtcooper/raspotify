@@ -117,6 +117,10 @@ LIBRESPOT_ENABLE_VOLUME_NORMALISATION=
 # HTTP proxy to use when connecting.
 #LIBRESPOT_PROXY=""
 
+# Send librespot Events via UDP MultiCast
+# See multicast_librespot_events.py -h for details
+#LIBRESPOT_ONEVENT="/usr/bin/multicast_librespot_events.py"
+
 # ### This is NOT a librespot option or flag. ###
 # This modifies the behavior of the Raspotify service.
 # If you have issues with this option DO NOT file a bug with librespot.
