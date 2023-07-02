@@ -46,7 +46,7 @@ packages() {
 		cd librespot
 		# We will switch up upstream dev when
 		# https://github.com/librespot-org/librespot/pull/1180 is merged.
-		git checkout resampling
+		git checkout resampling-plus-discovery-fix
 		cd /mnt/raspotify
 	fi
 
