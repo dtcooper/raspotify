@@ -184,13 +184,12 @@ def get_event():
         "end_of_track",
         "stopped",
         "preload_next",
-        "preloading",
         "loading",
         "unavailable",
     ):
         json_dict["track_id"] = os.getenv("TRACK_ID") or ""
 
-    elif player_event == "track_changed":
+    elif player_event in ("track_changed", "preloading"):
         common_metadata_fields = {}
 
         item_type = os.getenv("ITEM_TYPE") or ""
