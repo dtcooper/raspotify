@@ -1,34 +1,8 @@
 #!/usr/bin/python3
 
-# This is free and unencumbered software released into the public domain.
-#
-# Anyone is free to copy, modify, publish, use, compile, sell, or
-# distribute this software, either in source code form or as a compiled
-# binary, for any purpose, commercial or non-commercial, and by any
-# means.
-#
-# In jurisdictions that recognize copyright laws, the author or authors
-# of this software dedicate any and all copyright interest in the
-# software to the public domain. We make this dedication for the benefit
-# of the public at large and to the detriment of our heirs and
-# successors. We intend this dedication to be an overt act of
-# relinquishment in perpetuity of all present and future rights to this
-# software under copyright law.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-# IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
-# OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-# ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-# OTHER DEALINGS IN THE SOFTWARE.
-#
-# For more information, please refer to <http://unlicense.org/>
-
 import os
 import json
 import socket
-import struct
 import argparse
 import sys
 import signal
@@ -38,15 +12,15 @@ import ipaddress
 log = logging.getLogger(__name__)
 
 
-def parse_args(parser):
-    def in_multi_cast_range(addr):
-        def convert_ipv4(addr):
+def parse_args(parser: argparse.ArgumentParser) -> tuple[str, int, int]:
+    def in_multi_cast_range(addr: str) -> bool:
+        def convert_ipv4(addr: str) -> tuple[int, ...]:
             return tuple(int(n) for n in addr.split("."))
 
         return (
-            convert_ipv4("224.0.0.0") <=
-            convert_ipv4(addr) <=
-            convert_ipv4("239.255.255.255")
+            convert_ipv4("224.0.0.0")
+            <= convert_ipv4(addr)
+            <= convert_ipv4("239.255.255.255")
         )
 
     try:
@@ -68,9 +42,7 @@ def parse_args(parser):
         except ValueError:
             log.error(
                 "argument -g/--group: invalid choice: '{}' "
-                "(choose from 224.0.0.0-239.255.255.255)".format(
-                    args.group
-                )
+                "(choose from 224.0.0.0-239.255.255.255)".format(args.group)
             )
 
             parser.print_help(sys.stderr)
@@ -80,9 +52,7 @@ def parse_args(parser):
         if not in_multi_cast_range(args.group):
             log.error(
                 "argument -g/--group: invalid choice: '{}' "
-                "(choose from 224.0.0.0-239.255.255.255)".format(
-                    args.group
-                )
+                "(choose from 224.0.0.0-239.255.255.255)".format(args.group)
             )
 
             parser.print_help(sys.stderr)
@@ -93,9 +63,7 @@ def parse_args(parser):
         if args.port not in range(49152, 65536):
             log.error(
                 "argument -p/--port: invalid choice: '{}' "
-                "(choose from 49152-65535)".format(
-                    args.port
-                )
+                "(choose from 49152-65535)".format(args.port)
             )
 
             parser.print_help(sys.stderr)
@@ -106,9 +74,7 @@ def parse_args(parser):
         if args.ttl not in range(1, 32):
             log.error(
                 "argument -t/--ttl: invalid choice: '{}' "
-                "(choose from 1-31)".format(
-                    args.ttl
-                )
+                "(choose from 1-31)".format(args.ttl)
             )
 
             parser.print_help(sys.stderr)
@@ -118,28 +84,28 @@ def parse_args(parser):
     if hasattr(args, "debug"):
         log.setLevel(logging.DEBUG)
 
-        mode = "Send" if args.mode in ("s", "send") else "receive"
-
-        log.debug("Group: {}, Port: {}, TTL: {}, Mode: {}".format(
+        log.debug(
+            "Group: {}, Port: {}, TTL: {}".format(
                 args.group,
                 args.port,
                 args.ttl,
-                mode,
             )
         )
 
-    return args.group, args.port, args.ttl, args.mode
+    return args.group, args.port, args.ttl
 
 
-def get_event():
-    player_event = os.getenv("PLAYER_EVENT")
+def get_event() -> bytes:
+    player_event: str | None = os.getenv("PLAYER_EVENT")
 
     if player_event is None or player_event.startswith("sink"):
         exit(0)
 
     log.debug("PlayerEvent: {}".format(player_event))
 
-    json_dict = {
+    json_dict: dict[
+        str, None | str | dict[str, None | str] | dict[str, None | str | list[str]]
+    ] = {
         "event": player_event,
     }
 
@@ -190,7 +156,7 @@ def get_event():
         json_dict["track_id"] = os.getenv("TRACK_ID") or ""
 
     elif player_event in ("track_changed", "preloading"):
-        common_metadata_fields = {}
+        common_metadata_fields: dict[str, None | str | list[str]] = {}
 
         item_type = os.getenv("ITEM_TYPE") or ""
         common_metadata_fields["item_type"] = item_type
@@ -211,7 +177,7 @@ def get_event():
         json_dict["common_metadata_fields"] = common_metadata_fields
 
         if item_type == "Track":
-            track_metadata_fields = {}
+            track_metadata_fields: dict[str, None | str | list[str]] = {}
 
             track_metadata_fields["number"] = os.getenv("NUMBER")
             track_metadata_fields["disc_number"] = os.getenv("DISC_NUMBER")
@@ -220,9 +186,7 @@ def get_event():
 
             artists = os.getenv("ARTISTS")
 
-            track_metadata_fields["artists"] = (
-                artists.split("\n") if artists else []
-            )
+            track_metadata_fields["artists"] = artists.split("\n") if artists else []
 
             album_artists = os.getenv("ALBUM_ARTISTS")
 
@@ -233,15 +197,13 @@ def get_event():
             json_dict["track_metadata_fields"] = track_metadata_fields
 
         elif item_type == "Episode":
-            episode_metadata_fields = {}
+            episode_metadata_fields: dict[str, None | str] = {}
 
             episode_metadata_fields["show_name"] = os.getenv("SHOW_NAME") or ""
             # Unix timestamp
             episode_metadata_fields["publish_time"] = os.getenv("PUBLISH_TIME")
 
-            episode_metadata_fields["description"] = (
-                os.getenv("DESCRIPTION") or ""
-            )
+            episode_metadata_fields["description"] = os.getenv("DESCRIPTION") or ""
 
             json_dict["episode_metadata_fields"] = episode_metadata_fields
 
@@ -250,7 +212,7 @@ def get_event():
     return bytes(json.dumps(json_dict), encoding="utf-8")
 
 
-def get_socket():
+def get_send_socket(ttl: int) -> socket.socket:
     try:
         sock = socket.socket(
             socket.AF_INET,
@@ -258,17 +220,6 @@ def get_socket():
             socket.IPPROTO_UDP,
         )
 
-    except Exception as e:
-        log.error(e)
-        sys.exit(1)
-
-    return sock
-
-
-def get_send_socket(ttl):
-    sock = get_socket()
-
-    try:
         sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
         sock.settimeout(0.5)
 
@@ -279,29 +230,13 @@ def get_send_socket(ttl):
     return sock
 
 
-def get_listen_socket(group, port):
-    sock = get_socket()
-
-    try:
-        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        sock.bind((group, port))
-        mreq = struct.pack("4sl", socket.inet_aton(group), socket.INADDR_ANY)
-        sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
-
-    except Exception as e:
-        log.error(e)
-        sys.exit(1)
-
-    return sock
-
-
-def send_event(group, port, ttl):
-    event = get_event()
+def send_event(group: str, port: int, ttl: int) -> None:
+    event: bytes = get_event()
 
     with get_send_socket(ttl) as s:
         try:
             # Shout into the void...
-            bytes_sent = s.sendto(event, (group, port))
+            bytes_sent: int = s.sendto(event, (group, port))
             log.debug("{} Bytes sent of {}".format(bytes_sent, len(event)))
 
         except socket.timeout:
@@ -311,28 +246,6 @@ def send_event(group, port, ttl):
             log.error(e)
             sys.exit(1)
 
-
-def listen_for_events(group, port):
-    with get_listen_socket(group, port) as s:
-        while True:
-            try:
-                event, addr = s.recvfrom(1024)
-
-                log.debug("{} Bytes received from {}".format(len(event), addr))
-                log.debug("Bytes to String: {}".format(
-                        event.decode("utf-8", errors="replace")
-                    )
-                )
-
-                if event:
-                    json_data = json.loads(event)
-                    # Do interesting things with the json_data.
-                    # Or just print it...
-                    print(json.dumps(json_data, indent=4))
-
-            except Exception as e:
-                log.error(e)
-                sys.exit(1)
 
 if __name__ == "__main__":
     signal.signal(signal.SIGTERM, lambda *args, **kwargs: sys.exit(0))
@@ -346,8 +259,10 @@ if __name__ == "__main__":
         bold_red = "\x1b[31;1m"
 
         # reset = "\u001b[0m"
-        msg = "[%(asctime)s {color}%(levelname)s\u001b[0m " \
+        msg = (
+            "[%(asctime)s {color}%(levelname)s\u001b[0m "
             "%(filename)s:%(funcName)s:%(lineno)d] %(message)s"
+        )
 
         FORMATS = {
             logging.DEBUG: msg.format(color=blue),
@@ -372,16 +287,14 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
         exit_on_error=False,
-        description="Send or Recieve Librespot Events via UDP MultiCast.",
-        epilog="librespot --onevent=/path/to/multicast_librespot_events.py "
-        "| /path/to/multicast_librespot_events.py -m r",
+        description="Send Librespot Events via UDP MultiCast.",
+        epilog="librespot --onevent=/path/to/multicast_librespot_events.py",
     )
 
     parser.add_argument(
         "-g",
         "--group",
-        help="Address of the MultiCast Group you would like to "
-        "send/receive Events on.",
+        help="Address of the MultiCast Group you would like to send Events on.",
         type=str,
         metavar="[224.0.0.0-239.255.255.255]",
         default="224.0.0.0",
@@ -390,8 +303,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-p",
         "--port",
-        help="Port on the MultiCast Group you would like "
-        "to send/receive Events on.",
+        help="Port on the MultiCast Group you would like to send Events on.",
         type=int,
         metavar="[49152-65535]",
         default=49152,
@@ -407,28 +319,15 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "-m",
-        "--mode",
-        help="Send or Receive Events.",
-        type=str,
-        choices=["s", "send", "r", "receive"],
-        metavar="[s, send, r, receive]",
-        default="send",
-    )
-
-    parser.add_argument(
         "-d",
         "--debug",
-        action='store_const',
+        action="store_const",
         metavar=None,
         const=True,
         default=argparse.SUPPRESS,
         help="Enable Debug Logging.",
     )
 
-    group, port, ttl, mode = parse_args(parser)
+    group, port, ttl = parse_args(parser)
 
-    if mode in ("s", "send"):
-        send_event(group, port, ttl)
-    elif mode in ("r", "receive"):
-        listen_for_events(group, port)
+    send_event(group, port, ttl)
