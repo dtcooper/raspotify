@@ -272,7 +272,7 @@ if __name__ == "__main__":
             logging.CRITICAL: msg.format(color=bold_red),
         }
 
-        def format(self, record):
+        def format(self, record: logging.LogRecord) -> str:
             log_fmt = self.FORMATS.get(record.levelno)
             formatter = logging.Formatter(log_fmt)
             return formatter.format(record)
@@ -328,6 +328,4 @@ if __name__ == "__main__":
         help="Enable Debug Logging.",
     )
 
-    group, port, ttl = parse_args(parser)
-
-    send_event(group, port, ttl)
+    send_event(*parse_args(parser))
