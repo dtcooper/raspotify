@@ -64,10 +64,6 @@ LIBRESPOT_AUTOPLAY="on"
 # Defaults to 44.1kHz meaning no resampling.
 #LIBRESPOT_SAMPLE_RATE="44.1kHz"
 
-# Interpolation Quality to use if Resampling. {Low|Medium|High}.
-# Defaults to High.
-#LIBRESPOT_INTERPOLATION_QUALITY="High"
-
 # Displayed device type. Defaults to speaker.
 #LIBRESPOT_DEVICE_TYPE="speaker"
 
