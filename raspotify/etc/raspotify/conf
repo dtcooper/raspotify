@@ -46,6 +46,9 @@ LIBRESPOT_ENABLE_VOLUME_NORMALISATION=
 # Options will fallback to their defaults if commented out,
 # otherwise they must have a valid value.
 
+# Automatically play similar songs when your music ends.
+LIBRESPOT_AUTOPLAY="on"
+
 # Device name.
 # Raspotify defaults to "raspotify (*hostname)".
 # Librespot defaults to "Librespot".
