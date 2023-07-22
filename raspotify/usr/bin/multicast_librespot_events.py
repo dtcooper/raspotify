@@ -1,5 +1,32 @@
 #!/usr/bin/python3
 
+"""
+This script sends Librespot events via UDP Multicast. It retrieves player event data
+from environment variables and formats it into JSON. The JSON data is then sent to the
+specified multicast group and port using a UDP socket.
+
+Usage:
+    librespot --onevent=/path/to/multicast_librespot_events.py
+
+Command-line arguments:
+    -g/--group (str): Address of the MultiCast Group you would like to send events on.
+        Defaults to '224.0.0.0'.
+    -p/--port (int): Port on the MultiCast Group you would like to send events on.
+        Defaults to 49152.
+    -t/--ttl (int): The TTL (number of "hops") when sending events. Defaults to 2.
+    -d/--debug: Enable Debug Logging.
+
+Module Dependencies:
+    - os
+    - json
+    - socket
+    - argparse
+    - sys
+    - signal
+    - logging
+    - ipaddress
+"""
+
 import os
 import json
 import socket
@@ -11,16 +38,35 @@ import ipaddress
 
 log = logging.getLogger(__name__)
 
+DEFAULT_GROUP = "224.0.0.0"
+MAX_GROUP = "239.255.255.255"
+DEFAULT_PORT = 49152
+MAX_PORT = 65535
+PORT_RANGE = range(49152, 65536)
+DEFAULT_TTL = 2
+MIN_TTL = 1
+MAX_TTL = 31
+TTL_RANGE = range(1, 32)
+SOCKET_TIMEOUT = 0.5
+
 
 def parse_args(parser: argparse.ArgumentParser) -> tuple[str, int, int]:
+    """
+    Parse command-line arguments and validate their values.
+
+    Parameters:
+        parser (argparse.ArgumentParser): ArgumentParser instance to parse the arguments.
+
+    Returns:
+        tuple[str, int, int]: A tuple containing the group (address), port, and TTL values.
+    """
+
     def in_multi_cast_range(addr: str) -> bool:
         def convert_ipv4(addr: str) -> tuple[int, ...]:
             return tuple(int(n) for n in addr.split("."))
 
         return (
-            convert_ipv4("224.0.0.0")
-            <= convert_ipv4(addr)
-            <= convert_ipv4("239.255.255.255")
+            convert_ipv4(DEFAULT_GROUP) <= convert_ipv4(addr) <= convert_ipv4(MAX_GROUP)
         )
 
     try:
@@ -42,7 +88,7 @@ def parse_args(parser: argparse.ArgumentParser) -> tuple[str, int, int]:
         except ValueError:
             log.error(
                 "argument -g/--group: invalid choice: '{}' "
-                "(choose from 224.0.0.0-239.255.255.255)".format(args.group)
+                "(choose from {}-{})".format(args.group, DEFAULT_GROUP, MAX_GROUP)
             )
 
             parser.print_help(sys.stderr)
@@ -52,7 +98,7 @@ def parse_args(parser: argparse.ArgumentParser) -> tuple[str, int, int]:
         if not in_multi_cast_range(args.group):
             log.error(
                 "argument -g/--group: invalid choice: '{}' "
-                "(choose from 224.0.0.0-239.255.255.255)".format(args.group)
+                "(choose from {}-{})".format(args.group, DEFAULT_GROUP, MAX_GROUP)
             )
 
             parser.print_help(sys.stderr)
@@ -60,10 +106,10 @@ def parse_args(parser: argparse.ArgumentParser) -> tuple[str, int, int]:
             exit(1)
 
     if args.port != parser.get_default("p"):
-        if args.port not in range(49152, 65536):
+        if args.port not in PORT_RANGE:
             log.error(
                 "argument -p/--port: invalid choice: '{}' "
-                "(choose from 49152-65535)".format(args.port)
+                "(choose from {}-{})".format(args.port, DEFAULT_PORT, MAX_PORT)
             )
 
             parser.print_help(sys.stderr)
@@ -71,10 +117,10 @@ def parse_args(parser: argparse.ArgumentParser) -> tuple[str, int, int]:
             exit(1)
 
     if args.ttl != parser.get_default("t"):
-        if args.ttl not in range(1, 32):
+        if args.ttl not in TTL_RANGE:
             log.error(
                 "argument -t/--ttl: invalid choice: '{}' "
-                "(choose from 1-31)".format(args.ttl)
+                "(choose from {}-{})".format(args.ttl, MIN_TTL, MAX_TTL)
             )
 
             parser.print_help(sys.stderr)
@@ -96,6 +142,13 @@ def parse_args(parser: argparse.ArgumentParser) -> tuple[str, int, int]:
 
 
 def get_event() -> bytes:
+    """
+    Get the player event data from environment variables and format it into a JSON string.
+
+    Returns:
+        bytes: JSON-formatted player event data.
+    """
+
     player_event: str | None = os.getenv("PLAYER_EVENT")
 
     if player_event is None or player_event.startswith("sink"):
@@ -213,6 +266,16 @@ def get_event() -> bytes:
 
 
 def get_send_socket(ttl: int) -> socket.socket:
+    """
+    Create and configure a UDP multicast socket for sending events.
+
+    Parameters:
+        ttl (int): Time to live (TTL) value for the socket.
+
+    Returns:
+        socket.socket: A configured UDP multicast socket.
+    """
+
     try:
         sock = socket.socket(
             socket.AF_INET,
@@ -221,7 +284,7 @@ def get_send_socket(ttl: int) -> socket.socket:
         )
 
         sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
-        sock.settimeout(0.5)
+        sock.settimeout(SOCKET_TIMEOUT)
 
     except Exception as e:
         log.error(e)
@@ -231,6 +294,15 @@ def get_send_socket(ttl: int) -> socket.socket:
 
 
 def send_event(group: str, port: int, ttl: int) -> None:
+    """
+    Send the player event data to the specified multicast group and port.
+
+    Parameters:
+        group (str): The multicast group address to send the data to.
+        port (int): The port on the multicast group to send the data to.
+        ttl (int): Time to live (TTL) value for the socket.
+    """
+
     event: bytes = get_event()
 
     with get_send_socket(ttl) as s:
@@ -296,8 +368,8 @@ if __name__ == "__main__":
         "--group",
         help="Address of the MultiCast Group you would like to send Events on.",
         type=str,
-        metavar="[224.0.0.0-239.255.255.255]",
-        default="224.0.0.0",
+        metavar="[{}-{}]".format(DEFAULT_GROUP, MAX_GROUP),
+        default=DEFAULT_GROUP,
     )
 
     parser.add_argument(
@@ -305,8 +377,8 @@ if __name__ == "__main__":
         "--port",
         help="Port on the MultiCast Group you would like to send Events on.",
         type=int,
-        metavar="[49152-65535]",
-        default=49152,
+        metavar="[{}-{}]".format(DEFAULT_PORT, MAX_PORT),
+        default=DEFAULT_PORT,
     )
 
     parser.add_argument(
@@ -314,8 +386,8 @@ if __name__ == "__main__":
         "--ttl",
         help='The TTL (number of "hops") when sending Events.',
         type=int,
-        metavar="[1-31]",
-        default=2,
+        metavar="[{}-{}]".format(MIN_TTL, MAX_TTL),
+        default=DEFAULT_TTL,
     )
 
     parser.add_argument(
