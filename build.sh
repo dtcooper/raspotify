@@ -37,16 +37,13 @@ packages() {
 	cd /mnt/raspotify
 
 	if [ ! -d librespot ]; then
-		# Use a vendored version of librespot.
-		# https://github.com/librespot-org/librespot does not regularly or
-		# really ever update their dependencies on released versions.
-		# https://github.com/librespot-org/librespot/pull/1068
-		echo "Get https://github.com/JasonLG1979/librespot/tree/raspotify..."
-		git clone https://github.com/JasonLG1979/librespot
-		cd librespot
-		git checkout raspotify
+		echo "Get https://github.com/librespot-org/librespot/tree/dev..."
+		git clone --branch dev https://github.com/librespot-org/librespot
 		cd /mnt/raspotify
 	fi
+
+	# Quelch warning about dubious ownership
+	git config --global --add safe.directory /mnt/raspotify/librespot
 
 	DOC_DIR="raspotify/usr/share/doc/raspotify"
 
@@ -60,17 +57,25 @@ packages() {
 
 	cd librespot
 
-	# Get the git rev of librespot for .deb versioning
-	LIBRESPOT_VER="$(git describe --tags "$(git rev-list --tags --max-count=1)" 2>/dev/null || echo unknown)"
+	# We really should use the git rev of librespot for .deb versioning.
+	# The latest tag as of writing (0.4.2) is misleading because it doesn't reflect
+	# the fact we are using the dev branch (staged for 0.5.0).
+	#
+	# Hardcoding 0.5.0-dev in combination with the git hash suffix seems to be an
+	# acceptable solution as long as the raspotify version also is bumped every
+	# time we update against librespot.
+	#
+	#LIBRESPOT_VER="$(git describe --tags "$(git rev-list --tags --max-count=1)" 2>/dev/null || echo unknown)"
+	LIBRESPOT_VER=0.5.0-dev
 	LIBRESPOT_HASH="$(git rev-parse HEAD | cut -c 1-7 2>/dev/null || echo unknown)"
 
 	echo "Build Librespot binary..."
-	cargo build --jobs "$(nproc)" --profile raspotify --target "$BUILD_TARGET" --no-default-features --features "alsa-backend pulseaudio-backend"
+	cargo build --jobs "$(nproc)" --profile release --target "$BUILD_TARGET" --no-default-features --features "alsa-backend pulseaudio-backend"
 
 	echo "Copy Librespot binary to package root..."
 	cd /mnt/raspotify
 
-	cp -v /build/"$BUILD_TARGET"/raspotify/librespot raspotify/usr/bin
+	cp -v /build/"$BUILD_TARGET"/release/librespot raspotify/usr/bin
 
 	# Compute final package version + filename for Debian control file
 	DEB_PKG_VER="${RASPOTIFY_GIT_VER}~librespot.${LIBRESPOT_VER}-${LIBRESPOT_HASH}"

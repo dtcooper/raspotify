@@ -1,7 +1,7 @@
 .PHONY: all armhf arm64 amd64 clean distclean
 .DEFAULT_GOAL := all
 
-RASPOTIFY_AUTHOR?=Jason Gray <jasonlevigray3@gmail.com>
+RASPOTIFY_AUTHOR?=Kim Tore Jensen <kimtjen@gmail.com>
 
 armhf:
 	docker build -t raspotify .
