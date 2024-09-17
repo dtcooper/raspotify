@@ -182,8 +182,8 @@ case $ARCHITECTURE in
 	;;
 esac
 
-# Perm fixup. Not needed on macOS, but is on Linux
-chown -R "$PERMFIX_UID:$PERMFIX_GID" /mnt/raspotify 2>/dev/null || true
+# Fix broken permissions resulting from running the Docker container as root.
+[ $(id -u) -eq 0 ] && chown -R "$PERMFIX_UID:$PERMFIX_GID" /mnt/raspotify 2>/dev/null
 
 BUILD_TIME=$(duration_since "$START_BUILDS")
 
