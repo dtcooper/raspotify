@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.44.00] - 2024-09-18
+
+### Changed
+Tracking upstream librespot instead of @JasonLG1979's fork.
+Thanks @kimtore!
+
 ## [0.43.44] - 2023-05-03
 
 ### Fixed
