@@ -39,11 +39,7 @@ packages() {
 	if [ ! -d librespot ]; then
 		echo "Get https://github.com/librespot-org/librespot/tree/dev..."
 		git clone --branch dev https://github.com/librespot-org/librespot
-		cd /mnt/raspotify
 	fi
-
-	# Quelch warning about dubious ownership
-	git config --global --add safe.directory /mnt/raspotify/librespot
 
 	DOC_DIR="raspotify/usr/share/doc/raspotify"
 
@@ -66,7 +62,7 @@ packages() {
 	# time we update against librespot.
 	#
 	#LIBRESPOT_VER="$(git describe --tags "$(git rev-list --tags --max-count=1)" 2>/dev/null || echo unknown)"
-	LIBRESPOT_VER=0.5.0-dev
+	LIBRESPOT_VER=v0.5.0-dev
 	LIBRESPOT_HASH="$(git rev-parse HEAD | cut -c 1-7 2>/dev/null || echo unknown)"
 
 	echo "Build Librespot binary..."
