@@ -17,34 +17,34 @@
 # Commenting out the environment variable will fallback to librespot's default
 # unless otherwise noted.
 
-# Flags are either on (uncommented) or off (commented),
-# their values are otherwise not evaluated (but the "=" is still needed).
+# Flags can be set to either "on" or "off".
+# Empty values may cause errors.
 
 # Only log warning and error messages.
-LIBRESPOT_QUIET=
+LIBRESPOT_QUIET=on
 
 # Automatically play similar songs when your music ends.
-LIBRESPOT_AUTOPLAY=
+LIBRESPOT_AUTOPLAY=on
 
 # Disable caching of the audio data.
 # Enabling audio data caching can take up a lot of space
 # if you don't limit the cache size with LIBRESPOT_CACHE_SIZE_LIMIT.
 # It can also wear out your Micro SD card. You have been warned. 
-LIBRESPOT_DISABLE_AUDIO_CACHE=
+LIBRESPOT_DISABLE_AUDIO_CACHE=on
 
 # Disable caching of credentials.
 # Caching of credentials is not necessary so long as
 # LIBRESPOT_DISABLE_DISCOVERY is not set.
-LIBRESPOT_DISABLE_CREDENTIAL_CACHE=
+LIBRESPOT_DISABLE_CREDENTIAL_CACHE=on
 
 # Play all tracks at approximately the same apparent volume.
-LIBRESPOT_ENABLE_VOLUME_NORMALISATION=
+LIBRESPOT_ENABLE_VOLUME_NORMALISATION=on
 
 # Enable verbose log output.
-#LIBRESPOT_VERBOSE=
+#LIBRESPOT_VERBOSE=off
 
 # Disable zeroconf discovery mode.
-#LIBRESPOT_DISABLE_DISCOVERY=
+#LIBRESPOT_DISABLE_DISCOVERY=off
 
 # Options will fallback to their defaults if commented out,
 # otherwise they must have a valid value.
@@ -59,18 +59,6 @@ LIBRESPOT_ENABLE_VOLUME_NORMALISATION=
 
 # Output format {F64|F32|S32|S24|S24_3|S16}. Defaults to S16.
 #LIBRESPOT_FORMAT="S16"
-
-# Sample Rate to Resample to {44.1kHz|48kHz|88.2kHz|96kHz}.
-# Defaults to 44.1kHz meaning no resampling.
-# The option does not exist in upstream librespot.
-# DO NOT file a bug with librespot about this.
-#LIBRESPOT_SAMPLE_RATE="44.1kHz"
-
-# Interpolation Quality to use if Resampling. {Low|Medium|High}.
-# Defaults to Low.
-# The option does not exist in upstream librespot.
-# DO NOT file a bug with librespot about this.
-#LIBRESPOT_INTERPOLATION_QUALITY="Low"
 
 # Displayed device type. Defaults to speaker.
 #LIBRESPOT_DEVICE_TYPE="speaker"
