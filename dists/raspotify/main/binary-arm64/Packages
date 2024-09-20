@@ -10,10 +10,10 @@ Depends: libc6 (>= 2.31), libasound2 (>= 1.2.4)
 Priority: optional
 Section: base
 Filename: pool/main/a/asound-conf-wizard/asound-conf-wizard_0.1.17-1_arm64.deb
-Size: 228460
-SHA256: a92f2b6a2b910fd7b162222457961f2536d155b74acbea0400ba9baddceca5f7
-SHA1: c376e28f4ee5298ecdc75105a09f3111835c5291
-MD5sum: ee103aa2a4d9b49377604aa3f31bc5db
+Size: 228384
+SHA256: 2b7698fd313b9f19a56e99f178daa2c479d93b4f65d4e0bae9b07678850c0064
+SHA1: 2c090ad7cb498d225735fe241f3b20314c9a4d7d
+MD5sum: ea7a38457783fe42e7485a6a87ed27d1
 Description: asound-conf-wizard
  An interactive utility that generates a very simple /etc/asound.conf. It is
  designed to be used on headless sytems that run bare ALSA. It will NOT run on
@@ -21,8 +21,8 @@ Description: asound-conf-wizard
  design. You should use those to configure audio if they are installed.
 
 Package: raspotify
-Version: 0.44.0~librespot.v0.5.0-dev-fb5c0ef
-Installed-Size: 17191
+Version: 0.44.1~librespot.v0.5.0-dev-67d3195
+Installed-Size: 17183
 Architecture: arm64
 Depends: libc6 (>= 2.31), coreutils (>= 8.32), libasound2 (>= 1.2.4), alsa-utils (>= 1.2.4), libpulse0 (>= 14.2), systemd (>= 247.3), init-system-helpers (>= 1.60)
 Maintainer: Kim Tore Jensen <kimtjen@gmail.com>
@@ -31,11 +31,11 @@ Vcs-Browser: https://github.com/dtcooper/raspotify
 Vcs-Git: https://github.com/dtcooper/raspotify
 Priority: optional
 Section: base
-Filename: pool/main/r/raspotify/raspotify_0.44.0~librespot.v0.5.0-dev-fb5c0ef_arm64.deb
-Size: 4035684
-SHA256: 650491c5d6fa5d5704491797cd6e7ee46eb8ad1c32017ebf1b8bd88db24927c2
-SHA1: aa0cad869f6e0e93d94fc7cdb5b025dd12d59200
-MD5sum: 51f45e3d2c2832df1834391a6ed71e43
+Filename: pool/main/r/raspotify/raspotify_0.44.1~librespot.v0.5.0-dev-67d3195_arm64.deb
+Size: 4035000
+SHA256: 27274855dc2fe24ce48091f6afd37301c3b4f004131c6029c657f0503408fc0c
+SHA1: 414d2f94cc422b5694829f464811a84b5f9ad84e
+MD5sum: a83a706e451e23d1c5bef50250b0d2d8
 Description: Raspotify
  A Spotify Connect systemd daemon for Debian Stable based headless systems which thinly wraps a fork of librespot.
  [Built with rustc 1.81.0]
