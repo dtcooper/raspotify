@@ -1,5 +1,4 @@
 apt-repo/
-librespot/
 asound-conf-wizard/
 *.deb
 raspotify/DEBIAN/control

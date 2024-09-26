@@ -1,0 +1,4 @@
+[submodule "librespot"]
+	path = librespot
+	url = https://github.com/librespot-org/librespot
+	branch = dev

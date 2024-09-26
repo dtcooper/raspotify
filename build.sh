@@ -35,11 +35,7 @@ packages() {
 	START_PACKAGES=$(now)
 
 	cd /mnt/raspotify
-
-	if [ ! -d librespot ]; then
-		echo "Get https://github.com/librespot-org/librespot/tree/dev..."
-		git clone --branch dev https://github.com/librespot-org/librespot
-	fi
+	git submodule init librespot
 
 	DOC_DIR="raspotify/usr/share/doc/raspotify"
 
