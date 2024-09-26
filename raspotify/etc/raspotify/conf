@@ -24,7 +24,9 @@
 LIBRESPOT_QUIET=on
 
 # Automatically play similar songs when your music ends.
-LIBRESPOT_AUTOPLAY=on
+# Respects client autoplay setting if commented out. Forces autoplay on or off when active.
+# This value is either "on" or "off".
+#LIBRESPOT_AUTOPLAY=on
 
 # Disable caching of the audio data.
 # Enabling audio data caching can take up a lot of space
