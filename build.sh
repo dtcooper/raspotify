@@ -37,6 +37,7 @@ packages() {
 
 	cd /mnt/raspotify
 	git submodule init librespot
+	git submodule update librespot
 
 	DOC_DIR="raspotify/usr/share/doc/raspotify"
 
