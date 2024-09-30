@@ -10,7 +10,7 @@ After=network.target sound.target
 OnFailure=raspotify-crash-report-generator.service
 
 [Service]
-DynamicUser=yes
+DynamicUser=no
 SupplementaryGroups=audio
 
 # /usr/bin/raspotify-crash-report-generator.sh run by
