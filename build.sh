@@ -51,16 +51,7 @@ packages() {
 
 	cd librespot
 
-	# We really should use the git rev of librespot for .deb versioning.
-	# The latest tag as of writing (0.4.2) is misleading because it doesn't reflect
-	# the fact we are using the dev branch (staged for 0.5.0).
-	#
-	# Hardcoding 0.5.0-dev in combination with the git hash suffix seems to be an
-	# acceptable solution as long as the raspotify version also is bumped every
-	# time we update against librespot.
-	#
-	#LIBRESPOT_VER="$(git describe --tags "$(git rev-list --tags --max-count=1)" 2>/dev/null || echo unknown)"
-	LIBRESPOT_VER=v0.5.0-dev
+	LIBRESPOT_VER="$(git describe --tags "$(git rev-list --tags --max-count=1)" 2>/dev/null || echo unknown)"
 	LIBRESPOT_HASH="$(git rev-parse HEAD | cut -c 1-7 2>/dev/null || echo unknown)"
 
 	echo "Build Librespot binary..."
