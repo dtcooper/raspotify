@@ -12,15 +12,25 @@ ENV INSIDE_DOCKER_CONTAINER=1 \
 
 RUN mkdir /build \
     && mkdir /.cargo \
+    && rustup target add x86_64-unknown-linux-gnu \
     && rustup target add aarch64-unknown-linux-gnu \
     && rustup target add armv7-unknown-linux-gnueabihf \
-    && echo '[target.aarch64-unknown-linux-gnu]\nlinker = "aarch64-linux-gnu-gcc"' > /.cargo/config \
-    && echo '[target.armv7-unknown-linux-gnueabihf]\nlinker = "arm-linux-gnueabihf-gcc"' >> /.cargo/config \
-    && cargo install --jobs "$(nproc)" cargo-deb \
-    ;
+    && tee /.cargo/config.toml > /dev/null <<EOF
+[target.aarch64-unknown-linux-gnu]
+linker = "aarch64-linux-gnu-gcc"
+
+[target.armv7-unknown-linux-gnueabihf]
+linker = "arm-linux-gnueabihf-gcc"
+
+[target.x86_64-unknown-linux-gnu]
+linker = "x86_64-linux-gnu-gcc"
+EOF
+
+RUN cargo install --jobs "$(nproc)" cargo-deb
 
 RUN dpkg --add-architecture arm64 \
     && dpkg --add-architecture armhf \
+    && dpkg --add-architecture amd64 \
     && apt-get update \
     && apt-get -y upgrade \
     && apt-get install -y --no-install-recommends \
@@ -30,6 +40,9 @@ RUN dpkg --add-architecture arm64 \
         crossbuild-essential-arm64 \
         libasound2-dev:arm64 \
         libpulse-dev:arm64 \
+        crossbuild-essential-amd64 \
+        libasound2-dev:amd64 \
+        libpulse-dev:amd64 \
         crossbuild-essential-armhf \
         libasound2-dev:armhf \
         libpulse-dev:armhf \
