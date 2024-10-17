@@ -10,10 +10,10 @@ Depends: libc6 (>= 2.31), libasound2 (>= 1.2.4)
 Priority: optional
 Section: base
 Filename: pool/main/a/asound-conf-wizard/asound-conf-wizard_0.1.17-1_armhf.deb
-Size: 239944
-SHA256: 4dd82aa76b43880b68be20a58b25b78c50a8d1b9cdda5afbdb7c5ca5619fff27
-SHA1: 387eecbd2e63d7cb4b84db05f06669492d38879d
-MD5sum: 7a36b6137ac7aff3cecde8d2280d1039
+Size: 239844
+SHA256: 3fe93d4834931c0f7a942003f1b8ec6951cc822065aed11368e04aaed4c6e446
+SHA1: d217452e1c0eb566e43f2ef4c891d591c5116beb
+MD5sum: 1356c4ac7fafc42704eeb80581316933
 Description: asound-conf-wizard
  An interactive utility that generates a very simple /etc/asound.conf. It is
  designed to be used on headless sytems that run bare ALSA. It will NOT run on
@@ -21,8 +21,8 @@ Description: asound-conf-wizard
  design. You should use those to configure audio if they are installed.
 
 Package: raspotify
-Version: 0.44.1~librespot.v0.5.0-dev-67d3195
-Installed-Size: 15365
+Version: 0.45.0~librespot.v0.5.0-84d28e8
+Installed-Size: 15512
 Architecture: armhf
 Depends: libc6 (>= 2.31), coreutils (>= 8.32), libasound2 (>= 1.2.4), alsa-utils (>= 1.2.4), libpulse0 (>= 14.2), systemd (>= 247.3), init-system-helpers (>= 1.60)
 Maintainer: Kim Tore Jensen <kimtjen@gmail.com>
@@ -31,11 +31,11 @@ Vcs-Browser: https://github.com/dtcooper/raspotify
 Vcs-Git: https://github.com/dtcooper/raspotify
 Priority: optional
 Section: base
-Filename: pool/main/r/raspotify/raspotify_0.44.1~librespot.v0.5.0-dev-67d3195_armhf.deb
-Size: 3744468
-SHA256: 8d2b75727600d8f0d574b223cbcccec3a87d88251b580a9700f601991013a4d2
-SHA1: 072e7c079b7b539bca38de76817817ae14c47970
-MD5sum: 06b672072e16dce597a424c1fbe66652
+Filename: pool/main/r/raspotify/raspotify_0.45.0~librespot.v0.5.0-84d28e8_armhf.deb
+Size: 3798248
+SHA256: 8b231ff963c49460e40b85056a5682e48d7c61797a3f2b015d068477b1c45c39
+SHA1: 34ce9297578af23b05ad4cb536b4534c916f6c7a
+MD5sum: eb1b150de1ee7b5c909ba23bba275384
 Description: Raspotify
  A Spotify Connect systemd daemon for Debian Stable based headless systems which thinly wraps a fork of librespot.
  [Built with rustc 1.81.0]
