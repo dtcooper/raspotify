@@ -1,15 +1,6 @@
 
 [<img src="https://raw.githubusercontent.com/dtcooper/raspotify/master/raspotify.svg?sanitize=true">](https://github.com/dtcooper/raspotify)
 
-> :warning: :warning: :warning: **NOTE:** *I have **limited to no time** to work on this package these days!*
->
-> I am looking for a maintainer to help with issues and updating the package.
-> Please reach out via email at <david@jew.pizza> if you have interest in helping.
->
-> Cheers,
->
-> David
-
 Raspotify is a [Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_(file_format)) for [Debian Stable](https://www.debian.org/releases/stable/) ( ***Currently Debian 11 "Bullseye"*** ) and other Debian Stable based/compatible OS's ( ***your mileage may vary*** ) which thinly wraps the awesome [librespot](https://github.com/librespot-org/librespot) library by [Paul Lietar](https://github.com/plietar) and others up as a [systemd](https://en.wikipedia.org/wiki/Systemd) [daemon](https://en.wikipedia.org/wiki/Daemon_(computing)).
 
 Raspotify is intended to be used in a *[headless enviroment](https://en.wikipedia.org/wiki/Headless_computer)*. For desktop OS's [spotifyd](https://github.com/Spotifyd/spotifyd) offers similar functionality and is a better choice. If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify Connect support we recommend [moOde™ audio player](https://moodeaudio.org/).
@@ -57,9 +48,9 @@ Special thanks to [Paul Lietar](https://github.com/plietar), [librespot org](htt
 
 Raspotify's author [David Cooper](https://jew.pizza/) has abandoned being a software engineer to pursue a career as a radio personality. If you find Raspotify useful, you can support him by checking out his [radio work here](https://jew.pizza/) or [give him a follow on Twitter](https://twitter.com/dtcooper).
 
-On a related note, [@JasonLG1979](https://github.com/JasonLG1979) has become the de-facto maintainer of the project. So an additional thank you to him as well.
+On a related note, [Kim Tore Jensen](https://github.com/kimtore) has stepped up and is maintaing the project.
 
-If you'd like to buy Jason a Red Bull you can [❤️ Sponsor Him](https://github.com/sponsors/JasonLG1979).
+Special thanks to [@JasonLG1979](https://github.com/JasonLG1979), a former maintainer of the project.
 
 ## Final Note
 
