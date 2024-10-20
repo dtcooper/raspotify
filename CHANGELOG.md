@@ -2,7 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.44.00] - 2024-09-18
+## [0.45.0] - 2024-10-17
+
+### Fixed
+* Fix broken default configuration flag `LIBRESPOT_AUTOPLAY` (#674)
+* Disable systemd's `DynamicUser` flag, to enable manual user-initiated OAuth setup (#675)
+
+### Changed
+This release contains the long anticipated 0.5.0 release of librespot.
+Many thanks to the librespot dev team for their hard work.
+
+## [0.44.1] - 2024-09-20
+
+### Fixed
+Default configuration file had some compatibility issues with new version of librespot,
+and was updated to run nicely out of the box.
+
+See #673.
+
+## [0.44.0] - 2024-09-18
 
 ### Changed
 Tracking upstream librespot instead of @JasonLG1979's fork.
