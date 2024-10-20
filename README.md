@@ -48,7 +48,7 @@ Special thanks to [Paul Lietar](https://github.com/plietar), [librespot org](htt
 
 Raspotify's author [David Cooper](https://jew.pizza/) has abandoned being a software engineer to pursue a career as a radio personality. If you find Raspotify useful, you can support him by checking out his [radio work here](https://jew.pizza/) or [give him a follow on Twitter](https://twitter.com/dtcooper).
 
-On a related note, [Kim Tore Jensen](https://github.com/kimtore) has stepped up and is maintaing the project.
+On a related note, [Kim Tore Jensen](https://github.com/kimtore) has stepped up and is maintaining the project.
 
 Special thanks to [@JasonLG1979](https://github.com/JasonLG1979), a former maintainer of the project.
 
