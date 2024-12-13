@@ -55,7 +55,7 @@ packages() {
 	LIBRESPOT_HASH="$(git rev-parse HEAD | cut -c 1-7 2>/dev/null || echo unknown)"
 
 	echo "Build Librespot binary..."
-	cargo build --jobs "$(nproc)" --profile release --target "$BUILD_TARGET" --no-default-features --features "alsa-backend pulseaudio-backend"
+	cargo build --jobs "$(nproc)" --profile release --target "$BUILD_TARGET" --no-default-features --features "alsa-backend pulseaudio-backend with-avahi"
 
 	echo "Copy Librespot binary to package root..."
 	cd /mnt/raspotify

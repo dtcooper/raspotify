@@ -26,6 +26,7 @@ RUN dpkg --add-architecture arm64 \
     && apt-get install -y --no-install-recommends \
         build-essential \
         libasound2-dev \
+        libavahi-client-dev \
         libpulse-dev \
         crossbuild-essential-arm64 \
         libasound2-dev:arm64 \
