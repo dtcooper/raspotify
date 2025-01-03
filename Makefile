@@ -1,4 +1,4 @@
-.PHONY: all armhf arm64 amd64 clean distclean
+.PHONY: all armhf arm64 amd64 riscv64 clean distclean
 .DEFAULT_GOAL := all
 
 RASPOTIFY_AUTHOR?=Kim Tore Jensen <kimtjen@gmail.com>
@@ -34,6 +34,17 @@ amd64:
 			--env PERMFIX_GID="$$(id -g)" \
 			--env RASPOTIFY_AUTHOR="$(RASPOTIFY_AUTHOR)" \
 			--env ARCHITECTURE="amd64" \
+		raspotify /mnt/raspotify/build.sh
+
+riscv64:
+	docker build -t raspotify .
+	docker run \
+			--rm \
+			--volume "$(CURDIR):/mnt/raspotify" \
+			--env PERMFIX_UID="$$(id -u)" \
+			--env PERMFIX_GID="$$(id -g)" \
+			--env RASPOTIFY_AUTHOR="$(RASPOTIFY_AUTHOR)" \
+			--env ARCHITECTURE="riscv64" \
 		raspotify /mnt/raspotify/build.sh
 
 all:
