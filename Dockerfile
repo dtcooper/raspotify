@@ -14,10 +14,8 @@ RUN mkdir /build \
     && mkdir /.cargo \
     && rustup target add aarch64-unknown-linux-gnu \
     && rustup target add armv7-unknown-linux-gnueabihf \
-    && rustup target add riscv64gc-unknown-linux-gnu \
     && echo '[target.aarch64-unknown-linux-gnu]\nlinker = "aarch64-linux-gnu-gcc"' > /.cargo/config \
     && echo '[target.armv7-unknown-linux-gnueabihf]\nlinker = "arm-linux-gnueabihf-gcc"' >> /.cargo/config \
-    && echo '[target.riscv64gc-unknown-linux-gnu ]\nlinker = "riscv64-linux-gnu-gcc"' >> /.cargo/config \
     && cargo install --jobs "$(nproc)" cargo-deb \
     ;
 
@@ -36,8 +34,6 @@ RUN dpkg --add-architecture arm64 \
         crossbuild-essential-armhf \
         libasound2-dev:armhf \
         libpulse-dev:armhf \
-        gcc-riscv64-linux-gnu \
-        g++-riscv64-linux-gnu \
         cmake \
         clang-16 \
         git \

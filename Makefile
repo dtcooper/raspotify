@@ -37,7 +37,7 @@ amd64:
 		raspotify /mnt/raspotify/build.sh
 
 riscv64:
-	docker build -t raspotify .
+	docker build -t raspotify -f Dockerfile.riscv64 .
 	docker run \
 			--rm \
 			--volume "$(CURDIR):/mnt/raspotify" \
@@ -47,7 +47,7 @@ riscv64:
 			--env ARCHITECTURE="riscv64" \
 		raspotify /mnt/raspotify/build.sh
 
-all:
+all: riscv64 distclean
 	docker build -t raspotify .
 	docker run \
 			--rm \

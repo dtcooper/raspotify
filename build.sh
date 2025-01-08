@@ -150,7 +150,6 @@ build_all() {
 	build_armhf
 	build_arm64
 	build_amd64
-	build_riscv64
 }
 
 START_BUILDS=$(now)
