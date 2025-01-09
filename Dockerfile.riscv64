@@ -1,41 +1,15 @@
-# Upper part taken from https://github.com/rust-lang/docker-rust/blob/master/stable/bookworm/Dockerfile
-# since there are no rust-trixie Docker images yet
+# Dedicated riscv64 trixie Dockerfile, until official rust:trixie images are available:
+# https://github.com/rust-lang/docker-rust/blob/master/stable/
 FROM buildpack-deps:trixie
-
-ENV RUSTUP_HOME=/usr/local/rustup \
-    CARGO_HOME=/usr/local/cargo \
-    PATH=/usr/local/cargo/bin:$PATH \
-    RUST_VERSION=1.83.0
-
-RUN set -eux; \
-    rustArch='x86_64-unknown-linux-gnu'; rustupSha256='6aeece6993e902708983b209d04c0d1dbb14ebb405ddb87def578d41f920f56d'; \
-    url="https://static.rust-lang.org/rustup/archive/1.27.1/${rustArch}/rustup-init"; \
-    wget "$url"; \
-    echo "${rustupSha256} *rustup-init" | sha256sum -c -; \
-    chmod +x rustup-init; \
-    ./rustup-init -y --no-modify-path --profile minimal --default-toolchain $RUST_VERSION --default-host ${rustArch}; \
-    rm rustup-init; \
-    chmod -R a+w $RUSTUP_HOME $CARGO_HOME; \
-    rustup --version; \
-    cargo --version; \
-    rustc --version;
 
 ENV INSIDE_DOCKER_CONTAINER=1 \
     DEBIAN_FRONTEND=noninteractive \
     DEBCONF_NOWARNINGS=yes \
     PKG_CONFIG_ALLOW_CROSS=1 \
-    PKG_CONFIG_PATH="/usr/lib/arm-linux-gnueabihf/pkgconfig" \
     PATH="/root/.cargo/bin/:$PATH" \
     CARGO_INSTALL_ROOT="/root/.cargo" \
     CARGO_TARGET_DIR="/build" \
     CARGO_HOME="/build/cache"
-
-RUN mkdir /build \
-    && mkdir /.cargo \
-    && rustup target add riscv64gc-unknown-linux-gnu \
-    && echo '[target.riscv64gc-unknown-linux-gnu ]\nlinker = "riscv64-linux-gnu-gcc"' >> /.cargo/config \
-    && cargo install --jobs "$(nproc)" cargo-deb \
-    ;
 
 RUN dpkg --add-architecture riscv64 \
     && apt-get update \
@@ -43,7 +17,6 @@ RUN dpkg --add-architecture riscv64 \
     && apt-get install -y --no-install-recommends \
         build-essential \
         libasound2-dev \
-        libavahi-client-dev \
         libpulse-dev \
         crossbuild-essential-riscv64 \
         libasound2-dev:riscv64 \
@@ -52,14 +25,19 @@ RUN dpkg --add-architecture riscv64 \
         clang-19 \
         git \
         bc \
-        dpkg-dev \
         liblzma-dev \
         pkg-config \
         gettext-base \
+	rustup \
     && rm -rf /var/lib/apt/lists/* \
     ;
 
-RUN cargo install --force --locked --root /usr bindgen-cli
+RUN mkdir /build /.cargo \
+    && rustup toolchain install stable --profile minimal --target riscv64gc-unknown-linux-gnu \
+    && echo '[target.riscv64gc-unknown-linux-gnu ]\nlinker = "riscv64-linux-gnu-gcc"' > /.cargo/config.toml \
+    && cargo install --jobs "$(nproc)" cargo-deb \
+    && cargo install --force --locked --root /usr bindgen-cli \
+    ;
 
 RUN git config --global --add safe.directory /mnt/raspotify \
     && git config --global --add safe.directory /mnt/raspotify/librespot
