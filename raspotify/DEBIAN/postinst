@@ -8,6 +8,11 @@ if [ -d /etc/raspotify ]; then
 	chown root:root /etc/raspotify -Rf
 fi
 
+# Comment out unusable values of LIBRESPOT_AUTOPLAY (#673)
+if [ -f /etc/raspotify/conf ]; then
+    sed -i 's/^LIBRESPOT_AUTOPLAY=$/#LIBRESPOT_AUTOPLAY=on/g' /etc/raspotify/conf
+fi
+
 # Based off what debhelper would have added
 
 # This will only remove masks created by d-s-h on package removal.
