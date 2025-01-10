@@ -140,6 +140,12 @@ build_amd64() {
 	packages
 }
 
+build_riscv64() {
+	ARCHITECTURE="riscv64"
+	BUILD_TARGET="riscv64gc-unknown-linux-gnu"
+	packages
+}
+
 build_all() {
 	build_armhf
 	build_arm64
@@ -165,6 +171,9 @@ case $ARCHITECTURE in
 	;;
 "amd64")
 	build_amd64
+	;;
+"riscv64")
+	build_riscv64
 	;;
 "all")
 	build_all

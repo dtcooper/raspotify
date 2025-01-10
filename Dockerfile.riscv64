@@ -1,4 +1,6 @@
-FROM rust:bullseye
+# Dedicated riscv64 trixie Dockerfile, until official rust:trixie images are available:
+# https://github.com/rust-lang/docker-rust/blob/master/stable/
+FROM buildpack-deps:trixie
 
 ENV INSIDE_DOCKER_CONTAINER=1 \
     DEBIAN_FRONTEND=noninteractive \
@@ -9,35 +11,30 @@ ENV INSIDE_DOCKER_CONTAINER=1 \
     CARGO_TARGET_DIR="/build" \
     CARGO_HOME="/build/cache"
 
-RUN dpkg --add-architecture arm64 \
-    && dpkg --add-architecture armhf \
+RUN dpkg --add-architecture riscv64 \
     && apt-get update \
     && apt-get -y upgrade \
     && apt-get install -y --no-install-recommends \
         build-essential \
         libasound2-dev \
         libpulse-dev \
-        crossbuild-essential-arm64 \
-        libasound2-dev:arm64 \
-        libpulse-dev:arm64 \
-        crossbuild-essential-armhf \
-        libasound2-dev:armhf \
-        libpulse-dev:armhf \
+        crossbuild-essential-riscv64 \
+        libasound2-dev:riscv64 \
+        libpulse-dev:riscv64 \
         cmake \
-        clang-16 \
+        clang-19 \
         git \
         bc \
         liblzma-dev \
         pkg-config \
         gettext-base \
+	rustup \
     && rm -rf /var/lib/apt/lists/* \
     ;
 
 RUN mkdir /build /.cargo \
-    && rustup target add aarch64-unknown-linux-gnu \
-    && rustup target add armv7-unknown-linux-gnueabihf \
-    && echo '[target.aarch64-unknown-linux-gnu]\nlinker = "aarch64-linux-gnu-gcc"' > /.cargo/config.toml \
-    && echo '[target.armv7-unknown-linux-gnueabihf]\nlinker = "arm-linux-gnueabihf-gcc"' >> /.cargo/config.toml \
+    && rustup toolchain install stable --profile minimal --target riscv64gc-unknown-linux-gnu \
+    && echo '[target.riscv64gc-unknown-linux-gnu ]\nlinker = "riscv64-linux-gnu-gcc"' > /.cargo/config.toml \
     && cargo install --jobs "$(nproc)" cargo-deb \
     && cargo install --force --locked --root /usr bindgen-cli \
     ;
