@@ -2,6 +2,43 @@
 
 All notable changes to this project will be documented in this file.
 
+## Next version
+
+### Added
+* Raspotify now provides experimental builds on the `riscv64` architecture,
+  for use on Raspberry Pi clones such as the _VisionFive 2_. These builds
+  require Debian Trixie or later.
+
+### Fixed
+* Configuration files with empty `LIBRESPOT_AUTOPLAY` values are repaired.
+* The `avahi-daemon` package should have been a required dependency for 0.46.0,
+  and has now been added.
+
+## [0.46.0] - 2024-12-24
+
+### Changed
+Librespot bumped to 0.6.0, changelog from the maintainers follows:
+
+This version takes another step into the direction of the HTTP API, fixes a
+couple of bugs, and makes it easier for developers to mock a certain platform.
+Also it adds the option to choose avahi, dnssd or libmdns as your zeroconf
+backend for Spotify Connect discovery.
+
+Changed
+
+* [core] The access_token for http requests is now acquired by login5
+* [core] MSRV is now 1.75 (breaking)
+* [discovery] librespot can now be compiled with multiple MDNS/DNS-SD backends
+  (avahi, dns_sd, libmdns) which can be selected using a CLI flag. The defaults
+  are unchanged (breaking).
+
+Added
+
+* [core] Add get_token_with_client_id() to get a token for a specific client ID
+* [core] Add login (mobile) and auth_token retrieval via login5
+* [core] Add OS and os_version to config.rs
+* [discovery] Added a new MDNS/DNS-SD backend which connects to Avahi via D-Bus.
+
 ## [0.45.0] - 2024-10-17
 
 ### Fixed
