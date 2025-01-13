@@ -51,8 +51,9 @@ packages() {
 
 	cd librespot
 
-	LIBRESPOT_VER="$(git describe --tags "$(git rev-list --tags --max-count=1)" 2>/dev/null || echo unknown)"
-	LIBRESPOT_HASH="$(git rev-parse HEAD | cut -c 1-7 2>/dev/null || echo unknown)"
+	echo 'Obtaining latest Librespot Git repository tag for DEB package version suffix ...'
+	LIBRESPOT_VER="$(git describe --tags "$(git rev-list --tags --max-count=1)" || echo unknown)"
+	LIBRESPOT_HASH="$(git rev-parse HEAD | cut -c 1-7 || echo unknown)"
 
 	echo "Build Librespot binary..."
 	cargo build --jobs "$(nproc)" --profile release --target "$BUILD_TARGET" --no-default-features --features "alsa-backend pulseaudio-backend with-avahi"
@@ -156,9 +157,17 @@ START_BUILDS=$(now)
 
 cd /mnt/raspotify
 
-# Get the git rev of raspotify for .deb versioning
-RASPOTIFY_GIT_VER="$(git describe --tags "$(git rev-list --tags --max-count=1)" 2>/dev/null || echo unknown)"
-RASPOTIFY_HASH="$(git rev-parse HEAD | cut -c 1-7 2>/dev/null || echo unknown)"
+echo 'Obtaining latest Git repository tag for DEB package version ...'
+RASPOTIFY_GIT_VER="$(git describe --tags "$(git rev-list --tags --max-count=1)" || :)"
+if [ -z "$RASPOTIFY_GIT_VER" ]; then
+	echo 'Could not obtain latest tag from local repository. Obtaining it from upstream: https://api.github.com/repos/dtcooper/raspotify/tags'
+	RASPOTIFY_GIT_VER="$(curl -sSf  "https://api.github.com/repos/dtcooper/raspotify/tags" | awk -F\" '/^ *"name": "/{print $4;exit}' || :)"
+fi
+if [ -z "$RASPOTIFY_GIT_VER" ]; then
+	echo 'Could not obtain latest tag from upstream repository either. Exiting ...'
+	exit 1
+fi
+RASPOTIFY_HASH="$(git rev-parse HEAD | cut -c 1-7 || echo unknown)"
 
 echo "Build Raspotify $RASPOTIFY_GIT_VER~$RASPOTIFY_HASH..."
 
@@ -181,7 +190,7 @@ case $ARCHITECTURE in
 esac
 
 # Fix broken permissions resulting from running the Docker container as root.
-[ $(id -u) -eq 0 ] && chown -R "$PERMFIX_UID:$PERMFIX_GID" /mnt/raspotify 2>/dev/null
+[ $(id -u) -eq 0 ] && chown -R "$PERMFIX_UID:$PERMFIX_GID" /mnt/raspotify
 
 BUILD_TIME=$(duration_since "$START_BUILDS")
 
