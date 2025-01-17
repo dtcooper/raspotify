@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Next version
+## [0.46.1] - 2025-01-17
 
 ### Added
 * Raspotify now provides experimental builds on the `riscv64` architecture,
@@ -12,7 +12,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 * Configuration files with empty `LIBRESPOT_AUTOPLAY` values are repaired.
 * The `avahi-daemon` package should have been a required dependency for 0.46.0,
-  and has now been added.
+  and has now been added (#697).
 
 ## [0.46.0] - 2024-12-24
 
