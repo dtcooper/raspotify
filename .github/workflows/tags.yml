@@ -11,7 +11,7 @@ jobs:
       issues: write
     steps:
       - name: Close read-the-field-manual
-        uses: peter-evans/close-issue@v1
+        uses: peter-evans/close-issue@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.issue.number }}
@@ -37,7 +37,7 @@ jobs:
       issues: write
     steps:
       - name: Close unsupported-device
-        uses: peter-evans/close-issue@v1
+        uses: peter-evans/close-issue@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.issue.number }}
@@ -50,7 +50,7 @@ jobs:
       issues: write
     steps:
       - name: Close unsupported-os
-        uses: peter-evans/close-issue@v1
+        uses: peter-evans/close-issue@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.issue.number }}
@@ -63,7 +63,7 @@ jobs:
       issues: write
     steps:
       - name: Close unsupported-configuration
-        uses: peter-evans/close-issue@v1
+        uses: peter-evans/close-issue@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.issue.number }}
@@ -102,7 +102,7 @@ jobs:
       issues: write
     steps:
       - name: Close invalid
-        uses: peter-evans/close-issue@v1
+        uses: peter-evans/close-issue@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.issue.number }}
@@ -128,7 +128,7 @@ jobs:
       issues: write
     steps:
       - name: Close wontfix
-        uses: peter-evans/close-issue@v1
+        uses: peter-evans/close-issue@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.issue.number }}
