@@ -160,11 +160,11 @@ cd /mnt/raspotify
 echo 'Obtaining latest Git repository tag for DEB package version ...'
 RASPOTIFY_GIT_VER="$(git describe --tags "$(git rev-list --tags --max-count=1)" || :)"
 if [ -z "$RASPOTIFY_GIT_VER" ]; then
-	echo 'Could not obtain latest tag from local repository. Obtaining it from upstream: https://api.github.com/repos/dtcooper/raspotify/tags'
+	echo 'W: Could not obtain latest tag from local repository. Obtaining it from upstream: https://api.github.com/repos/dtcooper/raspotify/tags'
 	RASPOTIFY_GIT_VER="$(curl -sSf  "https://api.github.com/repos/dtcooper/raspotify/tags" | awk -F\" '/^ *"name": "/{print $4;exit}' || :)"
 fi
 if [ -z "$RASPOTIFY_GIT_VER" ]; then
-	echo 'Could not obtain latest tag from upstream repository either. Exiting ...'
+	echo 'E: Could not obtain latest tag from upstream repository either. Exiting ...'
 	exit 1
 fi
 RASPOTIFY_HASH="$(git rev-parse HEAD | cut -c 1-7 || echo unknown)"
