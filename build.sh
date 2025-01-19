@@ -160,20 +160,12 @@ cd /mnt/raspotify
 echo 'Obtaining latest Git repository tag for DEB package version ...'
 RASPOTIFY_GIT_VER="$(git describe --tags "$(git rev-list --tags --max-count=1)" || :)"
 if [ -z "$RASPOTIFY_GIT_VER" ]; then
-	# Derive from origin URL whether this is dtcooper/raspotify and hence supposed to have tags.
-	# If so, exit right here, else get tags from dtcooper/raspotify via GitHub API, since forks often do not have any tags.
-	url="$(git remote get-url origin || :)"
-	if [ "$url" = 'https://github.com/dtcooper/raspotify' ] || [ "$url" = 'https://github.com/dtcooper/raspotify/' ] || [ "$url" = 'https://github.com/dtcooper/raspotify.git' ]; then
-		echo 'E: Could not obtain any tag. Exiting ...'
-		exit 1
-	else
-		echo 'W: Could not obtain latest tag from local repository. Obtaining it from upstream: https://api.github.com/repos/dtcooper/raspotify/tags'
-		RASPOTIFY_GIT_VER="$(curl -sSf  "https://api.github.com/repos/dtcooper/raspotify/tags" | awk -F\" '/^ *"name": "/{print $4;exit}' || :)"
-		if [ -z "$RASPOTIFY_GIT_VER" ]; then
-			echo 'E: Could not obtain latest tag from upstream repository either. Exiting ...'
-			exit 1
-		fi
-	fi
+	echo 'Could not obtain latest tag from local repository. Obtaining it from upstream: https://api.github.com/repos/dtcooper/raspotify/tags'
+	RASPOTIFY_GIT_VER="$(curl -sSf  "https://api.github.com/repos/dtcooper/raspotify/tags" | awk -F\" '/^ *"name": "/{print $4;exit}' || :)"
+fi
+if [ -z "$RASPOTIFY_GIT_VER" ]; then
+	echo 'Could not obtain latest tag from upstream repository either. Exiting ...'
+	exit 1
 fi
 RASPOTIFY_HASH="$(git rev-parse HEAD | cut -c 1-7 || echo unknown)"
 
