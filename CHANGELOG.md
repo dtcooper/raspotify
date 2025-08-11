@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.46.2] - 2025-08-11
+
+### Fixed
+* Librespot bumped to bleeding edge on the development branch, in order to fix
+  broken playback (#727).
+
 ## [0.46.1] - 2025-01-17
 
 ### Added
