@@ -9,6 +9,7 @@ on:
 
 jobs:
   apt_deploy:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.ref =~ '^refs/tags/[0-9]+\.[0-9]+\.[0-9]+$' }}
     runs-on: ubuntu-latest
     name: Deploy Release
     env:
