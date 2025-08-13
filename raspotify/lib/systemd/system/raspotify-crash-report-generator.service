@@ -1,5 +1,7 @@
 [Unit]
 Description=Raspotify Crash Report Generator
+# Prevent this script if shutdown has been scheduled
+ConditionPathExists=!/run/systemd/shutdown/scheduled
 
 [Service]
 Type=oneshot

@@ -5,9 +5,11 @@ Documentation=https://github.com/librespot-org/librespot
 Documentation=https://github.com/dtcooper/raspotify/wiki
 Documentation=https://github.com/librespot-org/librespot/wiki/Options
 Wants=network.target sound.target
-After=network.target sound.target
+After=network.target sound.target avahi-daemon.service dbus.service dbus-broker.service
 
 OnFailure=raspotify-crash-report-generator.service
+StartLimitIntervalSec=120s
+StartLimitBurst=6
 
 [Service]
 DynamicUser=no
