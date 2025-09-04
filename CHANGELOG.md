@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.47.0] - 2025-09-04
+
+### Changed
+* Updated to Librespot 0.7.1.
+* Default config file is again synchronized against librespot's options, which,
+  over time, has drifted apart from what is supported by librespot, leading to
+  confusion. The syntax also has better explanation. Please review your
+  configuration file carefully when upgrading from an earlier release, as some
+  options have changed positions.
+
+### Fixed
+* Prevent systemd OnFailure from causing endless loop on shutdown (#735)
+
 ## [0.46.2] - 2025-08-11
 
 ### Fixed
