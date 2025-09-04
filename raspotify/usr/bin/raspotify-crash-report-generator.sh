@@ -10,7 +10,7 @@ password="LIBRESPOT_PASSWORD"
 
 librespot="LIBRESPOT_"
 
-logs=$(journalctl -u raspotify --since "1min ago" -q)
+logs=$(journalctl -u raspotify --since "2min ago" -q)
 
 fail_count=$(echo "$logs" | grep -o "raspotify.service: Failed" | wc -l)
 
@@ -50,8 +50,6 @@ done <$config
 	echo -e "\n-- Ouput of librespot -d ? --"
 	librespot -d "?"
 } >>$crash_report 2>/dev/null
-
-systemctl reset-failed raspotify
 
 if [ "$fail_count" -lt 6 ]; then
 	sleep 10
