@@ -24,7 +24,7 @@ jobs:
       issues: write
     steps:
       - name: Comment unreleased-fix
-        uses: peter-evans/create-or-update-comment@v1
+        uses: peter-evans/create-or-update-comment@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.issue.number }}
@@ -76,7 +76,7 @@ jobs:
       issues: write
     steps:
       - name: Comment upstream
-        uses: peter-evans/create-or-update-comment@v1
+        uses: peter-evans/create-or-update-comment@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.issue.number }}
@@ -89,7 +89,7 @@ jobs:
       issues: write
     steps:
       - name: Comment need-more-info-to-fix
-        uses: peter-evans/create-or-update-comment@v1
+        uses: peter-evans/create-or-update-comment@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.issue.number }}
@@ -115,7 +115,7 @@ jobs:
       issues: write
     steps:
       - name: Comment out-of-scope
-        uses: peter-evans/create-or-update-comment@v1
+        uses: peter-evans/create-or-update-comment@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.issue.number }}
