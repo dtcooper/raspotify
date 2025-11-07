@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.47.1] - 2025-11-07
+
+### Fixed
+* Built with non-upstream librespot hotfix for broken playback (#748).
+* Fix amd64 packaging issues on Debian Trixie (#736).
+
 ## [0.47.0] - 2025-09-04
 
 ### Changed
