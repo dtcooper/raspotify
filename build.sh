@@ -55,6 +55,11 @@ packages() {
 	LIBRESPOT_VER="$(git describe --tags "$(git rev-list --tags --max-count=1)" || echo unknown)"
 	LIBRESPOT_HASH="$(git rev-parse HEAD | cut -c 1-7 || echo unknown)"
 
+	# Compute final package version + filename for Debian control file
+	DEB_PKG_VER="${RASPOTIFY_GIT_VER}~librespot.${LIBRESPOT_VER}-${LIBRESPOT_HASH}"
+	DEB_PKG_NAME="raspotify_${DEB_PKG_VER}_${ARCHITECTURE}.deb"
+	echo "Prepare to build ${DEB_PKG_NAME}"
+
 	echo "Build Librespot binary..."
 	cargo build --jobs "$(nproc)" --profile release --target "$BUILD_TARGET" --no-default-features --features "alsa-backend pulseaudio-backend with-avahi rustls-tls-native-roots"
 
@@ -62,10 +67,6 @@ packages() {
 	cd /mnt/raspotify
 
 	cp -v /build/"$BUILD_TARGET"/release/librespot raspotify/usr/bin
-
-	# Compute final package version + filename for Debian control file
-	DEB_PKG_VER="${RASPOTIFY_GIT_VER}~librespot.${LIBRESPOT_VER}-${LIBRESPOT_HASH}"
-	DEB_PKG_NAME="raspotify_${DEB_PKG_VER}_${ARCHITECTURE}.deb"
 
 	# https://www.debian.org/doc/debian-policy/ch-controlfields.html#installed-size
 	# "The disk space is given as the integer value of the estimated installed size
