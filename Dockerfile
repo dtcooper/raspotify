@@ -39,6 +39,7 @@ RUN mkdir /build /.cargo \
     && rustup target add armv7-unknown-linux-gnueabihf \
     && echo '[target.aarch64-unknown-linux-gnu]\nlinker = "aarch64-linux-gnu-gcc"' > /.cargo/config.toml \
     && echo '[target.armv7-unknown-linux-gnueabihf]\nlinker = "arm-linux-gnueabihf-gcc"' >> /.cargo/config.toml \
+    && echo '[target.x86_64-unknown-linux-gnu]\nlinker = "gcc"' >> /.cargo/config.toml \
     && cargo install --jobs "$(nproc)" cargo-deb \
     && cargo install --force --locked --root /usr bindgen-cli \
     ;
