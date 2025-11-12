@@ -52,7 +52,7 @@ riscv64: builder_riscv64
 all: armhf arm64 amd64 riscv64
 
 clean:
-	rm -rf *.deb librespot asound-conf-wizard raspotify/usr/bin/librespot raspotify/usr/share raspotify/DEBIAN/control apt-repo
+	rm -rf *.deb asound-conf-wizard raspotify/usr/bin/librespot raspotify/usr/share raspotify/DEBIAN/control apt-repo
 
 distclean: clean
 	docker rmi -f raspotify || true
