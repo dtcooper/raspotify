@@ -1,7 +1,11 @@
 
 [<img src="https://raw.githubusercontent.com/dtcooper/raspotify/master/raspotify.svg?sanitize=true">](https://github.com/dtcooper/raspotify)
 
-Raspotify is a [Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_(file_format)) for [Debian Stable](https://www.debian.org/releases/stable/) ( ***Currently Debian 13 "Bookworm"*** ) and other Debian Stable based/compatible OS's ( ***your mileage may vary*** ) which thinly wraps the awesome [librespot](https://github.com/librespot-org/librespot) library by [Paul Lietar](https://github.com/plietar) and others up as a [systemd](https://en.wikipedia.org/wiki/Systemd) [daemon](https://en.wikipedia.org/wiki/Daemon_(computing)).
+Raspotify is a [Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_(file_format))
+for [Debian Stable](https://www.debian.org/releases/stable/) (**Currently Debian 13 "Trixie"**)
+and other Debian Stable based/compatible OS's (**your mileage may vary**) which thinly wraps the awesome
+[librespot](https://github.com/librespot-org/librespot) library by [Paul Lietar](https://github.com/plietar) and others as a
+[systemd](https://en.wikipedia.org/wiki/Systemd) [daemon](https://en.wikipedia.org/wiki/Daemon_(computing)).
 
 Raspotify is intended to be used in a *[headless enviroment](https://en.wikipedia.org/wiki/Headless_computer)*. For desktop OS's [spotifyd](https://github.com/Spotifyd/spotifyd) offers similar functionality and is a better choice. If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify Connect support we recommend [moOde™ audio player](https://moodeaudio.org/).
 
