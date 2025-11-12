@@ -8,10 +8,10 @@ Depends: libasound2 (>= 1.2.4), libc6 (>= 2.31)
 Priority: optional
 Section: base
 Filename: pool/main/a/asound-conf-wizard/asound-conf-wizard_0.1.17-1_amd64.deb
-Size: 269368
-SHA256: 2a2d314b7df68e45a42efd077a6a057bebdb7d3403b7cc0b2f405d8dd7ce4bed
-SHA1: 2a4ee09aa3872dc1c318abd5d8b63364d74587c9
-MD5sum: aedc279323882acd0f6f78c6fecd6ce3
+Size: 269644
+SHA256: 22ab4d58c76642e05c5a98c439f290f70c234f89a66ed2f3c09680ae812b4178
+SHA1: 9f0b43436da8d768faff5fe97830ba2275eba15c
+MD5sum: 3a85e554f9551a7b624a5ab1b8e8e224
 Description: asound-conf-wizard
  An interactive utility that generates a very simple /etc/asound.conf. It is
  designed to be used on headless sytems that run bare ALSA. It will NOT run on
@@ -19,8 +19,8 @@ Description: asound-conf-wizard
  design. You should use those to configure audio if they are installed.
 
 Package: raspotify
-Version: 0.47.1~librespot.v0.7.1-7b3cd63
-Installed-Size: 21370
+Version: 0.48.0~librespot.v0.8.0-d36f9f1
+Installed-Size: 21753
 Architecture: amd64
 Depends: libc6 (>= 2.31), coreutils (>= 8.32), libasound2t64 (>= 1.2.4) | libasound2 (>= 1.2.4), avahi-daemon (>= 0.8), alsa-utils (>= 1.2.4), libpulse0 (>= 14.2), systemd (>= 247.3), init-system-helpers (>= 1.60)
 Maintainer: Kim Tore Jensen <kimtjen@gmail.com>
@@ -29,12 +29,12 @@ Vcs-Browser: https://github.com/dtcooper/raspotify
 Vcs-Git: https://github.com/dtcooper/raspotify
 Priority: optional
 Section: base
-Filename: pool/main/r/raspotify/raspotify_0.47.1~librespot.v0.7.1-7b3cd63_amd64.deb
-Size: 5143628
-SHA256: 9700b13a6939be4b04f1043a6db62c2965a3b1f984cea68189480bc97918289c
-SHA1: 11b6e2d6491b2cb4dc8c06d2bfdb4f4dd0bbfc48
-MD5sum: c526833cc7daa6a5439b42ac54f79447
+Filename: pool/main/r/raspotify/raspotify_0.48.0~librespot.v0.8.0-d36f9f1_amd64.deb
+Size: 5303684
+SHA256: 693d07c3fc6c71b5ce978cc189276c10d02635d1020b4570dc71c2c60be3d683
+SHA1: 711590928113497d5ee7d9f2a9542c8ab41c8d82
+MD5sum: 25760ffb4dc1e253e87d9f02d4b7544b
 Description: Raspotify
  A Spotify Connect systemd daemon for Debian Stable based headless systems which thinly wraps a fork of librespot.
- [Built with rustc 1.91.0]
+ [Built with rustc 1.91.1]
 
