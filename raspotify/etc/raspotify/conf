@@ -112,6 +112,9 @@ LIBRESPOT_ENABLE_VOLUME_NORMALISATION=
 # the current volume.
 #LIBRESPOT_INITIAL_VOLUME=50
 
+# File system directory to search for local file playback.
+#LIBRESPOT_LOCAL_FILE_DIR=
+
 # Mixer to use: softvol, alsa. Defaults to softvol.
 #LIBRESPOT_MIXER_TYPE=softvol
 
