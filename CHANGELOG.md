@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.48.1] - 2025-11-24
+
+### Fixed
+* Disabling volume controls with `LIBRESPOT_VOLUME_CTRL=fixed` should now be
+  possible again. This feature was broken since at least version 0.47.0. (#754)
+* Manual dependency installation was removed from the installer. (#752)
+
 ## [0.48.0] - 2025-11-12
 
 ### Changed
