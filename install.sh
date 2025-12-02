@@ -41,7 +41,14 @@ echo "$SOURCE_REPO" | $SUDO tee /etc/apt/sources.list.d/raspotify.list
 $SUDO apt-get update
 $SUDO apt-get -y install raspotify
 
-echo "\nThanks for installing Raspotify! Don't forget to checkout the wiki for tips, tricks and configuration info!:\n"
-echo "https://github.com/dtcooper/raspotify/wiki"
-echo "\nAnd if you're feeling generous you could buy me a RedBull:\n"
-echo "https://github.com/sponsors/JasonLG1979"
+echo
+echo "Thanks for installing Raspotify!"
+echo
+echo "Check the Wiki for tips, tricks and configuration info:"
+echo
+echo "    https://github.com/dtcooper/raspotify/wiki"
+echo
+echo "And if you're feeling generous, you could buy me a beer:"
+echo
+echo "    https://github.com/sponsors/kimtore"
+echo
