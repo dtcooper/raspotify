@@ -150,7 +150,13 @@ build_armv6() {
 	CARGO_FEATURES="alsa-backend pulseaudio-backend with-avahi native-tls"
 
 	# Link against the Raspberry Pi OS ARMv6 sysroot using its v6 startfiles.
+	# Statically link OpenSSL so the package does not depend on a specific system
+	# OpenSSL soname (Raspbian bullseye ships 1.1, bookworm/trixie ship 3); this
+	# keeps a single .deb working across Raspberry Pi OS versions.
 	export OPENSSL_NO_VENDOR=1
+	export OPENSSL_STATIC=1
+	export OPENSSL_LIB_DIR="$RPI_SYSROOT/usr/lib/arm-linux-gnueabihf"
+	export OPENSSL_INCLUDE_DIR="$RPI_SYSROOT/usr/include"
 	export PKG_CONFIG_ALLOW_CROSS=1
 	export PKG_CONFIG_SYSROOT_DIR="$RPI_SYSROOT"
 	export PKG_CONFIG_PATH="$RPI_SYSROOT/usr/lib/arm-linux-gnueabihf/pkgconfig:$RPI_SYSROOT/usr/share/pkgconfig"

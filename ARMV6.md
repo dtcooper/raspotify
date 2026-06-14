@@ -55,6 +55,8 @@ sudo apt-get -f install   # pull in any missing runtime deps
 
 `build.sh`'s `build_armv6()` then builds the Rust target `arm-unknown-linux-gnueabihf` with `--features "alsa-backend pulseaudio-backend with-avahi native-tls"` and the sysroot link flags.
 
+**OpenSSL is linked statically** (`OPENSSL_STATIC=1`). Raspberry Pi OS ships different OpenSSL sonames per release — bullseye has `libssl.so.1.1`, bookworm/trixie have `libssl.so.3` — so a dynamically linked build only runs on the release it was built against. Static linking makes a single `.deb` work across releases; the remaining shared dependencies (`libasound`, `libpulse`, glibc, …) have stable sonames present on all current Raspberry Pi OS versions.
+
 ## Caveats
 
 - **Performance is unverified.** The original 2022 concern (volume normalization on a single ~700 MHz ARM1176) stands. Test on real hardware before relying on it; consider disabling volume normalization.
