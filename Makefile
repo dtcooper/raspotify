@@ -1,4 +1,4 @@
-.PHONY: all builder builder_riscv64 armhf arm64 amd64 riscv64 clean distclean
+.PHONY: all builder builder_riscv64 builder_armv6 armhf armv6 arm64 amd64 riscv64 clean distclean
 .DEFAULT_GOAL := all
 
 RASPOTIFY_AUTHOR?=Kim Tore Jensen <kimtjen@gmail.com>
@@ -9,6 +9,9 @@ builder:
 builder_riscv64:
 	docker build --pull -t raspotify_riscv64 -f Dockerfile.riscv64 .
 
+builder_armv6:
+	docker build --pull -t raspotify_armv6 -f Dockerfile.armv6 .
+
 armhf: builder
 	docker run \
 			--rm \
@@ -18,6 +21,16 @@ armhf: builder
 			--env RASPOTIFY_AUTHOR="$(RASPOTIFY_AUTHOR)" \
 			--env ARCHITECTURE="armhf" \
 		raspotify /mnt/raspotify/build.sh
+
+armv6: builder_armv6
+	docker run \
+			--rm \
+			--volume "$(CURDIR):/mnt/raspotify" \
+			--env PERMFIX_UID="$$(id -u)" \
+			--env PERMFIX_GID="$$(id -g)" \
+			--env RASPOTIFY_AUTHOR="$(RASPOTIFY_AUTHOR)" \
+			--env ARCHITECTURE="armv6" \
+		raspotify_armv6 /mnt/raspotify/build.sh
 
 arm64: builder
 	docker run \
@@ -57,3 +70,4 @@ clean:
 distclean: clean
 	docker rmi -f raspotify || true
 	docker rmi -f raspotify_riscv64 || true
+	docker rmi -f raspotify_armv6 || true

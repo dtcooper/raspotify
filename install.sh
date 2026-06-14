@@ -13,14 +13,23 @@ if ! which apt-get >/dev/null; then
 	exit 1
 fi
 
+# ARMv6 (Pi v1 / Pi Zero v1.x) is built and reported by Raspberry Pi OS as
+# "armhf", the same as the ARMv7 build, so the two cannot be told apart in a
+# single apt repository. ARMv6 is therefore shipped as a standalone .deb rather
+# than via this apt-based installer. See ARMV6.md.
+if uname -a | grep -F -iq -e armv6; then
+	echo "\nARMv6 detected (Pi v1 / Pi Zero v1.x):\n"
+	echo "Raspotify is available for ARMv6 as a standalone .deb (not via this apt repo)."
+	echo "Download raspotify_*_armv6.deb from the releases page and install it with:"
+	echo "\n    sudo dpkg -i raspotify_*_armv6.deb"
+	echo "    sudo apt-get -f install   # to pull in any missing dependencies\n"
+	echo "    https://github.com/dtcooper/raspotify/releases\n"
+	exit 1
+fi
+
 if uname -a | grep -F -ivq -e armv7 -e aarch64 -e x86_64 -e riscv64; then
 	echo "\nUnspported architecture:\n"
 	echo "$ERROR_MESG"
-	echo "\nSupport for ARMv6 (Pi v1 and Pi Zero v1.x) has been dropped."
-	echo "0.31.8.1 was the last version to be built with ARMv6 support."
-	echo "\nhttps://github.com/dtcooper/raspotify/releases/tag/0.31.8.1\n"
-	echo "You can install and run that version on an ARMv6 device,"
-	echo "but you will never get updates and doing so is completely unsupported."
 	exit 1
 fi
 
