@@ -61,7 +61,7 @@ packages() {
 	echo "Prepare to build ${DEB_PKG_NAME}"
 
 	# TLS/feature set is overridable so the ARMv6 build can swap rustls (which
-	# pulls in ring's ARMv7/NEON assembly) for native-tls (OpenSSL). See ARMV6.md.
+	# pulls in ring's ARMv7/NEON assembly) for native-tls (OpenSSL).
 	CARGO_FEATURES="${CARGO_FEATURES:-alsa-backend pulseaudio-backend with-avahi rustls-tls-native-roots}"
 
 	echo "Build Librespot binary (features: $CARGO_FEATURES)..."
@@ -150,13 +150,25 @@ build_armv6() {
 	CARGO_FEATURES="alsa-backend pulseaudio-backend with-avahi native-tls"
 
 	# Link against the Raspberry Pi OS ARMv6 sysroot using its v6 startfiles.
-	# Statically link OpenSSL so the package does not depend on a specific system
-	# OpenSSL soname (Raspbian bullseye ships 1.1, bookworm/trixie ship 3); this
-	# keeps a single .deb working across Raspberry Pi OS versions.
+	# OpenSSL is linked dynamically against the system libssl so the OS keeps it
+	# patched (an apt upgrade, not a Raspotify rebuild, ships OpenSSL CVE fixes).
 	export OPENSSL_NO_VENDOR=1
-	export OPENSSL_STATIC=1
 	export OPENSSL_LIB_DIR="$RPI_SYSROOT/usr/lib/arm-linux-gnueabihf"
 	export OPENSSL_INCLUDE_DIR="$RPI_SYSROOT/usr/include"
+
+	# The binary links a specific libssl soname, which differs per Raspberry Pi OS
+	# release (bullseye -> libssl.so.1.1 -> pkg libssl1.1; bookworm/trixie ->
+	# libssl.so.3 -> pkg libssl3). Add the dependency that matches the sysroot so
+	# the .deb only installs where its libssl is present.
+	if [ -e "$OPENSSL_LIB_DIR/libssl.so.3" ]; then
+		DEB_EXTRA_DEPENDS=", libssl3 (>= 3.0.0)"
+	elif [ -e "$OPENSSL_LIB_DIR/libssl.so.1.1" ]; then
+		DEB_EXTRA_DEPENDS=", libssl1.1 (>= 1.1.1)"
+	else
+		echo "E: no libssl found in $OPENSSL_LIB_DIR" >&2
+		exit 1
+	fi
+	export DEB_EXTRA_DEPENDS
 	export PKG_CONFIG_ALLOW_CROSS=1
 	export PKG_CONFIG_SYSROOT_DIR="$RPI_SYSROOT"
 	export PKG_CONFIG_PATH="$RPI_SYSROOT/usr/lib/arm-linux-gnueabihf/pkgconfig:$RPI_SYSROOT/usr/share/pkgconfig"

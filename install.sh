@@ -16,7 +16,7 @@ fi
 # ARMv6 (Pi v1 / Pi Zero v1.x) is built and reported by Raspberry Pi OS as
 # "armhf", the same as the ARMv7 build, so the two cannot be told apart in a
 # single apt repository. ARMv6 is therefore shipped as a standalone .deb rather
-# than via this apt-based installer. See ARMV6.md.
+# than via this apt-based installer.
 if uname -a | grep -F -iq -e armv6; then
 	echo "\nARMv6 detected (Pi v1 / Pi Zero v1.x):\n"
 	echo "Raspotify is available for ARMv6 as a standalone .deb (not via this apt repo)."

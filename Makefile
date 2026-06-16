@@ -3,6 +3,10 @@
 
 RASPOTIFY_AUTHOR?=Kim Tore Jensen <kimtjen@gmail.com>
 
+# Raspberry Pi OS suite the ARMv6 sysroot is built from. Selects the OpenSSL
+# the .deb links/depends on: bullseye -> libssl1.1, bookworm/trixie -> libssl3.
+RASPBIAN_SUITE?=bullseye
+
 builder:
 	docker build --pull -t raspotify .
 
@@ -10,7 +14,7 @@ builder_riscv64:
 	docker build --pull -t raspotify_riscv64 -f Dockerfile.riscv64 .
 
 builder_armv6:
-	docker build --pull -t raspotify_armv6 -f Dockerfile.armv6 .
+	docker build --pull --build-arg RASPBIAN_SUITE="$(RASPBIAN_SUITE)" -t raspotify_armv6 -f Dockerfile.armv6 .
 
 armhf: builder
 	docker run \

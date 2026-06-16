@@ -25,7 +25,14 @@ Or you can just download the latest .deb package and install it manually from he
 * [`raspotify-latest_amd64.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_amd64.deb)
 * [`raspotify-latest_riscv64.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_riscv64.deb)
 
-### [Raspotify does NOT support ARMv6 Pi's (Pi v1 and Pi Zero v1.x)](https://github.com/dtcooper/raspotify/wiki/Raspotify-on-Pi-v1's-and-Pi-Zero-v1.x)
+### Pi v1 and Pi Zero v1.x (ARMv6)
+
+ARMv6 is supported via a standalone `.deb`. It can't be served from the apt repo or the `armhf` link above because Raspberry Pi OS reports ARMv6 as `armhf` — the same as the ARMv7 build — so the two can't be told apart by apt. Download `raspotify_*_armv6.deb` from the [releases page](https://github.com/dtcooper/raspotify/releases) and install it manually:
+
+```sh
+sudo dpkg -i raspotify_*_armv6.deb
+sudo apt-get -f install   # pull in any missing runtime deps
+```
 
 ## Configuration
 

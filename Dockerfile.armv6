@@ -2,19 +2,21 @@
 #
 # Builder image for ARMv6 (Raspberry Pi 1 / Pi Zero v1.x, ARM1176JZF-S + VFPv2).
 #
-# This is deliberately a separate builder from the main Dockerfile because the
-# stock Debian `armhf` port is ARMv7-baseline: its crt1.o/libgcc/crypto carry
-# ARMv7 + Thumb-2 + NEON code that raises SIGILL on an ARM1176. To get a binary
-# that actually runs on a Pi Zero v1.x we cross-compile against a genuine
-# Raspberry Pi OS (Raspbian) ARMv6 sysroot and link with *its* v6 startfiles.
+# Separate from the main Dockerfile because Debian's armhf port is ARMv7-baseline
+# and won't run on an ARM1176. Two fixes: build librespot with native-tls
+# (OpenSSL) instead of rustls to avoid ring's ARMv7/NEON assembly, and link
+# against a real Raspberry Pi OS (Raspbian) ARMv6 sysroot and its v6 startfiles
+# rather than Debian's ARMv7 crt1.o. OpenSSL is linked dynamically; build.sh
+# picks the libssl dependency matching the sysroot's soname.
 #
-# See ARMV6.md for the full story.
+# Build with `make armv6` (needs Docker with QEMU/binfmt for linux/arm/v6).
+# Produces a standalone raspotify_*_armv6.deb, not served from the apt repo.
 
 # ---- Stage 1: Raspberry Pi OS (Raspbian) ARMv6 sysroot ----------------------
-# Raspbian's armhf is built for ARMv6 + VFPv2 (unlike Debian's ARMv7 armhf).
-# The dev libs are installed here (runs emulated via QEMU/binfmt during build)
-# and the whole rootfs is copied out below to be used as a cross sysroot.
-FROM --platform=linux/arm/v6 balenalib/rpi-raspbian:bullseye AS sysroot
+# Dev libs are installed under emulation; the rootfs is copied out as a cross
+# sysroot below. RASPBIAN_SUITE (default bullseye) selects the libssl soname.
+ARG RASPBIAN_SUITE=bullseye
+FROM --platform=linux/arm/v6 balenalib/rpi-raspbian:${RASPBIAN_SUITE} AS sysroot
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -57,11 +59,9 @@ RUN apt-get update \
 # Bring in the Raspberry Pi OS ARMv6 sysroot built in stage 1.
 COPY --from=sysroot / ${RPI_SYSROOT}/
 
-# glibc's .so linker scripts / .so symlinks use absolute paths that break under
-# cross --sysroot linking (ld resolves them against the host /, not the sysroot)
-# and ld then falls back to the static .a archives, which reference loader
-# internals and fail to link. Relativize every absolute symlink and drop the
-# static libc/pthread/etc. archives so the shared, loader-aware libs are used.
+# The sysroot's absolute .so symlinks resolve against the host / under cross
+# --sysroot linking and break. Relativize them, and drop the static libc/pthread
+# archives so ld uses the shared, loader-aware libs instead.
 RUN python3 - <<'PY'
 import os
 root = os.environ["RPI_SYSROOT"]
@@ -82,10 +82,9 @@ for dp, _, fs in os.walk(root):
 print("sysroot symlinks relativized")
 PY
 
-# Assemble a clean -B directory holding ONLY the Raspbian v6 startfiles + libgcc.
-# We use Debian's arm-linux-gnueabihf-gcc purely as the link *driver*, but it
-# would otherwise pull in its own ARMv7/Thumb-2 crt1.o (whose _start faults on
-# an ARM1176). Pointing -B here forces the v6 crt1.o/crti.o/crtn.o/libgcc.
+# Stage the Raspbian v6 startfiles + libgcc into a clean -B dir. Debian's gcc is
+# used only as the link driver; -B forces its v6 crt1.o/crti.o/crtn.o/libgcc
+# instead of the ARMv7 ones it would otherwise pull in.
 RUN GCCV="$(ls ${RPI_SYSROOT}/usr/lib/gcc/arm-linux-gnueabihf | grep -E '^[0-9]+$' | sort -n | tail -1)" \
     && mkdir -p ${V6GCC} \
     && cp ${RPI_SYSROOT}/usr/lib/gcc/arm-linux-gnueabihf/${GCCV}/crt*.o ${V6GCC}/ \
