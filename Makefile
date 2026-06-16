@@ -3,9 +3,11 @@
 
 RASPOTIFY_AUTHOR?=Kim Tore Jensen <kimtjen@gmail.com>
 
-# Raspberry Pi OS suite the ARMv6 sysroot is built from. Selects the OpenSSL
-# the .deb links/depends on: bullseye -> libssl1.1, bookworm/trixie -> libssl3.
-RASPBIAN_SUITE?=bullseye
+# Raspberry Pi OS suite the ARMv6 sysroot is built from. bookworm is the newest
+# ARMv6 Raspbian base available; its binary runs on Raspberry Pi OS bookworm and
+# newer (glibc >= 2.36 + libssl.so.3). Selects the OpenSSL the .deb depends on:
+# bookworm/trixie -> libssl3, bullseye -> libssl1.1.
+RASPBIAN_SUITE?=bookworm
 
 builder:
 	docker build --pull -t raspotify .

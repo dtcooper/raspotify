@@ -157,11 +157,12 @@ build_armv6() {
 	export OPENSSL_INCLUDE_DIR="$RPI_SYSROOT/usr/include"
 
 	# The binary links a specific libssl soname, which differs per Raspberry Pi OS
-	# release (bullseye -> libssl.so.1.1 -> pkg libssl1.1; bookworm/trixie ->
-	# libssl.so.3 -> pkg libssl3). Add the dependency that matches the sysroot so
-	# the .deb only installs where its libssl is present.
+	# release (bullseye -> libssl.so.1.1; bookworm/trixie -> libssl.so.3). Add the
+	# dependency matching the sysroot so the .deb only installs where its libssl is
+	# present. For libssl.so.3, trixie's 64-bit time_t transition renamed the
+	# package libssl3 -> libssl3t64, so depend on either (cf. libasound2t64).
 	if [ -e "$OPENSSL_LIB_DIR/libssl.so.3" ]; then
-		DEB_EXTRA_DEPENDS=", libssl3 (>= 3.0.0)"
+		DEB_EXTRA_DEPENDS=", libssl3t64 (>= 3.0.0) | libssl3 (>= 3.0.0)"
 	elif [ -e "$OPENSSL_LIB_DIR/libssl.so.1.1" ]; then
 		DEB_EXTRA_DEPENDS=", libssl1.1 (>= 1.1.1)"
 	else
