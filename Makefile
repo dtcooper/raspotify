@@ -5,8 +5,8 @@ RASPOTIFY_AUTHOR?=Kim Tore Jensen <kimtjen@gmail.com>
 
 # Raspberry Pi OS suite the ARMv6 sysroot is built from. bookworm is the newest
 # ARMv6 Raspbian base available; its binary runs on Raspberry Pi OS bookworm and
-# newer (glibc >= 2.36 + libssl.so.3). Selects the OpenSSL the .deb depends on:
-# bookworm/trixie -> libssl3, bullseye -> libssl1.1.
+# newer (glibc >= 2.34 + libssl.so.3, the libssl3 package). Must be bookworm or
+# newer.
 RASPBIAN_SUITE?=bookworm
 
 builder:

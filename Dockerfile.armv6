@@ -6,8 +6,8 @@
 # and won't run on an ARM1176. Two fixes: build librespot with native-tls
 # (OpenSSL) instead of rustls to avoid ring's ARMv7/NEON assembly, and link
 # against a real Raspberry Pi OS (Raspbian) ARMv6 sysroot and its v6 startfiles
-# rather than Debian's ARMv7 crt1.o. OpenSSL is linked dynamically; build.sh
-# picks the libssl dependency matching the sysroot's soname.
+# rather than Debian's ARMv7 crt1.o. OpenSSL is linked dynamically against the
+# sysroot's libssl.so.3, so the .deb depends on the system libssl3 package.
 #
 # Build with `make armv6` (needs Docker with QEMU/binfmt for linux/arm/v6).
 # Produces a standalone raspotify_*_armv6.deb, not served from the apt repo.
@@ -15,7 +15,8 @@
 # ---- Stage 1: Raspberry Pi OS (Raspbian) ARMv6 sysroot ----------------------
 # Dev libs are installed under emulation; the rootfs is copied out as a cross
 # sysroot below. RASPBIAN_SUITE (default bookworm, the newest ARMv6 Raspbian
-# base) selects the libssl soname; the binary runs on bookworm and newer.
+# base) must be bookworm or newer (glibc >= 2.34, libssl.so.3); the binary runs
+# on bookworm and newer.
 ARG RASPBIAN_SUITE=bookworm
 FROM --platform=linux/arm/v6 balenalib/rpi-raspbian:${RASPBIAN_SUITE} AS sysroot
 ENV DEBIAN_FRONTEND=noninteractive
@@ -53,7 +54,6 @@ RUN apt-get update \
         liblzma-dev \
         pkg-config \
         gettext-base \
-        python3 \
     && rm -rf /var/lib/apt/lists/* \
     ;
 
@@ -61,46 +61,31 @@ RUN apt-get update \
 COPY --from=sysroot / ${RPI_SYSROOT}/
 
 # Prepare the sysroot for cross --sysroot linking:
-#  - Drop the static glibc archives so ld uses the shared, loader-aware libs
-#    rather than the .a's, which reference loader internals and fail to link.
-#  - glibc >= 2.34 (bookworm/trixie) merged pthread/dl/rt/util into libc and
-#    dropped their unversioned dev symlink, so `-lpthread` etc. no longer
-#    resolve. Recreate the symlink to the now-empty runtime stub; the link's
-#    --as-needed keeps the empty lib out of the binary's NEEDED entries.
-#  - Relativize absolute symlinks: ld resolves them against the host / and breaks.
-RUN python3 - <<'PY'
-import glob, os
-root = os.environ["RPI_SYSROOT"]
-libdirs = (os.path.join(root, "usr/lib/arm-linux-gnueabihf"),
-           os.path.join(root, "lib/arm-linux-gnueabihf"))
-
-for d in libdirs:
-    for a in ("libpthread.a", "libdl.a", "librt.a", "libm.a",
-              "libc.a", "libutil.a", "libanl.a", "libresolv.a"):
-        p = os.path.join(d, a)
-        if os.path.exists(p):
-            os.remove(p)
-
-for d in libdirs:
-    for name in ("pthread", "dl", "rt", "util", "anl", "resolv"):
-        so = os.path.join(d, "lib%s.so" % name)
-        if os.path.lexists(so):
-            continue
-        vers = sorted(glob.glob(os.path.join(d, "lib%s.so.*" % name)))
-        if vers:
-            os.symlink(os.path.basename(vers[-1]), so)
-
-for dp, _, fs in os.walk(root):
-    for f in fs:
-        p = os.path.join(dp, f)
-        if os.path.islink(p):
-            t = os.readlink(p)
-            if t.startswith("/"):
-                rel = os.path.relpath(os.path.join(root, t.lstrip("/")), dp)
-                os.remove(p)
-                os.symlink(rel, p)
-print("sysroot prepared")
-PY
+#  - Drop the static glibc archives (.a): they reference loader internals and
+#    fail to link, so force ld onto the shared libs.
+#  - glibc >= 2.34 folded pthread/dl/rt/util/anl/resolv into libc and dropped
+#    their unversioned dev symlink, so `-lpthread` etc. stop resolving. Recreate
+#    it pointing at the empty runtime stub; --as-needed keeps it out of NEEDED.
+#  - Relativize absolute symlinks (re-rooted into the sysroot): ld otherwise
+#    follows e.g. libm.so -> /lib/.../libm.so.6 against the host / (cannot find -lm).
+RUN set -eu; \
+    for d in usr/lib/arm-linux-gnueabihf lib/arm-linux-gnueabihf; do \
+        dir="${RPI_SYSROOT}/$d"; \
+        [ -d "$dir" ] || continue; \
+        ( cd "$dir" && rm -f libpthread.a libdl.a librt.a libm.a libc.a libutil.a libanl.a libresolv.a ); \
+        for n in pthread dl rt util anl resolv; do \
+            [ -e "$dir/lib$n.so" ] && continue; \
+            latest="$(ls -1 "$dir"/lib$n.so.* 2>/dev/null | sort -V | tail -n1 || true)"; \
+            [ -n "$latest" ] && ln -s "$(basename "$latest")" "$dir/lib$n.so" || true; \
+        done; \
+    done; \
+    find "${RPI_SYSROOT}" -type l | while IFS= read -r l; do \
+        t="$(readlink "$l")"; \
+        case "$t" in \
+            /*) ln -sfn "$(realpath -m --relative-to="$(dirname "$l")" "${RPI_SYSROOT}${t}")" "$l" ;; \
+        esac; \
+    done; \
+    echo "sysroot prepared"
 
 # Stage the Raspbian v6 startfiles + libgcc into a clean -B dir. Debian's gcc is
 # used only as the link driver; -B forces its v6 crt1.o/crti.o/crtn.o/libgcc
