@@ -1,0 +1,72 @@
+# syntax=docker/dockerfile:1
+#
+# ARMv6 builder image (Raspberry Pi 1 / Zero v1.x, ARM1176JZF-S + VFPv2).
+# Debian's armhf is ARMv7-baseline and SIGILLs on an ARM1176, so we:
+#   - link against a Raspbian ARMv6 sysroot and its v6 startfiles, not Debian's
+#     ARMv7 crt*.o;
+#   - build librespot with native-tls, not rustls (ring ships ARMv7/NEON asm).
+# OpenSSL links dynamically, so the .deb depends on libssl3.
+#
+# `make armv6` (needs Docker QEMU/binfmt for linux/arm/v6) -> standalone
+# raspotify_*_armv6.deb, not served from the apt repo.
+
+# ---- Stage 1: Raspbian ARMv6 sysroot ----------------------------------------
+# Install the dev libs under emulation, then copy the rootfs out as a cross
+# sysroot (below). bookworm is the oldest suite with ARMv6 Raspbian on glibc
+# >= 2.34 / libssl.so.3, so it gives the widest runtime compatibility; the
+# binary runs on bookworm and newer.
+FROM --platform=linux/arm/v6 balenalib/rpi-raspbian:bookworm AS sysroot
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        gcc \
+        libc6-dev \
+        pkg-config \
+        libasound2-dev \
+        libpulse-dev \
+        libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# ---- Stage 2: build environment --------------------------------------------
+FROM rust:bullseye
+
+ENV INSIDE_DOCKER_CONTAINER=1 \
+    DEBIAN_FRONTEND=noninteractive \
+    DEBCONF_NOWARNINGS=yes \
+    PATH="/root/.cargo/bin/:$PATH" \
+    CARGO_INSTALL_ROOT="/root/.cargo" \
+    CARGO_TARGET_DIR="/build" \
+    CARGO_HOME="/build/cache" \
+    RPI_SYSROOT="/opt/rpi-sysroot" \
+    V6GCC="/opt/v6gcc"
+
+RUN apt-get update \
+    && apt-get -y upgrade \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        gcc-arm-linux-gnueabihf \
+        cmake \
+        git \
+        bc \
+        liblzma-dev \
+        pkg-config \
+        gettext-base \
+    && rm -rf /var/lib/apt/lists/* \
+    ;
+
+# Bring in the Raspberry Pi OS ARMv6 sysroot built in stage 1.
+COPY --from=sysroot / ${RPI_SYSROOT}/
+
+# Make that rootfs a cross-linking sysroot and stage its ARMv6 startfiles into
+# ${V6GCC}; see prepare-armv6-sysroot.sh for the why of each step.
+COPY prepare-armv6-sysroot.sh /usr/local/bin/prepare-armv6-sysroot.sh
+RUN sh /usr/local/bin/prepare-armv6-sysroot.sh
+
+RUN mkdir -p /build /.cargo \
+    && rustup target add arm-unknown-linux-gnueabihf \
+    && printf '[target.arm-unknown-linux-gnueabihf]\nlinker = "arm-linux-gnueabihf-gcc"\n' > /.cargo/config.toml \
+    && cargo install --jobs "$(nproc)" cargo-deb \
+    ;
+
+RUN git config --global --add safe.directory /mnt/raspotify \
+    && git config --global --add safe.directory /mnt/raspotify/librespot

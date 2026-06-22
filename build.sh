@@ -60,8 +60,12 @@ packages() {
 	DEB_PKG_NAME="raspotify_${DEB_PKG_VER}_${ARCHITECTURE}.deb"
 	echo "Prepare to build ${DEB_PKG_NAME}"
 
-	echo "Build Librespot binary..."
-	cargo build --jobs "$(nproc)" --profile release --target "$BUILD_TARGET" --no-default-features --features "alsa-backend pulseaudio-backend with-avahi rustls-tls-native-roots"
+	# Overridable so the ARMv6 build can swap rustls (ring -> ARMv7/NEON asm)
+	# for native-tls (OpenSSL).
+	CARGO_FEATURES="${CARGO_FEATURES:-alsa-backend pulseaudio-backend with-avahi rustls-tls-native-roots}"
+
+	echo "Build Librespot binary (features: $CARGO_FEATURES)..."
+	cargo build --jobs "$(nproc)" --profile release --target "$BUILD_TARGET" --no-default-features --features "$CARGO_FEATURES"
 
 	echo "Copy Librespot binary to package root..."
 	cd /mnt/raspotify
@@ -74,6 +78,10 @@ packages() {
 	INSTALLED_SIZE="$((($(du -bs raspotify --exclude=raspotify/DEBIAN/control | cut -f 1) + 2048) / 1024))"
 
 	echo "Generate Debian control..."
+	# The package arch can differ from our internal $ARCHITECTURE label: the
+	# ARMv6 build is labelled "armv6" for distinct artifact names, but Pi OS
+	# reports it as "armhf", so that is the package arch.
+	export DEB_ARCH="${DEB_ARCH:-$ARCHITECTURE}"
 	export DEB_PKG_VER
 	export INSTALLED_SIZE
 	envsubst <control.debian.tmpl >raspotify/DEBIAN/control
@@ -130,6 +138,40 @@ build_armhf() {
 	packages
 }
 
+# Raspberry Pi 1 / Pi Zero v1.x (ARM1176JZF-S, ARMv6 + VFPv2).
+# Requires the ARMv6 builder image (Dockerfile.armv6), which provides a
+# Raspberry Pi OS sysroot in $RPI_SYSROOT and v6 startfiles in $V6GCC.
+build_armv6() {
+	ARCHITECTURE="armv6"
+	BUILD_TARGET="arm-unknown-linux-gnueabihf"
+	# Raspberry Pi OS reports "armhf" even on ARMv6, so that is the package arch.
+	DEB_ARCH="armhf"
+	# native-tls (OpenSSL) instead of rustls -> no ring -> no ARMv7/NEON asm.
+	CARGO_FEATURES="alsa-backend pulseaudio-backend with-avahi native-tls"
+
+	# Link against the Raspbian ARMv6 sysroot + its v6 startfiles. OpenSSL is
+	# dynamic, so OS apt upgrades (not a Raspotify rebuild) ship its CVE fixes.
+	export OPENSSL_NO_VENDOR=1
+	export OPENSSL_LIB_DIR="$RPI_SYSROOT/usr/lib/arm-linux-gnueabihf"
+	export OPENSSL_INCLUDE_DIR="$RPI_SYSROOT/usr/include"
+
+	# bookworm links the libssl3 package; trixie's 64-bit time_t transition
+	# renamed it libssl3 -> libssl3t64, so depend on either (cf. libasound2t64).
+	export DEB_EXTRA_DEPENDS=", libssl3t64 (>= 3.0.0) | libssl3 (>= 3.0.0)"
+	export PKG_CONFIG_ALLOW_CROSS=1
+	export PKG_CONFIG_SYSROOT_DIR="$RPI_SYSROOT"
+	export PKG_CONFIG_PATH="$RPI_SYSROOT/usr/lib/arm-linux-gnueabihf/pkgconfig:$RPI_SYSROOT/usr/share/pkgconfig"
+	export CFLAGS_arm_unknown_linux_gnueabihf="-march=armv6 -mfpu=vfp -mfloat-abi=hard --sysroot=$RPI_SYSROOT"
+	export CARGO_TARGET_ARM_UNKNOWN_LINUX_GNUEABIHF_RUSTFLAGS="\
+-Clink-arg=--sysroot=$RPI_SYSROOT \
+-Clink-arg=-B$V6GCC \
+-Clink-arg=-L$RPI_SYSROOT/lib/arm-linux-gnueabihf \
+-Clink-arg=-L$RPI_SYSROOT/usr/lib/arm-linux-gnueabihf \
+-Clink-arg=-Wl,-rpath-link,$RPI_SYSROOT/lib/arm-linux-gnueabihf"
+
+	packages
+}
+
 build_arm64() {
 	ARCHITECTURE="arm64"
 	BUILD_TARGET="aarch64-unknown-linux-gnu"
@@ -176,6 +218,9 @@ case $ARCHITECTURE in
 "armhf")
 	build_armhf
 	;;
+"armv6")
+	build_armv6
+	;;
 "arm64")
 	build_arm64
 	;;
@@ -191,7 +236,9 @@ case $ARCHITECTURE in
 esac
 
 # Fix broken permissions resulting from running the Docker container as root.
-[ $(id -u) -eq 0 ] && chown -R "$PERMFIX_UID:$PERMFIX_GID" /mnt/raspotify
+# Best-effort: some bind-mount backends (e.g. Docker Desktop on macOS) deny
+# chown on a few VCS files; that must not fail the build after the .deb is made.
+[ $(id -u) -eq 0 ] && { chown -R "$PERMFIX_UID:$PERMFIX_GID" /mnt/raspotify || true; }
 
 BUILD_TIME=$(duration_since "$START_BUILDS")
 
