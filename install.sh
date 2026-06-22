@@ -13,10 +13,9 @@ if ! which apt-get >/dev/null; then
 	exit 1
 fi
 
-# ARMv6 (Pi v1 / Pi Zero v1.x) is built and reported by Raspberry Pi OS as
-# "armhf", the same as the ARMv7 build, so the two cannot be told apart in a
-# single apt repository. ARMv6 is therefore shipped as a standalone .deb rather
-# than via this apt-based installer.
+# Raspberry Pi OS reports ARMv6 (Pi v1 / Zero v1.x) as "armhf", same as the
+# ARMv7 build, so apt can't tell them apart -- ARMv6 ships as a standalone .deb,
+# not via this apt installer.
 if uname -a | grep -F -iq -e armv6; then
 	echo "\nARMv6 detected (Pi v1 / Pi Zero v1.x):\n"
 	echo "Raspotify is available for ARMv6 as a standalone .deb (not via this apt repo)."

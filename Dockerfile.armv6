@@ -1,22 +1,19 @@
 # syntax=docker/dockerfile:1
 #
-# Builder image for ARMv6 (Raspberry Pi 1 / Pi Zero v1.x, ARM1176JZF-S + VFPv2).
+# ARMv6 builder image (Raspberry Pi 1 / Zero v1.x, ARM1176JZF-S + VFPv2).
+# Debian's armhf is ARMv7-baseline and SIGILLs on an ARM1176, so we:
+#   - link against a Raspbian ARMv6 sysroot and its v6 startfiles, not Debian's
+#     ARMv7 crt*.o;
+#   - build librespot with native-tls, not rustls (ring ships ARMv7/NEON asm).
+# OpenSSL links dynamically, so the .deb depends on libssl3.
 #
-# Separate from the main Dockerfile because Debian's armhf port is ARMv7-baseline
-# and won't run on an ARM1176. Two fixes: build librespot with native-tls
-# (OpenSSL) instead of rustls to avoid ring's ARMv7/NEON assembly, and link
-# against a real Raspberry Pi OS (Raspbian) ARMv6 sysroot and its v6 startfiles
-# rather than Debian's ARMv7 crt1.o. OpenSSL is linked dynamically against the
-# sysroot's libssl.so.3, so the .deb depends on the system libssl3 package.
-#
-# Build with `make armv6` (needs Docker with QEMU/binfmt for linux/arm/v6).
-# Produces a standalone raspotify_*_armv6.deb, not served from the apt repo.
+# `make armv6` (needs Docker QEMU/binfmt for linux/arm/v6) -> standalone
+# raspotify_*_armv6.deb, not served from the apt repo.
 
-# ---- Stage 1: Raspberry Pi OS (Raspbian) ARMv6 sysroot ----------------------
-# Dev libs are installed under emulation; the rootfs is copied out as a cross
-# sysroot below. RASPBIAN_SUITE (default bookworm, the newest ARMv6 Raspbian
-# base) must be bookworm or newer (glibc >= 2.34, libssl.so.3); the binary runs
-# on bookworm and newer.
+# ---- Stage 1: Raspbian ARMv6 sysroot ----------------------------------------
+# Install the dev libs under emulation, then copy the rootfs out as a cross
+# sysroot (below). RASPBIAN_SUITE must be bookworm or newer (glibc >= 2.34,
+# libssl.so.3); the resulting binary runs on bookworm and newer.
 ARG RASPBIAN_SUITE=bookworm
 FROM --platform=linux/arm/v6 balenalib/rpi-raspbian:${RASPBIAN_SUITE} AS sysroot
 ENV DEBIAN_FRONTEND=noninteractive
@@ -60,45 +57,12 @@ RUN apt-get update \
 # Bring in the Raspberry Pi OS ARMv6 sysroot built in stage 1.
 COPY --from=sysroot / ${RPI_SYSROOT}/
 
-# Prepare the sysroot for cross --sysroot linking:
-#  - Drop the static glibc archives (.a): they reference loader internals and
-#    fail to link, so force ld onto the shared libs.
-#  - glibc >= 2.34 folded pthread/dl/rt/util/anl/resolv into libc and dropped
-#    their unversioned dev symlink, so `-lpthread` etc. stop resolving. Recreate
-#    it pointing at the empty runtime stub; --as-needed keeps it out of NEEDED.
-#  - Relativize absolute symlinks (re-rooted into the sysroot): ld otherwise
-#    follows e.g. libm.so -> /lib/.../libm.so.6 against the host / (cannot find -lm).
-RUN set -eu; \
-    for d in usr/lib/arm-linux-gnueabihf lib/arm-linux-gnueabihf; do \
-        dir="${RPI_SYSROOT}/$d"; \
-        [ -d "$dir" ] || continue; \
-        ( cd "$dir" && rm -f libpthread.a libdl.a librt.a libm.a libc.a libutil.a libanl.a libresolv.a ); \
-        for n in pthread dl rt util anl resolv; do \
-            [ -e "$dir/lib$n.so" ] && continue; \
-            latest="$(ls -1 "$dir"/lib$n.so.* 2>/dev/null | sort -V | tail -n1 || true)"; \
-            [ -n "$latest" ] && ln -s "$(basename "$latest")" "$dir/lib$n.so" || true; \
-        done; \
-    done; \
-    find "${RPI_SYSROOT}" -type l | while IFS= read -r l; do \
-        t="$(readlink "$l")"; \
-        case "$t" in \
-            /*) ln -sfn "$(realpath -m --relative-to="$(dirname "$l")" "${RPI_SYSROOT}${t}")" "$l" ;; \
-        esac; \
-    done; \
-    echo "sysroot prepared"
-
-# Stage the Raspbian v6 startfiles + libgcc into a clean -B dir. Debian's gcc is
-# used only as the link driver; -B forces its v6 crt1.o/crti.o/crtn.o/libgcc
-# instead of the ARMv7 ones it would otherwise pull in.
-RUN GCCV="$(ls ${RPI_SYSROOT}/usr/lib/gcc/arm-linux-gnueabihf | grep -E '^[0-9]+$' | sort -n | tail -1)" \
-    && mkdir -p ${V6GCC} \
-    && cp ${RPI_SYSROOT}/usr/lib/gcc/arm-linux-gnueabihf/${GCCV}/crt*.o ${V6GCC}/ \
-    && cp ${RPI_SYSROOT}/usr/lib/gcc/arm-linux-gnueabihf/${GCCV}/libgcc.a ${V6GCC}/ \
-    && cp ${RPI_SYSROOT}/usr/lib/arm-linux-gnueabihf/crt1.o \
-          ${RPI_SYSROOT}/usr/lib/arm-linux-gnueabihf/crti.o \
-          ${RPI_SYSROOT}/usr/lib/arm-linux-gnueabihf/crtn.o \
-          ${RPI_SYSROOT}/usr/lib/arm-linux-gnueabihf/Scrt1.o ${V6GCC}/ \
-    && echo "v6 startfiles staged in ${V6GCC}"
+# Make that rootfs a cross-linking sysroot and stage its ARMv6 startfiles into
+# ${V6GCC}; see prepare-armv6-sysroot.sh for the why of each step. GCC_VERSION
+# optionally pins the gcc major for the startfiles (empty = newest installed).
+ARG GCC_VERSION=
+COPY prepare-armv6-sysroot.sh /usr/local/bin/prepare-armv6-sysroot.sh
+RUN GCC_VERSION="$GCC_VERSION" sh /usr/local/bin/prepare-armv6-sysroot.sh
 
 RUN mkdir -p /build /.cargo \
     && rustup target add arm-unknown-linux-gnueabihf \

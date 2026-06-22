@@ -27,7 +27,7 @@ Or you can just download the latest .deb package and install it manually from he
 
 ### Pi v1 and Pi Zero v1.x (ARMv6)
 
-ARMv6 is supported on Raspberry Pi OS **bookworm and newer** via a standalone `.deb`. It can't be served from the apt repo or the `armhf` link above because Raspberry Pi OS reports ARMv6 as `armhf` — the same as the ARMv7 build — so the two can't be told apart by apt. Download `raspotify_*_armv6.deb` from the [releases page](https://github.com/dtcooper/raspotify/releases) and install it manually:
+ARMv6 is supported on Raspberry Pi OS **bookworm and newer** via a standalone `.deb`. Raspberry Pi OS reports ARMv6 as `armhf` (same as the ARMv7 build), so apt can't tell them apart — hence a manual download rather than the apt repo. Grab `raspotify_*_armv6.deb` from the [releases page](https://github.com/dtcooper/raspotify/releases) and install it:
 
 ```sh
 sudo dpkg -i raspotify_*_armv6.deb

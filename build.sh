@@ -60,8 +60,8 @@ packages() {
 	DEB_PKG_NAME="raspotify_${DEB_PKG_VER}_${ARCHITECTURE}.deb"
 	echo "Prepare to build ${DEB_PKG_NAME}"
 
-	# TLS/feature set is overridable so the ARMv6 build can swap rustls (which
-	# pulls in ring's ARMv7/NEON assembly) for native-tls (OpenSSL).
+	# Overridable so the ARMv6 build can swap rustls (ring -> ARMv7/NEON asm)
+	# for native-tls (OpenSSL).
 	CARGO_FEATURES="${CARGO_FEATURES:-alsa-backend pulseaudio-backend with-avahi rustls-tls-native-roots}"
 
 	echo "Build Librespot binary (features: $CARGO_FEATURES)..."
@@ -78,9 +78,9 @@ packages() {
 	INSTALLED_SIZE="$((($(du -bs raspotify --exclude=raspotify/DEBIAN/control | cut -f 1) + 2048) / 1024))"
 
 	echo "Generate Debian control..."
-	# The Debian package architecture can differ from our internal $ARCHITECTURE
-	# label: the ARMv6 build is labelled "armv6" for distinct artifact names, but
-	# Raspberry Pi OS reports "armhf" for it, so that is what the package targets.
+	# The package arch can differ from our internal $ARCHITECTURE label: the
+	# ARMv6 build is labelled "armv6" for distinct artifact names, but Pi OS
+	# reports it as "armhf", so that is the package arch.
 	export DEB_ARCH="${DEB_ARCH:-$ARCHITECTURE}"
 	export DEB_PKG_VER
 	export INSTALLED_SIZE
@@ -149,16 +149,14 @@ build_armv6() {
 	# native-tls (OpenSSL) instead of rustls -> no ring -> no ARMv7/NEON asm.
 	CARGO_FEATURES="alsa-backend pulseaudio-backend with-avahi native-tls"
 
-	# Link against the Raspberry Pi OS ARMv6 sysroot using its v6 startfiles.
-	# OpenSSL is linked dynamically against the system libssl so the OS keeps it
-	# patched (an apt upgrade, not a Raspotify rebuild, ships OpenSSL CVE fixes).
+	# Link against the Raspbian ARMv6 sysroot + its v6 startfiles. OpenSSL is
+	# dynamic, so OS apt upgrades (not a Raspotify rebuild) ship its CVE fixes.
 	export OPENSSL_NO_VENDOR=1
 	export OPENSSL_LIB_DIR="$RPI_SYSROOT/usr/lib/arm-linux-gnueabihf"
 	export OPENSSL_INCLUDE_DIR="$RPI_SYSROOT/usr/include"
 
-	# bookworm and newer link libssl.so.3 / the libssl3 package; trixie's 64-bit
-	# time_t transition renamed it libssl3 -> libssl3t64, so depend on either
-	# (cf. libasound2t64).
+	# bookworm links the libssl3 package; trixie's 64-bit time_t transition
+	# renamed it libssl3 -> libssl3t64, so depend on either (cf. libasound2t64).
 	export DEB_EXTRA_DEPENDS=", libssl3t64 (>= 3.0.0) | libssl3 (>= 3.0.0)"
 	export PKG_CONFIG_ALLOW_CROSS=1
 	export PKG_CONFIG_SYSROOT_DIR="$RPI_SYSROOT"
