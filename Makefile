@@ -3,14 +3,6 @@
 
 RASPOTIFY_AUTHOR?=Kim Tore Jensen <kimtjen@gmail.com>
 
-# Raspbian suite the ARMv6 sysroot is built from. Must be bookworm or newer
-# (glibc >= 2.34, libssl3); the binary then runs on bookworm and newer.
-RASPBIAN_SUITE?=bookworm
-
-# Optionally pin the gcc major for the ARMv6 startfiles; empty = newest in the
-# sysroot.
-GCC_VERSION?=
-
 builder:
 	docker build --pull -t raspotify .
 
@@ -18,7 +10,7 @@ builder_riscv64:
 	docker build --pull -t raspotify_riscv64 -f Dockerfile.riscv64 .
 
 builder_armv6:
-	docker build --pull --build-arg RASPBIAN_SUITE="$(RASPBIAN_SUITE)" --build-arg GCC_VERSION="$(GCC_VERSION)" -t raspotify_armv6 -f Dockerfile.armv6 .
+	docker build --pull -t raspotify_armv6 -f Dockerfile.armv6 .
 
 armhf: builder
 	docker run \

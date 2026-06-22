@@ -12,10 +12,10 @@
 
 # ---- Stage 1: Raspbian ARMv6 sysroot ----------------------------------------
 # Install the dev libs under emulation, then copy the rootfs out as a cross
-# sysroot (below). RASPBIAN_SUITE must be bookworm or newer (glibc >= 2.34,
-# libssl.so.3); the resulting binary runs on bookworm and newer.
-ARG RASPBIAN_SUITE=bookworm
-FROM --platform=linux/arm/v6 balenalib/rpi-raspbian:${RASPBIAN_SUITE} AS sysroot
+# sysroot (below). bookworm is the oldest suite with ARMv6 Raspbian on glibc
+# >= 2.34 / libssl.so.3, so it gives the widest runtime compatibility; the
+# binary runs on bookworm and newer.
+FROM --platform=linux/arm/v6 balenalib/rpi-raspbian:bookworm AS sysroot
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -58,11 +58,9 @@ RUN apt-get update \
 COPY --from=sysroot / ${RPI_SYSROOT}/
 
 # Make that rootfs a cross-linking sysroot and stage its ARMv6 startfiles into
-# ${V6GCC}; see prepare-armv6-sysroot.sh for the why of each step. GCC_VERSION
-# optionally pins the gcc major for the startfiles (empty = newest installed).
-ARG GCC_VERSION=
+# ${V6GCC}; see prepare-armv6-sysroot.sh for the why of each step.
 COPY prepare-armv6-sysroot.sh /usr/local/bin/prepare-armv6-sysroot.sh
-RUN GCC_VERSION="$GCC_VERSION" sh /usr/local/bin/prepare-armv6-sysroot.sh
+RUN sh /usr/local/bin/prepare-armv6-sysroot.sh
 
 RUN mkdir -p /build /.cargo \
     && rustup target add arm-unknown-linux-gnueabihf \

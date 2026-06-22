@@ -8,11 +8,10 @@
 # Environment inputs:
 #   RPI_SYSROOT  the Raspbian rootfs, fixed up in place                (required)
 #   V6GCC        a dedicated dir to collect the ARMv6 startup files in (required)
-#   GCC_VERSION  pin the gcc major version for the startfiles          (optional)
 #
 # gcc versions and library sonames are detected rather than hard-coded: they
-# change when the Raspbian base image is bumped, and pinned paths would break.
-# Set GCC_VERSION to override the gcc detection if you'd rather pin it.
+# change if the Raspbian base image (Dockerfile.armv6) is bumped to a newer
+# suite, so detecting keeps that a one-line change instead of breaking here.
 
 set -eu
 : "${RPI_SYSROOT:?RPI_SYSROOT must be set}"
@@ -56,12 +55,8 @@ done
 #   - gcc's crt*.o (crtbegin*/crtend*) and libgcc.a, from its versioned dir
 #   - glibc's crt1.o/crti.o/crtn.o/Scrt1.o, from the lib dir
 gcc_dir="$RPI_SYSROOT/usr/lib/gcc/arm-linux-gnueabihf"
-# Pinned via GCC_VERSION, else the newest gcc major installed in the sysroot.
-gcc_ver="${GCC_VERSION:-$(ls "$gcc_dir" | grep -E '^[0-9]+$' | sort -n | tail -1)}"
-[ -d "$gcc_dir/$gcc_ver" ] || {
-	echo "gcc $gcc_ver not found in $gcc_dir (GCC_VERSION='${GCC_VERSION:-}')" >&2
-	exit 1
-}
+gcc_ver=$(ls "$gcc_dir" | grep -E '^[0-9]+$' | sort -n | tail -1)  # newest gcc major
+[ -d "$gcc_dir/$gcc_ver" ] || { echo "no gcc found in $gcc_dir" >&2; exit 1; }
 lib_dir="$RPI_SYSROOT/usr/lib/arm-linux-gnueabihf"
 
 mkdir -p "$V6GCC"
