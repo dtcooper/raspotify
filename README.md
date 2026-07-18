@@ -27,6 +27,42 @@ Or you can just download the latest .deb package and install it manually from he
 
 ### [Raspotify does NOT support ARMv6 Pi's (Pi v1 and Pi Zero v1.x)](https://github.com/dtcooper/raspotify/wiki/Raspotify-on-Pi-v1's-and-Pi-Zero-v1.x)
 
+## Building
+
+Raspotify `.deb` packages are built inside Docker, which cross-compiles librespot for Linux. This works on macOS with [Docker Desktop](https://www.docker.com/products/docker-desktop/) or [Colima](https://github.com/abiosoft/colima).
+
+Initialize submodules, then build for the desired architecture:
+
+```sh
+git submodule update --init --recursive
+make arm64    # or: armhf, amd64, riscv64, all
+```
+
+The resulting packages are written to the repository root, for example:
+
+* `raspotify_<version>_arm64.deb`
+* `asound-conf-wizard_<version>_arm64.deb`
+
+The librespot commit hash in the package filename comes from whatever commit is checked out in `librespot/` at build time. `build.sh` runs `git submodule update librespot`, which resets the submodule to the commit recorded in this repository. To build against a different librespot commit, use the following approach.
+
+**Bump the submodule pointer** (recommended if you intend to keep that librespot revision):
+
+```sh
+git -C librespot checkout <commit>
+git add librespot
+git commit -m "Bump librespot to <commit>"
+make arm64
+```
+
+Replace `arm64` with `armhf`, `amd64`, or `riscv64` as needed. The `riscv64` target uses a separate Docker image: `make builder_riscv64` before `make riscv64`.
+
+To remove build artifacts and Docker images:
+
+```sh
+make clean      # remove .deb files and build outputs
+make distclean  # clean + remove Docker images
+```
+
 ## Configuration
 
 The [wiki](https://github.com/dtcooper/raspotify/wiki) is full of useful information. The [Basic Setup Guide](https://github.com/dtcooper/raspotify/wiki/Basic-Setup-Guide) is a good place to start.
