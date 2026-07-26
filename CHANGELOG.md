@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.48.2] - 2026-07-18
+
+### Fixed
+* Update librespot. Fixes broken audio CDN. (#763)
+
 ## [0.48.1] - 2025-11-24
 
 ### Fixed
