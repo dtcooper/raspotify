@@ -5,4 +5,5 @@ ConditionPathExists=!/run/systemd/shutdown/scheduled
 
 [Service]
 Type=oneshot
+UMask=0077
 ExecStart=/usr/bin/raspotify-crash-report-generator.sh

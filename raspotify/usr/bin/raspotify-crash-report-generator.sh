@@ -4,9 +4,11 @@ crash_report="/etc/raspotify/crash_report"
 
 config="/etc/raspotify/conf"
 
-# We don't want user names or passwords in the crash report.
+# We don't want credentials in the crash report.
 username="LIBRESPOT_USERNAME"
 password="LIBRESPOT_PASSWORD"
+access_token="LIBRESPOT_ACCESS_TOKEN"
+proxy="LIBRESPOT_PROXY"
 
 librespot="LIBRESPOT_"
 
@@ -32,6 +34,12 @@ while read -r line; do
 		;;
 	$password*)
 		echo "$password=XXXXXXXX" >>$crash_report 2>/dev/null
+		;;
+	$access_token*)
+		echo "$access_token=XXXXXXXX" >>$crash_report 2>/dev/null
+		;;
+	$proxy*)
+		echo "$proxy=XXXXXXXX" >>$crash_report 2>/dev/null
 		;;
 	$librespot*)
 		echo "$stripped_line" >>$crash_report 2>/dev/null
