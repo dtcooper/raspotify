@@ -51,11 +51,11 @@ while read -r line; do
 done <$config
 
 {
-	echo -e "\n-- Ouput of aplay -l --\n"
+	echo -e "\n-- Output of aplay -l --\n"
 	aplay -l
-	echo -e "\n-- Ouput of aplay -L --\n"
+	echo -e "\n-- Output of aplay -L --\n"
 	aplay -L
-	echo -e "\n-- Ouput of librespot -d ? --"
+	echo -e "\n-- Output of librespot -d ? --"
 	librespot -d "?"
 } >>$crash_report 2>/dev/null
 

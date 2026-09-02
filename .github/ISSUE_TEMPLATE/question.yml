@@ -6,14 +6,14 @@ body:
       value: |
         Thank you for taking the time to ask your question.
 
-        Please take the time to read the [README](https://github.com/dtcooper/raspotify#readme), [Wiki](https://github.com/dtcooper/raspotify/wiki) and search though open and closed [isssues](https://github.com/dtcooper/raspotify/issues).
+        Please take the time to read the [README](https://github.com/dtcooper/raspotify#readme), [Wiki](https://github.com/dtcooper/raspotify/wiki) and search through open and closed [issues](https://github.com/dtcooper/raspotify/issues).
         
         **Duplicates and/or questions that can easily be answered by reading said information will be closed with little to no explanation.** 
   - type: checkboxes
     id: due-diligence
     attributes:
       label: Due Diligence
-      description: Before asking this question you have made sure to read the README, wiki and seach though the issues (open and closed) 
+      description: Before asking this question you have made sure to read the README, wiki and search through the issues (open and closed)
       options:
         - label: I have done my due diligence
           required: true
