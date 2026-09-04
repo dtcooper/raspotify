@@ -1,10 +1,12 @@
-FROM rust:bullseye
+FROM rust:bookworm
 
+# PKG_CONFIG_PATH is deliberately not set here: it applies to every target, so a
+# single arch's dir would be searched first for all of them. build.sh sets it
+# per-arch alongside BUILD_TARGET instead.
 ENV INSIDE_DOCKER_CONTAINER=1 \
     DEBIAN_FRONTEND=noninteractive \
     DEBCONF_NOWARNINGS=yes \
     PKG_CONFIG_ALLOW_CROSS=1 \
-    PKG_CONFIG_PATH="/usr/lib/arm-linux-gnueabihf/pkgconfig" \
     PATH="/root/.cargo/bin/:$PATH" \
     CARGO_INSTALL_ROOT="/root/.cargo" \
     CARGO_TARGET_DIR="/build" \
@@ -18,12 +20,15 @@ RUN dpkg --add-architecture arm64 \
         build-essential \
         libasound2-dev \
         libpulse-dev \
+        libssl-dev \
         crossbuild-essential-arm64 \
         libasound2-dev:arm64 \
         libpulse-dev:arm64 \
+        libssl-dev:arm64 \
         crossbuild-essential-armhf \
         libasound2-dev:armhf \
         libpulse-dev:armhf \
+        libssl-dev:armhf \
         cmake \
         clang-16 \
         git \
