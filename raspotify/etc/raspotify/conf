@@ -116,7 +116,7 @@ LIBRESPOT_ENABLE_VOLUME_NORMALISATION=
 #LIBRESPOT_LOCAL_FILE_DIR=
 
 # Mixer to use: softvol, alsa. Defaults to softvol.
-#LIBRESPOT_MIXER_TYPE=softvol
+#LIBRESPOT_MIXER=softvol
 
 # Device name.
 # Raspotify defaults to "raspotify (*hostname)".
