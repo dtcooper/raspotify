@@ -27,11 +27,11 @@ jobs:
           path: apt-repo
 
       - name: Download .deb file
-        uses: robinraju/release-downloader@v1.13
+        uses: robinraju/release-downloader@v1
         with:
           repository: dtcooper/raspotify
           tag: ${{ github.event.inputs.tag }}
-          fileName: "*"
+          fileName: "*.deb"
 
       - name: Install reprepro
         run: |
