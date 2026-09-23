@@ -27,7 +27,7 @@ jobs:
           path: apt-repo
 
       - name: Download .deb files
-        run: gh release download ${{ github.event.inputs.tag }}
+        run: gh release download ${{ github.event.inputs.tag }} --pattern "*.deb"
 
       - name: Install reprepro
         run: |
