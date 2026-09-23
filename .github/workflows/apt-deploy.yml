@@ -1,11 +1,16 @@
+# vi: se et ts=2 sts=2 sw=2:
+
 name: Deploy Release
 
 on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Tag of release with .deb file asset attached it, for example 0.31.5'
+        description: 'Tag of release with .deb file assets attached. Omit this field to deploy the latest release.'
         required: false
+
+permissions:
+  contents: read        # scope to the minimum your job needs
 
 jobs:
   apt_deploy:
@@ -17,7 +22,7 @@ jobs:
       RELEASE_TAG: ${{ github.event.inputs.tag }}
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v7
 
       - name: Checkout gh-pages branch
@@ -27,6 +32,8 @@ jobs:
           path: apt-repo
 
       - name: Download .deb files
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release download ${{ github.event.inputs.tag }} --pattern "*.deb"
 
       - name: Install reprepro
