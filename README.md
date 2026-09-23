@@ -1,9 +1,13 @@
 
 [<img src="https://raw.githubusercontent.com/dtcooper/raspotify/master/raspotify.svg?sanitize=true">](https://github.com/dtcooper/raspotify)
 
-Raspotify is a [Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_(file_format)) for [Debian Stable](https://www.debian.org/releases/stable/) ( ***Currently Debian 13 "Bookworm"*** ) and other Debian Stable based/compatible OS's ( ***your mileage may vary*** ) which thinly wraps the awesome [librespot](https://github.com/librespot-org/librespot) library by [Paul Lietar](https://github.com/plietar) and others up as a [systemd](https://en.wikipedia.org/wiki/Systemd) [daemon](https://en.wikipedia.org/wiki/Daemon_(computing)).
+Raspotify is a [Debian package and associated repository](https://en.wikipedia.org/wiki/Deb_(file_format))
+for [Debian Stable](https://www.debian.org/releases/stable/) (**Currently Debian 13 "Trixie"**)
+and other Debian Stable based/compatible OS's (**your mileage may vary**) which thinly wraps the awesome
+[librespot](https://github.com/librespot-org/librespot) library by [Paul Lietar](https://github.com/plietar) and others as a
+[systemd](https://en.wikipedia.org/wiki/Systemd) [daemon](https://en.wikipedia.org/wiki/Daemon_(computing)).
 
-Raspotify is intended to be used in a *[headless enviroment](https://en.wikipedia.org/wiki/Headless_computer)*. For desktop OS's [spotifyd](https://github.com/Spotifyd/spotifyd) offers similar functionality and is a better choice. If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify Connect support we recommend [moOde™ audio player](https://moodeaudio.org/).
+Raspotify is intended to be used in a *[headless environment](https://en.wikipedia.org/wiki/Headless_computer)*. For desktop OS's [spotifyd](https://github.com/Spotifyd/spotifyd) offers similar functionality and is a better choice. If you're looking for a turnkey audio solution for Raspberry Pi's with Spotify Connect support we recommend [moOde™ audio player](https://moodeaudio.org/).
 
 **Librespot, and therefore Raspotify, requires a premium account.**
 
@@ -22,6 +26,42 @@ Or you can just download the latest .deb package and install it manually from he
 * [`raspotify-latest_riscv64.deb`](https://dtcooper.github.io/raspotify/raspotify-latest_riscv64.deb)
 
 ### [Raspotify does NOT support ARMv6 Pi's (Pi v1 and Pi Zero v1.x)](https://github.com/dtcooper/raspotify/wiki/Raspotify-on-Pi-v1's-and-Pi-Zero-v1.x)
+
+## Building
+
+Raspotify `.deb` packages are built inside Docker, which cross-compiles librespot for Linux. This works on macOS with [Docker Desktop](https://www.docker.com/products/docker-desktop/) or [Colima](https://github.com/abiosoft/colima).
+
+Initialize submodules, then build for the desired architecture:
+
+```sh
+git submodule update --init --recursive
+make arm64    # or: armhf, amd64, riscv64, all
+```
+
+The resulting packages are written to the repository root, for example:
+
+* `raspotify_<version>_arm64.deb`
+* `asound-conf-wizard_<version>_arm64.deb`
+
+The librespot commit hash in the package filename comes from whatever commit is checked out in `librespot/` at build time. `build.sh` runs `git submodule update librespot`, which resets the submodule to the commit recorded in this repository. To build against a different librespot commit, use the following approach.
+
+**Bump the submodule pointer** (recommended if you intend to keep that librespot revision):
+
+```sh
+git -C librespot checkout <commit>
+git add librespot
+git commit -m "Bump librespot to <commit>"
+make arm64
+```
+
+Replace `arm64` with `armhf`, `amd64`, or `riscv64` as needed. The `riscv64` target uses a separate Docker image: `make builder_riscv64` before `make riscv64`.
+
+To remove build artifacts and Docker images:
+
+```sh
+make clean      # remove .deb files and build outputs
+make distclean  # clean + remove Docker images
+```
 
 ## Configuration
 
