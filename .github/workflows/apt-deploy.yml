@@ -41,8 +41,6 @@ jobs:
           sudo apt-get install -y reprepro
 
       - name: Create and deploy repo
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
           GPG_SECRET_KEY_BASE64: ${{ secrets.GPG_SECRET_KEY_BASE64 }}
