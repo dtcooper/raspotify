@@ -4,10 +4,6 @@ name: Deploy Release
 
 on:
   workflow_dispatch:
-    inputs:
-      tag:
-        description: 'Tag of release with .deb file assets attached. Omit this field to deploy the latest release.'
-        required: false
 
 permissions:
   contents: read        # scope to the minimum your job needs
@@ -16,10 +12,6 @@ jobs:
   apt_deploy:
     runs-on: ubuntu-latest
     name: Deploy Release
-    env:
-      GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
-      GPG_SECRET_KEY_BASE64: ${{ secrets.GPG_SECRET_KEY_BASE64 }}
-      RELEASE_TAG: ${{ github.event.inputs.tag }}
 
     steps:
       - name: Checkout repository
@@ -31,10 +23,17 @@ jobs:
           ref: gh-pages
           path: apt-repo
 
+      - name: Determine release tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG=$(gh release view --json tagName --jq '.tagName')
+          echo "RELEASE_TAG=$TAG" >> $GITHUB_ENV
+
       - name: Download .deb files
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release download ${{ github.event.inputs.tag }} --pattern "*.deb"
+        run: gh release download --pattern "*.deb"
 
       - name: Install reprepro
         run: |
@@ -42,4 +41,7 @@ jobs:
           sudo apt-get install -y reprepro
 
       - name: Create and deploy repo
+        env:
+          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+          GPG_SECRET_KEY_BASE64: ${{ secrets.GPG_SECRET_KEY_BASE64 }}
         run: ./deploy-apt-repo.sh
