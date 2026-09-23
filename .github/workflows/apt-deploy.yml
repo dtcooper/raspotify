@@ -5,7 +5,7 @@ on:
     inputs:
       tag:
         description: 'Tag of release with .deb file asset attached it, for example 0.31.5'
-        required: true
+        required: false
 
 jobs:
   apt_deploy:
@@ -26,11 +26,8 @@ jobs:
           ref: gh-pages
           path: apt-repo
 
-      - name: Download .deb file
-        uses: robinraju/release-downloader@v1
-        with:
-          tag: ${{ github.event.inputs.tag }}
-          fileName: "*.deb"
+      - name: Download .deb files
+        run: gh release download ${{ github.event.inputs.tag }}
 
       - name: Install reprepro
         run: |
