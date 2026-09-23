@@ -6,9 +6,6 @@ on:
       tag:
         description: 'Tag of release with .deb file asset attached it, for example 0.31.5'
         required: true
-  push:
-    tags:
-      - '[0-9]+(\.[0-9]+)*([-\.]\S+)?'
 
 jobs:
   apt_deploy:
@@ -20,31 +17,26 @@ jobs:
       RELEASE_TAG: ${{ github.event.inputs.tag }}
 
     steps:
-      -
-        name: Checkout repo
+      - name: Checkout repo
         uses: actions/checkout@v7
 
-      -
-        name: Checkout gh-pages branch
+      - name: Checkout gh-pages branch
         uses: actions/checkout@v7
         with:
           ref: gh-pages
           path: apt-repo
 
-      -
-        name: Download .deb file
+      - name: Download .deb file
         uses: robinraju/release-downloader@v1.13
         with:
           repository: dtcooper/raspotify
           tag: ${{ github.event.inputs.tag }}
           fileName: "*"
 
-      -
-        name: Install reprepro
+      - name: Install reprepro
         run: |
           sudo apt-get update
           sudo apt-get install -y reprepro
 
-      -
-        name: Create and deploy repo
+      - name: Create and deploy repo
         run: ./deploy-apt-repo.sh
