@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.48.3] - 2026-09-23
+
+### Fixed
+* Security: don't leak OAuth2 credentials when using crash reporter. (#767)
+* Include Rust version in package description. (#768)
+* Fix typos in README, issue templates, and crash report script. (#769)
+
+### Changed
+* Security: use native TLS instead of rustls on all targets except riscv64. (#770)
+* Librespot setting `LIBRESPOT_MIXER_TYPE` changed to `LIBRESPOT_MIXER`.
+  This is now reflected in the sample configuration file. (#771)
+* Librespot bumped to latest development release.
+
+### Added
+* Librespot now supports _device token flow_ with `--enable-device-auth`.
+
 ## [0.48.2] - 2026-07-18
 
 ### Fixed
