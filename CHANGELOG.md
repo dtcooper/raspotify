@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.48.4] - 2026-10-22
+
+### Fixed
+* Update librespot. Fixes playback always starting from the first track. (#773)
+  (upstream: librespot-org/librespot#1795)
+
 ## [0.48.3] - 2026-09-23
 
 ### Fixed
