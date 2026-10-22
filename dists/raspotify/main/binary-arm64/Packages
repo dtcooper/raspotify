@@ -8,10 +8,10 @@ Depends: libasound2 (>= 1.2.4), libc6 (>= 2.31)
 Priority: optional
 Section: base
 Filename: pool/main/a/asound-conf-wizard/asound-conf-wizard_0.1.17-1_arm64.deb
-Size: 224932
-SHA256: 326e0d6b8c481b95d3cace418b4e5499710a47bab1fdc16ac87f08516961aac6
-SHA1: 52210e17c6a7ca601fd1e891518f10a53f767942
-MD5sum: 8fa903916431f903a6c3552994d9b6c9
+Size: 223536
+SHA256: 953696c15261343499f98a01c856d6d6f8828ebeb5c87cca1e7a8f2a252613d6
+SHA1: b186ec6d8e82fa4d424febe6464a04ee575ef56b
+MD5sum: d929d75460a5ddfc3e3b7dbfa204afd6
 Description: asound-conf-wizard
  An interactive utility that generates a very simple /etc/asound.conf. It is
  designed to be used on headless sytems that run bare ALSA. It will NOT run on
@@ -19,8 +19,8 @@ Description: asound-conf-wizard
  design. You should use those to configure audio if they are installed.
 
 Package: raspotify
-Version: 0.48.3~librespot.v0.8.0-939dc5e
-Installed-Size: 20035
+Version: 0.48.4~librespot.v0.8.0-99b6088
+Installed-Size: 20025
 Architecture: arm64
 Depends: libc6 (>= 2.36), coreutils (>= 8.32), libasound2t64 (>= 1.2.4) | libasound2 (>= 1.2.4), avahi-daemon (>= 0.8), alsa-utils (>= 1.2.4), libpulse0 (>= 14.2), systemd (>= 247.3), init-system-helpers (>= 1.60), libssl3t64 (>= 3.0.0) | libssl3 (>= 3.0.0)
 Maintainer: Kim Tore Jensen <kimtjen@gmail.com>
@@ -29,12 +29,12 @@ Vcs-Browser: https://github.com/dtcooper/raspotify
 Vcs-Git: https://github.com/dtcooper/raspotify
 Priority: optional
 Section: base
-Filename: pool/main/r/raspotify/raspotify_0.48.3~librespot.v0.8.0-939dc5e_arm64.deb
-Size: 3981344
-SHA256: 2097b3994824cf17163ecc47c6f6a5a695202987e2ab0b650f50d663291c63f2
-SHA1: 523bedc88b3dd5bf001de2d0ed90f91dfffa5014
-MD5sum: 583e674d04bc79a51550e3c2c05f4bf5
+Filename: pool/main/r/raspotify/raspotify_0.48.4~librespot.v0.8.0-99b6088_arm64.deb
+Size: 3973400
+SHA256: 4d272678f475ad18961563951b6c36e5395c8a85b8d5607d1e3e9f94671108e2
+SHA1: a57a57e18e14748289f2f5b897ec1a57dc547786
+MD5sum: 7941363f3bb302a92ce9256d205deb52
 Description: Raspotify
  A Spotify Connect systemd daemon for Debian Stable based headless systems which thinly wraps a fork of librespot.
- [Built with rustc 1.98.1 (48a229cea 2026-09-01)]
+ [Built with rustc 1.99.1 (58cf8f9c3 2026-10-13)]
 
