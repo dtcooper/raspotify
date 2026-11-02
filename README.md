@@ -27,6 +27,18 @@ Or you can just download the latest .deb package and install it manually from he
 
 ### [Raspotify does NOT support ARMv6 Pi's (Pi v1 and Pi Zero v1.x)](https://github.com/dtcooper/raspotify/wiki/Raspotify-on-Pi-v1's-and-Pi-Zero-v1.x)
 
+### Regarding "Audio Key Error" and similar messages
+
+Spotify has made some breaking changes to their API which introduces problems for Librespot users across many open source projects, including Raspotify.
+The API change has already been reversed engineered and a fix implemented. This fix was subsequently shut down by Spotify on basis of copyright infringement laws.
+
+The issue is tracked upstream as [#1649](https://github.com/librespot-org/librespot/issues/1649), and also as
+[#757](https://github.com/dtcooper/raspotify/issues/757) on the Raspotify issue tracker.
+Please read through the issues and check if you're having the same problem before reporting a new issue.
+
+If Raspotify won't work for you, the most popular response from the community is to try [Spotify Soloist](https://developer.spotify.com/documentation/soloist),
+which seems to be what Spotify wants anyway.
+
 ## Building
 
 Raspotify `.deb` packages are built inside Docker, which cross-compiles librespot for Linux. This works on macOS with [Docker Desktop](https://www.docker.com/products/docker-desktop/) or [Colima](https://github.com/abiosoft/colima).
