@@ -2,7 +2,8 @@
 
 set -e
 
-SOURCE_REPO="deb [signed-by=/usr/share/keyrings/raspotify_key.asc] https://dtcooper.github.io/raspotify raspotify main"
+REPO_URL="https://dtcooper.github.io/raspotify"
+SOURCE_REPO="deb [signed-by=/usr/share/keyrings/raspotify_key.asc] $REPO_URL raspotify main"
 ERROR_MESG="Please make sure you are running a compatible armhf (ARMv7), arm64, amd64 or riscv64 Debian based OS."
 
 SUDO="sudo"
@@ -34,7 +35,7 @@ if ! which sudo >/dev/null; then
 	fi
 fi
 
-$SUDO curl -sSfL https://dtcooper.github.io/raspotify/key.asc -o /usr/share/keyrings/raspotify_key.asc
+$SUDO curl -sSfL "$REPO_URL/key.asc" -o /usr/share/keyrings/raspotify_key.asc
 $SUDO chmod 644 /usr/share/keyrings/raspotify_key.asc
 echo "$SOURCE_REPO" | $SUDO tee /etc/apt/sources.list.d/raspotify.list
 

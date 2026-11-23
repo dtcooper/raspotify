@@ -128,7 +128,15 @@ echo "$AWIZ_ARMHF_DEB_PKG_NAME, $AWIZ_ARM64_DEB_PKG_NAME, $AWIZ_AMD64_DEB_PKG_NA
 
 gpg --armor --export "$GPG_KEY_ID" > key.asc
 cp -v ../README.md ../LICENSE ../install.sh .
+if [ -n "$APT_REPO_URL" ]; then
+    # Point the published install script at this repo instead of upstream.
+    sed -i "s#^REPO_URL=.*#REPO_URL=\"$APT_REPO_URL\"#" install.sh
+fi
 git add -A
+if git diff --cached --quiet; then
+    echo "Nothing changed in the apt repo, skipping commit."
+    exit 0
+fi
 git -c 'user.name=Automated Release' -c 'user.email=automated-release@users.noreply.github.com' \
     commit -m "Update gh-pages apt repository (released tag $RELEASE_TAG)"
 git push origin gh-pages

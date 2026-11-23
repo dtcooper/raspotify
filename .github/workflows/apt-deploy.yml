@@ -1,39 +1,108 @@
 # vi: se et ts=2 sts=2 sw=2:
+#
+# Builds raspotify + asound-conf-wizard .debs for every architecture from this
+# repository (no GitHub release needed) and publishes them as a signed APT
+# repository on the gh-pages branch, served via GitHub Pages at:
+#
+#   https://<owner>.github.io/<repo>
+#
+# One-time setup for a fork:
+#   1. Create a signing key and add two repository secrets:
+#        gpg --quick-gen-key "Raspotify APT <you@example.com>" rsa4096 sign never
+#        GPG_KEY_ID              -> the key's fingerprint (gpg --list-keys)
+#        GPG_SECRET_KEY_BASE64   -> gpg --export-secret-keys --armor <ID> | base64 -w0
+#      (the key must not have a passphrase)
+#   2. Run this workflow once, then in Settings -> Pages set
+#      "Deploy from a branch" -> gh-pages / (root).
+#
+# Install on a device:
+#   curl -sL https://<owner>.github.io/<repo>/install.sh | sh
 
-name: Deploy Release
+name: Build and Deploy APT Repo
 
 on:
+  push:
+    branches: [master]
+    paths-ignore:
+      - '**.md'
+      - 'readme'
+      - '.github/workflows/stale.yml'
+      - '.github/workflows/tags.yml'
+      - '.github/workflows/build-test.yml'
   workflow_dispatch:
+
+# Never run two deploys at once; they would race on the gh-pages branch.
+concurrency:
+  group: apt-deploy
+  cancel-in-progress: false
 
 permissions:
   contents: write
 
 jobs:
-  apt_deploy:
-    runs-on: ubuntu-latest
-    name: Deploy Release
-
+  build:
+    name: Build ${{ matrix.arch }}
+    strategy:
+      matrix:
+        arch: [armhf, arm64, amd64, riscv64]
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
-
-      - name: Checkout gh-pages branch
-        uses: actions/checkout@v7
         with:
-          ref: gh-pages
-          path: apt-repo
+          fetch-depth: 0 # tags are needed for the package version
 
-      - name: Determine release tag
+      - name: Build packages
+        env:
+          # Makes every CI build a strictly newer version than the upstream
+          # release it is based on and than the previous CI build, so
+          # `apt upgrade` picks it up.
+          RASPOTIFY_VERSION_SUFFIX: +ci${{ github.run_number }}
+        run: make ${{ matrix.arch }}
+
+      - name: Upload packages
+        uses: actions/upload-artifact@v5
+        with:
+          name: debs-${{ matrix.arch }}
+          path: '*.deb'
+          if-no-files-found: error
+
+  deploy:
+    name: Deploy APT repo
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check signing secrets
+        env:
+          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+          GPG_SECRET_KEY_BASE64: ${{ secrets.GPG_SECRET_KEY_BASE64 }}
+        run: |
+          if [ -z "$GPG_KEY_ID" ] || [ -z "$GPG_SECRET_KEY_BASE64" ]; then
+            echo "::error::Repository secrets GPG_KEY_ID and GPG_SECRET_KEY_BASE64 must be set (see the comment at the top of this workflow)."
+            exit 1
+          fi
+
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Download packages
+        uses: actions/download-artifact@v5
+        with:
+          pattern: debs-*
+          merge-multiple: true
+
+      - name: Checkout or create gh-pages branch
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TAG=$(gh release view --json tagName --jq '.tagName')
-          echo "RELEASE_TAG=$TAG" >> $GITHUB_ENV
-
-      - name: Download .deb files
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release download --pattern "*.deb"
+          remote="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          if git ls-remote --exit-code --heads "$remote" gh-pages >/dev/null; then
+            git clone --depth 1 --branch gh-pages "$remote" apt-repo
+          else
+            echo "No gh-pages branch yet, creating it."
+            git init -b gh-pages apt-repo
+            git -C apt-repo remote add origin "$remote"
+          fi
 
       - name: Install reprepro
         run: |
@@ -44,4 +113,7 @@ jobs:
         env:
           GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
           GPG_SECRET_KEY_BASE64: ${{ secrets.GPG_SECRET_KEY_BASE64 }}
-        run: ./deploy-apt-repo.sh
+          APT_REPO_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+        run: |
+          export RELEASE_TAG="${GITHUB_REF_NAME}@${GITHUB_SHA::7} (CI run ${GITHUB_RUN_NUMBER})"
+          ./deploy-apt-repo.sh

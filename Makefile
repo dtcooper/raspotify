@@ -16,6 +16,7 @@ armhf: builder
 			--env PERMFIX_UID="$$(id -u)" \
 			--env PERMFIX_GID="$$(id -g)" \
 			--env RASPOTIFY_AUTHOR="$(RASPOTIFY_AUTHOR)" \
+			--env RASPOTIFY_VERSION_SUFFIX="$(RASPOTIFY_VERSION_SUFFIX)" \
 			--env ARCHITECTURE="armhf" \
 		raspotify /mnt/raspotify/build.sh
 
@@ -26,6 +27,7 @@ arm64: builder
 			--env PERMFIX_UID="$$(id -u)" \
 			--env PERMFIX_GID="$$(id -g)" \
 			--env RASPOTIFY_AUTHOR="$(RASPOTIFY_AUTHOR)" \
+			--env RASPOTIFY_VERSION_SUFFIX="$(RASPOTIFY_VERSION_SUFFIX)" \
 			--env ARCHITECTURE="arm64" \
 		raspotify /mnt/raspotify/build.sh
 
@@ -36,6 +38,7 @@ amd64: builder
 			--env PERMFIX_UID="$$(id -u)" \
 			--env PERMFIX_GID="$$(id -g)" \
 			--env RASPOTIFY_AUTHOR="$(RASPOTIFY_AUTHOR)" \
+			--env RASPOTIFY_VERSION_SUFFIX="$(RASPOTIFY_VERSION_SUFFIX)" \
 			--env ARCHITECTURE="amd64" \
 		raspotify /mnt/raspotify/build.sh
 
@@ -46,6 +49,7 @@ riscv64: builder_riscv64
 			--env PERMFIX_UID="$$(id -u)" \
 			--env PERMFIX_GID="$$(id -g)" \
 			--env RASPOTIFY_AUTHOR="$(RASPOTIFY_AUTHOR)" \
+			--env RASPOTIFY_VERSION_SUFFIX="$(RASPOTIFY_VERSION_SUFFIX)" \
 			--env ARCHITECTURE="riscv64" \
 		raspotify_riscv64 /mnt/raspotify/build.sh
 

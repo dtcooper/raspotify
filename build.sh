@@ -189,6 +189,8 @@ if [ -z "$RASPOTIFY_GIT_VER" ]; then
 	echo 'E: Could not obtain latest tag from upstream repository either. Exiting ...'
 	exit 1
 fi
+# Optional suffix, e.g. "+ci42" from CI, so fork builds sort above the upstream release.
+RASPOTIFY_GIT_VER="${RASPOTIFY_GIT_VER}${RASPOTIFY_VERSION_SUFFIX}"
 RASPOTIFY_HASH="$(git rev-parse HEAD | cut -c 1-7 || echo unknown)"
 
 echo "Build Raspotify $RASPOTIFY_GIT_VER~$RASPOTIFY_HASH..."
